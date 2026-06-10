@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Part 12 · 함수 기초</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&amp;family=Gowun+Dodum&amp;display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:760px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:88px 22px 40px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:62ch;}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:76px 0 46px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 20px;line-height:1.3;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  code{font-family:'Gowun Dodum',monospace;background:#efe7d8;color:#8a3408;padding:1.5px 7px;border-radius:6px;font-size:.92em;}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15.5px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:22px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:16px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;color:#9ec79a;border-radius:10px;padding:13px 16px;font-family:monospace;font-size:14px;min-height:42px;white-space:pre-wrap;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}.out .err{color:#e0935f;}
+  .btn{border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:13px;padding:9px 15px;border-radius:9px;cursor:pointer;}
+  .btn.ghost{background:#fdfaf4;border:1.5px solid var(--line);color:var(--sub);}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+  .seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:monospace;transition:.15s;color:var(--ink);}
+  .seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  .pp-input{border:1.5px solid var(--line);border-radius:8px;padding:8px 12px;font-family:monospace;font-size:14px;background:#fff;color:var(--ink);}
+  .codebox{background:#2b2723;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:13px;line-height:1.7;color:#f4efe6;white-space:pre-wrap;}
+  .codebox .kw{color:#e0935f;}.codebox .dim{color:#6f6457;}.codebox .run{background:rgba(158,199,154,.18);border-radius:4px;}
+
+  /* recipe machine */
+  .rm{display:flex;flex-direction:column;align-items:center;gap:6px;margin:12px 0;}
+  .rm-fn{border:2px solid var(--accent);border-radius:12px;padding:12px 22px;background:#fdf2ec;font-family:monospace;font-weight:700;font-size:15px;color:var(--accent);}
+  .rm-arrow{color:var(--sub);font-size:16px;}
+  .rm-in,.rm-out{font-family:monospace;font-size:14px;}
+  .rm-in .pp-input{width:90px;text-align:center;}
+
+  /* scope box */
+  .sc-stage{display:flex;flex-direction:column;gap:10px;}
+  .sc-global{border:1.5px dashed var(--line);border-radius:10px;padding:12px;background:#fff;}
+  .sc-fn{border:2px solid var(--teal);border-radius:10px;padding:12px;background:#eef5f3;margin-left:18px;}
+  .sc-lbl{font-size:11px;font-weight:700;color:var(--sub);margin-bottom:6px;font-family:monospace;}
+  .sc-var{display:inline-block;font-family:monospace;font-size:13px;background:#fff;border:1px solid var(--line);border-radius:6px;padding:3px 9px;margin:2px;}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}}
+</style>
+<style id="wide16x9">
+/* ===== 16:9 와이드 반응형 오버라이드 ===== */
+:root{--maxw:1320px;}
+header.hero{text-align:center;padding-top:70px;}
+header.hero .lead{margin-left:auto;margin-right:auto;}
+header.hero .hero-meta{justify-content:center;}
+main.wrap section.two-col .col-text>:first-child{margin-top:0;}
+main.wrap section.two-col .col-text .summary{margin-bottom:0;}
+@media(min-width:980px){
+  main.wrap section.two-col{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.06fr);
+    gap:46px;align-items:start;
+  }
+  main.wrap section.two-col .col-widget{position:sticky;top:22px;}
+  main.wrap section.two-col .col-text{padding-top:2px;}
+}
+@media(max-width:979px){
+  main.wrap section.two-col .col-widget{margin-top:6px;}
+}
+</style></head>
+<body>
+<div id="progress"></div>
+<header class="hero">
+<div class="eyebrow">파이썬 기초 문법 · Part 12 · 함수</div>
+<h1>함수 기초</h1>
+<p class="lead">한 묶음의 일에 <strong>이름을 붙여 재사용</strong>하는 도구. 반복되는 처리를 한 번 정의(<code>def</code>)해 두고 여러 번 부름. Part 8~11에서 손으로 짠 처리를 함수로 묶으면 코드가 짧고·명확하고·재사용 가능해짐 — 진짜 프로그램다워지는 단계.</p>
+<div class="hero-meta">
+<span class="chip">🟠 함수 · 12/18</span>
+<span class="chip t">def · 매개변수 · return</span>
+<span class="chip t">예상 35분</span>
+</div>
+</header>
+<main class="wrap">
+<!-- 1 -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">12-1</div><h2>함수 — 일에 이름 붙이기</h2><p><code>def 이름():</code>로 코드를 묶어 정의하고, <code>이름()</code>으로 호출함. <strong>정의는 실행이 아님</strong> — 호출할 때 비로소 실행되고, 부를 때마다 재실행됨(재사용). 레시피를 적어 두는 것과 실제 요리의 차이.</p><div class="note"><b>📌 참고</b>  우리가 써온 <code>print()</code>·<code>len()</code>·<code>sum()</code>도 함수. 함수의 가치는 <b>재사용</b>과 <b>이름</b> — 같은 코드를 복사하는 대신 한 번 정의해 부르고, 고칠 때도 한 곳만 고침. 잘 지은 이름은 의도를 설명함.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>함수는 코드를 하나의 이름으로 묶은 것, <code>def</code>로 정의.</li>
+<li>정의는 실행이 아님 — 호출(<code>이름()</code>)할 때 실행.</li>
+<li>한 번 정의해 여러 번 부르는 재사용이 핵심.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 정의 vs 호출</span>
+<p class="wdesc">"호출"을 누를 때마다 함수 몸체가 실행되는 걸 봄(정의는 실행되지 않음).</p>
+<div class="codebox" id="w1code"></div>
+<div style="text-align:center;margin-top:10px;">
+<button class="btn" id="w1call">안내() 호출</button>
+<button class="btn ghost" id="w1reset">↻</button>
+</div>
+<div class="out" id="w1out" style="margin-top:10px;"></div>
+</div></div></section>
+<!-- 2 -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">12-2</div><h2>매개변수와 인자</h2><p>괄호 안 <strong>매개변수</strong>로 바깥 값을 받아, 같은 함수를 다른 값으로 재사용함. 호출 시 넘기는 값이 <strong>인자</strong>. "○○으로 볶음밥"의 ○○ 자리처럼 — 넣는 재료에 따라 결과가 달라짐.</p><div class="note"><b>📌 참고</b>  매개변수(받을 자리, 정의 시)와 인자(넘기는 값, 호출 시)는 짝. <b>기본값</b>을 정하면(<code>def 인사(이름, 인사말="안녕")</code>) 그 인자를 생략 가능. 기본값 매개변수는 없는 것 뒤에 와야 함.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>매개변수는 값 받는 자리, 인자는 넘기는 실제 값.</li>
+<li>인자는 매개변수에 순서대로 담겨 함수 안에서 쓰임.</li>
+<li>기본값을 정하면 해당 인자를 생략할 수 있음.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 할인가 함수</span>
+<p class="wdesc">가격·할인율을 바꿔, 같은 함수가 다른 인자로 다른 결과를 내는 걸 봄.</p>
+<div class="rm">
+<div class="rm-in">할인가( <input class="pp-input" id="w2price" type="number" value="89000"/> , <input class="pp-input" id="w2rate" step="0.05" style="width:60px;" type="number" value="0.1"/> )</div>
+<div class="rm-arrow">↓ 함수에 인자가 담겨 실행</div>
+<div class="rm-fn">def 할인가(가격, 할인율)</div>
+<div class="rm-arrow">↓ return</div>
+<div class="out" id="w2out" style="width:100%;"></div>
+</div>
+</div></div></section>
+<!-- 3 -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">12-3</div><h2>return — 결과 돌려주기</h2><p><code>print</code>가 화면에 "보여주기"만 한다면, <code>return</code>은 결과 값을 <strong>돌려주어</strong> 변수에 담거나 계산에 쓰게 함. 둘을 혼동하는 게 가장 흔한 입문 실수.</p><div class="note"><b>📌 참고</b>  <code>return 값</code>은 값을 돌려주고 함수를 즉시 끝냄. <code>print</code>만 한 함수를 변수에 담으면 <code>None</code>(돌려준 값 없음). 여러 값은 <code>return a, b</code>로 튜플 반환 → 언패킹으로 받음(Part 6). 데이터 분석은 거의 항상 <code>return</code>.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li><code>return</code>은 결과를 호출한 쪽으로 돌려줌(함수도 끝냄).</li>
+<li><code>print</code>(보여주기)와 <code>return</code>(돌려주기)은 다름.</li>
+<li>여러 값은 <code>return a, b</code>로 튜플 반환.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · return vs print</span>
+<p class="wdesc">같은 계산을 return과 print로 만든 함수의 차이를 봄 — 돌려받은 값으로 또 계산할 수 있나?</p>
+<div class="seg" id="w3tog">
+<button class="on" data-k="ret">return 가격*0.9</button>
+<button data-k="prt">print(가격*0.9)</button>
+</div>
+<div class="out" id="w3out"></div>
+</div></div></section>
+<!-- 4 scope -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">12-4</div><h2>스코프 — 이름이 사는 범위</h2><p>함수 <strong>안에서 만든 변수는 함수 안에서만</strong> 살아 있음(지역 변수). 밖에선 안 보이고, 함수가 끝나면 사라짐. 각 함수가 독립된 작업대를 갖는 셈 — 서로 간섭하지 않아 안전함.</p><div class="note"><b>📌 참고</b>  같은 이름(<code>임시</code>·<code>결과</code>)을 여러 함수에서 써도 충돌 없음(각자의 작업대). 바깥 값이 필요하면 전역 의존보다 <b>매개변수로 받기</b> — "받은 것으로 일하고 결과를 return"이 깔끔.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>함수 안에서 만든 변수(지역)는 함수 안에서만 유효.</li>
+<li>함수가 끝나면 지역 변수는 사라지고 밖에선 안 보임.</li>
+<li>스코프 덕에 함수들이 서로 간섭 없이 독립 동작.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 작업대(스코프)</span>
+<p class="wdesc">"함수 호출"을 누르면 함수 안에 임시 변수가 생기고, 함수가 끝나면 사라지는 걸 봄.</p>
+<div class="sc-stage">
+<div class="sc-global"><div class="sc-lbl">전역 (함수 밖)</div><div id="w4global"><span class="sc-var">세율 = 0.1</span></div></div>
+<div class="sc-fn"><div class="sc-lbl">함수 계산() 안 (작업대)</div><div id="w4local"><span class="dim" style="font-size:12px;color:var(--sub)">(아직 비어 있음)</span></div></div>
+</div>
+<div style="text-align:center;margin-top:12px;">
+<button class="btn" id="w4call">계산() 호출</button>
+<button class="btn ghost" id="w4end">함수 종료</button>
+</div>
+<div class="out" id="w4out" style="margin-top:10px;"></div>
+</div></div></section>
+<!-- 5 -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">12-5</div><h2>함수 + 반복 — 묶어 재사용</h2><p>"한 건 처리"를 함수로 묶고, 반복으로 모든 데이터에 적용함. 규칙(함수)과 적용(반복)이 분리되어, 규칙을 바꿀 땐 함수 한 곳만 고치면 됨 — "진짜 프로그램다운" 구조.</p><div class="note"><b>📌 참고</b>  "한 건을 어떻게 처리할지"는 함수로, "모든 건에 적용"은 반복으로 — 좋은 코드의 기본 패턴. 함수가 <code>return</code>하면 결과를 모아 누적·필터·정렬로 이어 갈 수 있음. 데이터 분석 코드 대부분이 이 형태.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>"한 건 처리"를 함수로 묶고 반복으로 전체 적용.</li>
+<li>규칙(함수)과 적용(반복)이 분리돼 수정·재사용 쉬움.</li>
+<li><code>return</code>한 결과를 모아 다음 처리로 이어 감.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 판정 함수를 전체에 적용</span>
+<p class="wdesc">"전체 실행"을 누르면, <code>판정(상품)</code> 함수가 모든 상품에 차례로 적용됨.</p>
+<div class="out" id="w5out" style="min-height:90px;"></div>
+<div style="text-align:center;margin-top:10px;">
+<button class="btn" id="w5run">for 상품 in 상품목록: 판정(상품)</button>
+<button class="btn ghost" id="w5reset">↻</button>
+</div>
+</div></div></section>
+</main>
+<footer>
+<div class="next-card">
+<div class="nl">NEXT · PART 13</div>
+<div class="nt">함수 심화</div>
+<p style="margin-top:8px;">유연한 인자, 한 줄 함수 <strong>람다(lambda)</strong>(Part 8에서 정렬 <code>key</code>에 살짝 등장했던 그것!), 함수를 값처럼 다루기. 람다를 제대로 배우면 <code>sorted(..., key=lambda ...)</code>가 완전히 이해됨.</p>
+</div>
+<p style="margin-top:24px;">파이썬 기초 문법 커리큘럼 · Part 12 / 18 · 데이터 분석 자동화를 위한 기초</p>
+</footer>
+<script>
+var prog=document.getElementById('progress');
+addEventListener('scroll',function(){var h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+
+/* W1 def/call */
+(function(){
+  var calls=0;
+  function render(running){
+    document.getElementById('w1code').innerHTML=
+      '<span class="kw">def</span> 안내():\n'+
+      '<span class="'+(running?'run':'')+'">    print("처리 시작")</span>\n\n'+
+      '<span class="dim"># 호출한 횟수: '+calls+'</span>';
+  }
+  document.getElementById('w1call').addEventListener('click',function(){
+    calls++; render(true);
+    var lines=[]; for(var i=0;i<calls;i++) lines.push('처리 시작');
+    document.getElementById('w1out').innerHTML=lines.map(function(l){return '출력 ▸ <span class="hl">'+l+'</span>';}).join('\n')+'\n<span class="dim">(호출할 때마다 몸체가 다시 실행 — 재사용)</span>';
+    setTimeout(function(){render(false);},400);
+  });
+  document.getElementById('w1reset').addEventListener('click',function(){ calls=0; render(false); document.getElementById('w1out').innerHTML='<span class="dim">def 안내(): 는 정의일 뿐 — "호출"을 눌러야 실행됨</span>'; });
+  render(false); document.getElementById('w1out').innerHTML='<span class="dim">def 안내(): 는 정의일 뿐 — "호출"을 눌러야 실행됨</span>';
+})();
+
+/* W2 params */
+(function(){
+  function render(){
+    var p=parseFloat(document.getElementById('w2price').value)||0;
+    var r=parseFloat(document.getElementById('w2rate').value)||0;
+    var res=Math.round(p-p*r);
+    document.getElementById('w2out').innerHTML='<span class="dim">가격='+p.toLocaleString()+', 할인율='+r+' 이 매개변수에 담김</span>\nreturn ▸ <span class="hl">'+res.toLocaleString()+'원</span>';
+  }
+  document.getElementById('w2price').addEventListener('input',render);
+  document.getElementById('w2rate').addEventListener('input',render);
+  render();
+})();
+
+/* W3 return vs print */
+(function(){
+  var R={
+    ret:'<span class="dim">def 할인가(가격): return 가격*0.9</span>\n값 = 할인가(89000)\nprint(값)        ▸ <span class="hl">80100.0</span>\nprint(값 * 2)    ▸ <span class="hl">160200.0</span>   <span style="color:#9ec79a">(돌려받아 또 계산 가능!)</span>',
+    prt:'<span class="dim">def 할인가(가격): print(가격*0.9)</span>\n값 = 할인가(89000)  ▸ <span class="hl">80100.0</span> <span class="dim">(화면 출력)</span>\nprint(값)        ▸ <span class="err">None</span>   <span class="err">(돌려준 값이 없어 계산 불가)</span>'
+  };
+  var out=document.getElementById('w3out');
+  document.querySelectorAll('#w3tog button').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#w3tog button').forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on'); out.innerHTML=R[b.dataset.k];
+    });
+  });
+  out.innerHTML=R.ret;
+})();
+
+/* W4 scope */
+(function(){
+  var local=document.getElementById('w4local'), out=document.getElementById('w4out');
+  function clear(){ local.innerHTML='<span class="dim" style="font-size:12px;color:var(--sub)">(아직 비어 있음)</span>'; }
+  document.getElementById('w4call').addEventListener('click',function(){
+    local.innerHTML='<span class="sc-var">임시 = 100</span> <span class="sc-var">결과 = 50</span>';
+    out.innerHTML='<span class="dim">계산() 실행 중 — 작업대에 지역 변수 생성</span>\n함수 안 print(임시) ▸ <span class="hl">100</span>';
+  });
+  document.getElementById('w4end').addEventListener('click',function(){
+    clear();
+    out.innerHTML='<span class="dim">함수 종료 — 지역 변수 사라짐</span>\n밖에서 print(임시) ▸ <span class="err">NameError (밖에선 안 보임)</span>';
+  });
+  clear(); out.innerHTML='<span class="dim">"계산() 호출"을 눌러 보세요</span>';
+})();
+
+/* W5 함수+반복 */
+(function(){
+  var data=[{이름:"니트",가격:89000,재고:12},{이름:"코트",가격:120000,재고:3},{이름:"가디건",가격:79000,재고:0}];
+  function 판정(d){
+    var 상태 = d.재고===0?"품절":(d.재고<=5?"재고 부족":"충분");
+    var 등급 = d.가격>=100000?"프리미엄":"일반";
+    return d.이름+": "+등급+", "+상태;
+  }
+  var out=document.getElementById('w5out');
+  document.getElementById('w5run').addEventListener('click',function(){
+    var i=0; out.innerHTML='';
+    var timer=setInterval(function(){
+      if(i>=data.length){ clearInterval(timer); return; }
+      out.innerHTML+=(i>0?'\n':'')+'판정(상품['+i+']) ▸ <span class="hl">'+판정(data[i])+'</span>';
+      i++;
+    },500);
+  });
+  document.getElementById('w5reset').addEventListener('click',function(){ out.innerHTML='<span class="dim">"전체 실행"을 누르면 판정 함수가 모든 상품에 적용됨</span>'; });
+  out.innerHTML='<span class="dim">"전체 실행"을 누르면 판정 함수가 모든 상품에 적용됨</span>';
+})();
+</script>
+</body>
+</html>

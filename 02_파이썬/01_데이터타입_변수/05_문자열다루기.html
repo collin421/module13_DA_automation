@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Part 4 · 문자열 다루기</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&amp;family=Gowun+Dodum&amp;display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:760px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:88px 22px 40px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:62ch;}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:76px 0 46px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 20px;line-height:1.3;}
+  p{margin:0 0 16px;}
+  .sub{color:var(--sub);}
+  strong{color:var(--accent);font-weight:700;}
+  code{font-family:'Gowun Dodum',monospace;background:#efe7d8;color:#8a3408;padding:1.5px 7px;border-radius:6px;font-size:.92em;}
+  pre{background:#2b2723;color:#f4efe6;border-radius:12px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.7;margin:16px 0;}
+  pre code{background:none;color:inherit;padding:0;}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15.5px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:22px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:16px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .pp-input{border:1.5px solid var(--line);border-radius:8px;padding:8px 12px;font-family:monospace;font-size:14px;background:#fff;color:var(--ink);}
+  .out{background:#2b2723;color:#9ec79a;border-radius:10px;padding:13px 16px;font-family:monospace;font-size:15px;min-height:42px;white-space:pre-wrap;}
+  .out .dim{color:#8b8175;}.out .err{color:#e0935f;}.out .hl{color:#fff;font-weight:700;}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+  .seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:monospace;transition:.15s;color:var(--ink);}
+  .seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+
+  /* char cells */
+  .chars{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin-bottom:6px;}
+  .ch{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;}
+  .ch .box{width:42px;height:46px;border:1.5px solid var(--line);border-radius:9px;display:grid;place-items:center;font-family:monospace;font-size:20px;background:#fff;transition:.15s;}
+  .ch.sel .box{border-color:var(--accent);background:var(--accent);color:#fff;}
+  .ch.inrange .box{border-color:var(--teal);background:#d8e8e3;color:#225349;}
+  .ch .idx{font-family:monospace;font-size:11px;color:var(--sub);}
+  .ch .nidx{font-family:monospace;font-size:10px;color:#b08968;}
+
+  /* W2 sliders */
+  .sl-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-family:monospace;font-size:13px;}
+  .sl-row input[type=range]{flex:1;accent-color:var(--accent);}
+
+  /* W3 immutability */
+  .im-mem{display:flex;flex-direction:column;gap:8px;margin:12px 0;}
+  .im-line{display:flex;align-items:center;gap:10px;font-family:monospace;font-size:14px;}
+  .im-name{width:60px;text-align:right;font-weight:700;color:var(--accent);}
+  .im-arrow{color:var(--sub);}
+  .im-val{border:1.5px solid var(--line);border-radius:8px;padding:5px 12px;background:#fff;}
+  .im-val.old{opacity:.5;text-decoration:line-through;}
+  .im-val.new{border-color:var(--teal);background:#d8e8e3;}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}.ch .box{width:34px;height:40px;font-size:16px;}}
+</style>
+<style id="wide16x9">
+/* ===== 16:9 와이드 반응형 오버라이드 ===== */
+:root{--maxw:1320px;}
+header.hero{text-align:center;padding-top:70px;}
+header.hero .lead{margin-left:auto;margin-right:auto;}
+header.hero .hero-meta{justify-content:center;}
+main.wrap section.two-col .col-text>:first-child{margin-top:0;}
+main.wrap section.two-col .col-text .summary{margin-bottom:0;}
+@media(min-width:980px){
+  main.wrap section.two-col{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.06fr);
+    gap:46px;align-items:start;
+  }
+  main.wrap section.two-col .col-widget{position:sticky;top:22px;}
+  main.wrap section.two-col .col-text{padding-top:2px;}
+}
+@media(max-width:979px){
+  main.wrap section.two-col .col-widget{margin-top:6px;}
+}
+</style></head>
+<body>
+<div id="progress"></div>
+<header class="hero">
+<div class="eyebrow">파이썬 기초 문법 · Part 4 · 자료구조</div>
+<h1>문자열 다루기</h1>
+<p class="lead">이미 만난 <strong>문자열</strong>을 깊이 다룸. 글자를 하나씩 꺼내고(인덱싱), 잘라 내고(슬라이싱), 메서드로 가공함. 그리고 "한 번 만들면 못 바꾼다"는 동작 원리 <strong>불변성</strong>도 익힘 — 지저분한 데이터를 정리하는 <strong>데이터 전처리</strong>의 첫걸음.</p>
+<div class="hero-meta">
+<span class="chip">🟡 자료구조 · 4/18</span>
+<span class="chip t">인덱싱 · 슬라이싱 · 메서드</span>
+<span class="chip t">예상 35분</span>
+</div>
+</header>
+<main class="wrap">
+<!-- Section 1: indexing -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">4-1</div><h2>인덱싱 — 글자를 하나씩</h2><p>문자열은 글자가 순서대로 늘어선 묶음. 각 글자엔 <strong>자리 번호(인덱스)</strong>가 있어 <code>[번호]</code>로 꺼냄. <strong>번호는 0부터</strong>, 음수는 뒤에서부터(<code>-1</code>이 맨 끝)임.</p><div class="note"><b>📌 참고</b>  "0부터 센다"가 입문자가 가장 헷갈리는 지점. 첫 글자 = <code>[0]</code>, 마지막 글자 = <code>[-1]</code> 또는 <code>[len()-1]</code>. 없는 자리(<code>[5]</code>)를 꺼내면 오류가 남.
+<div class="summary"><div class="h">3줄 요약</div><ol>
+<li>각 글자는 <code>[번호]</code>로 꺼냄 — 번호는 0부터.</li>
+<li>음수 인덱스는 뒤에서부터, <code>-1</code>이 맨 마지막.</li>
+<li><code>len()</code>으로 글자 수를 세고 마지막 인덱스는 <code>len()-1</code>.</li>
+</ol></div>
+</div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 인덱스 사물함</span>
+<p class="wdesc">글자를 클릭해 그 인덱스를 확인. 0부터 시작하고, 아래엔 음수 인덱스도 표시됨.</p>
+<div class="chars" id="w1chars"></div>
+<div class="out" id="w1out" style="margin-top:14px;"></div>
+</div></div></section>
+<!-- Section 2: slicing -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">4-2</div><h2>슬라이싱 — 잘라 내기</h2><p><code>[시작:끝]</code>으로 여러 글자를 한 번에 자름. <strong>시작은 포함, 끝은 불포함</strong> — 그래서 <code>[0:3]</code>은 3개. 칼이 끝 번호 <strong>앞</strong>에서 멈춘다고 생각하면 쉬움.</p><div class="note"><b>📌 참고</b>  <code>[::-1]</code>(거꾸로 뒤집기)은 자주 쓰는 관용구. 슬라이싱은 범위를 벗어나도 오류 없이 빈 문자열을 돌려줌(인덱싱이 오류 나는 것과 다름). 날짜 <code>"2025-01-15"</code>에서 <code>[:4]</code>로 연도를 뽑는 식으로 씀.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>슬라이싱 <code>[시작:끝]</code>으로 여러 글자를 자름.</li>
+<li><strong>시작 포함, 끝 불포함</strong> — <code>[0:3]</code>은 3개.</li>
+<li><code>[::-1]</code>은 거꾸로, 빈 칸은 처음/끝/전체.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 슬라이싱 구간</span>
+<p class="wdesc">시작·끝을 슬라이더로 바꿔, 어떤 글자가 잘려 나오는지 봄(초록 = 선택 구간).</p>
+<div class="chars" id="w2chars"></div>
+<div class="sl-row">시작 <input id="w2start" max="10" min="0" type="range" value="0"/> <span id="w2startv" style="color:var(--accent);width:20px;">0</span></div>
+<div class="sl-row">끝   <input id="w2end" max="10" min="0" type="range" value="3"/> <span id="w2endv" style="color:var(--accent);width:20px;">3</span></div>
+<div class="out" id="w2out"></div>
+</div></div></section>
+<!-- Section 3: methods + immutability -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">4-3</div><h2>변형 메서드와 불변성 ⭐</h2><p><code>문자열.기능()</code>으로 가공함(<code>upper</code>·<code>strip</code>·<code>replace</code> 등). <strong>핵심 동작 원리</strong> — 문자열은 <strong>불변(immutable)</strong>이라 메서드는 원본을 안 바꾸고 <strong>새 문자열을 만들어 돌려줌</strong>. 쓰려면 다시 담아야 함(Part 1 바인딩).</p><div class="note"><b>📌 참고</b>  왜 불변일까? 값이 안 바뀌도록 보장하면 코드가 안전·예측 가능해짐(다른 곳에서 쓰던 문자열이 나도 모르게 바뀌는 사고 방지). 숫자·불리언도 불변. 반대로 다음 파트의 <b>리스트는 가변</b>이라 동작이 다름.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>메서드는 <code>문자열.기능()</code>으로 부름.</li>
+<li>문자열은 <strong>불변</strong> — 메서드는 새 문자열을 돌려줌.</li>
+<li>결과를 쓰려면 다시 변수에 담아야(재할당) 함.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 원본은 안 바뀐다</span>
+<p class="wdesc">메서드를 적용해 봄. 원본은 그대로 남고, "다시 담기"를 눌러야 변수가 새 값을 가리킴.</p>
+<div class="seg" id="w3op">
+<button class="on" data-k="strip">.strip()</button>
+<button data-k="upper">.upper()</button>
+<button data-k="replace">.replace("니트","코트")</button>
+</div>
+<div class="im-mem" id="w3mem"></div>
+<div class="seg" style="margin-top:6px;">
+<button id="w3rebind" style="border-color:var(--teal);">이름 = 이름.메서드()  ← 다시 담기</button>
+<button class="" id="w3reset">↻ 초기화</button>
+</div>
+<div class="out" id="w3out"></div>
+</div></div></section>
+<!-- Section 4: search -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">4-4</div><h2>검색과 포함 — 찾고 확인하기</h2><p><code>in</code>(포함 여부, 참/거짓)·<code>.find()</code>(위치, 없으면 -1)·<code>.count()</code>(횟수). <code>in</code>은 결과가 불리언이라 필터·조건에 바로 쓰임.</p><div class="note"><b>📌 참고</b>  단순히 "들어 있나"만 알고 싶으면 <code>in</code>이 가장 읽기 쉽고 파이썬다움. 데이터 필터에 자주 씀 — "상품명에 '세일'이 들어간 것만", "이메일에 '@'가 있는지" 등.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li><code>in</code>으로 포함 여부(참/거짓)를 가장 간단히 확인.</li>
+<li><code>.find()</code>는 위치를 돌려주고 없으면 <code>-1</code>.</li>
+<li><code>in</code>은 필터·조건의 단골 도구임.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 검색기</span>
+<p class="wdesc">상품명에서 찾을 단어를 입력해, <code>in</code>·<code>find</code>·<code>count</code> 결과를 봄.</p>
+<div style="font-family:monospace;font-size:14px;margin-bottom:10px;">상품명 = <span style="color:var(--teal)">"베이지 니트 가디건 니트"</span></div>
+<div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+<span style="font-size:13px;color:var(--sub)">찾을 단어:</span>
+<input class="pp-input" id="w4q" style="width:140px;" value="니트"/>
+</div>
+<div class="out" id="w4out"></div>
+</div></div></section>
+<!-- Section 5: split / join -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">4-5</div><h2>분리와 결합 — split과 join</h2><p><code>.split(구분자)</code>로 쪼개 <strong>리스트</strong>로 만들고, <code>"연결자".join(리스트)</code>로 이어 문자열로 만듦. 콤마로 묶인 데이터(CSV)를 다루는 전처리의 핵심 — 자르고(split) 붙이는(join) 짝임.</p><div class="note"><b>📌 참고</b>  <code>.split()</code>의 결과는 <b>리스트</b>임 — 그래서 다음 파트(리스트)가 바로 이어짐. CSV를 다룰 때 <code>.split(",")</code>가 가장 기초적인 도구이고, 나중엔 pandas가 이를 자동화함.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li><code>.split(구분자)</code>로 잘라 <strong>리스트</strong>로 만듦.</li>
+<li><code>"연결자".join(리스트)</code>로 이어 문자열로 만듦.</li>
+<li>자르고 붙이는 split↔join이 데이터 정리의 기본 패턴.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 쪼개고 붙이기</span>
+<p class="wdesc">문자열과 구분자를 바꿔 split 결과(리스트)를 보고, join으로 다시 붙여 봄.</p>
+<div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap;">
+<input class="pp-input" id="w5text" style="flex:1;min-width:160px;" value="사과,바나나,체리"/>
+<span style="font-size:13px;color:var(--sub)">.split(</span>
+<input class="pp-input" id="w5sep" style="width:50px;text-align:center;" value=","/>
+<span style="font-size:13px;color:var(--sub)">)</span>
+</div>
+<div class="out" id="w5out"></div>
+</div></div></section>
+</main>
+<footer>
+<div class="next-card">
+<div class="nl">NEXT · PART 5</div>
+<div class="nt">리스트</div>
+<p style="margin-top:8px;">여러 값을 순서대로 담는 가장 많이 쓰는 자료구조. 문자열과 달리 <strong>바꿀 수 있다(가변)</strong> — 동작 원리의 차이도 살펴봄. <code>split</code>의 결과가 바로 리스트였음!</p>
+</div>
+<p style="margin-top:24px;">파이썬 기초 문법 커리큘럼 · Part 4 / 18 · 데이터 분석 자동화를 위한 기초</p>
+</footer>
+<script>
+var prog=document.getElementById('progress');
+addEventListener('scroll',function(){var h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+
+/* ===== W1: indexing ===== */
+(function(){
+  var word="파이썬프로그래밍".split("");
+  var wrap=document.getElementById('w1chars'), out=document.getElementById('w1out'), sel=0;
+  function render(){
+    wrap.innerHTML='';
+    word.forEach(function(c,i){
+      var d=document.createElement('div');
+      d.className='ch'+(i===sel?' sel':'');
+      d.innerHTML='<div class="idx">'+i+'</div><div class="box">'+c+'</div><div class="nidx">'+(i-word.length)+'</div>';
+      d.addEventListener('click',function(){ sel=i; render(); });
+      wrap.appendChild(d);
+    });
+    out.innerHTML='<span class="dim">글자[ '+sel+' ]  또는  글자[ '+(sel-word.length)+' ]</span>  →  <span class="hl">"'+word[sel]+'"</span>';
+  }
+  render();
+})();
+
+/* ===== W2: slicing ===== */
+(function(){
+  var word="0123456789".split("");
+  var wrap=document.getElementById('w2chars'), out=document.getElementById('w2out');
+  var s=document.getElementById('w2start'), e=document.getElementById('w2end');
+  function render(){
+    var si=parseInt(s.value,10), ei=parseInt(e.value,10);
+    document.getElementById('w2startv').textContent=si;
+    document.getElementById('w2endv').textContent=ei;
+    wrap.innerHTML='';
+    word.forEach(function(c,i){
+      var inr=(i>=si && i<ei);
+      var d=document.createElement('div');
+      d.className='ch'+(inr?' inrange':'');
+      d.innerHTML='<div class="idx">'+i+'</div><div class="box">'+c+'</div>';
+      wrap.appendChild(d);
+    });
+    var res=word.slice(si,ei).join("");
+    out.innerHTML='<span class="dim">글자['+si+':'+ei+']</span>  →  <span class="hl">"'+res+'"</span>   <span class="dim">('+(res.length)+'글자 — 끝('+ei+')은 불포함)</span>';
+  }
+  s.addEventListener('input',render); e.addEventListener('input',render); render();
+})();
+
+/* ===== W3: immutability ===== */
+(function(){
+  var ORIG="  니트  ";
+  var op='strip', current=ORIG, rebound=false;
+  function result(base){
+    if(op==='strip') return base.trim();
+    if(op==='upper') return base.toUpperCase();
+    return base.split("니트").join("코트");
+  }
+  function render(){
+    var newval=result(ORIG);
+    var mem=document.getElementById('w3mem');
+    if(!rebound){
+      mem.innerHTML=
+        '<div class="im-line"><span class="im-name">이름</span><span class="im-arrow">───▶</span><span class="im-val">"'+ORIG.replace(/ /g,"·")+'"</span><span class="dim">(원본, 그대로)</span></div>'+
+        '<div class="im-line"><span class="im-name"></span><span class="im-arrow">메서드 결과 ▶</span><span class="im-val new">"'+newval.replace(/ /g,"·")+'"</span><span class="dim">(새 문자열 — 아직 아무도 안 가리킴)</span></div>';
+      document.getElementById('w3out').innerHTML='<span class="dim">이름.'+labelOf()+'  ← 새 값을 돌려주지만 이름은 원본을 가리킴</span>\nprint(이름) ▸ <span class="hl">"'+ORIG.replace(/ /g,"·")+'"</span>  <span class="err">(원본 그대로!)</span>';
+    }else{
+      mem.innerHTML=
+        '<div class="im-line"><span class="im-name">이름</span><span class="im-arrow">─╳─▶</span><span class="im-val old">"'+ORIG.replace(/ /g,"·")+'"</span><span class="dim">(버려짐)</span></div>'+
+        '<div class="im-line"><span class="im-name"></span><span class="im-arrow">───▶</span><span class="im-val new">"'+newval.replace(/ /g,"·")+'"</span><span class="dim">(이름이 이제 여기를 가리킴)</span></div>';
+      document.getElementById('w3out').innerHTML='<span class="dim">이름 = 이름.'+labelOf()+'  ← 다시 담음(재할당)</span>\nprint(이름) ▸ <span class="hl">"'+newval.replace(/ /g,"·")+'"</span>  <span style="color:#9ec79a">(바뀜!)</span>';
+    }
+  }
+  function labelOf(){ return op==='strip'?'strip()':(op==='upper'?'upper()':'replace("니트","코트")'); }
+  document.querySelectorAll('#w3op button').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#w3op button').forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on'); op=b.dataset.k; rebound=false; render();
+    });
+  });
+  document.getElementById('w3rebind').addEventListener('click',function(){ rebound=true; render(); });
+  document.getElementById('w3reset').addEventListener('click',function(){ rebound=false; render(); });
+  render();
+})();
+
+/* ===== W4: search ===== */
+(function(){
+  var text="베이지 니트 가디건 니트";
+  function render(){
+    var q=document.getElementById('w4q').value;
+    var out=document.getElementById('w4out');
+    if(q===''){ out.innerHTML='<span class="dim">찾을 단어를 입력하세요</span>'; return; }
+    var has=text.indexOf(q)!==-1;
+    var pos=text.indexOf(q);
+    // count
+    var cnt = q.length? text.split(q).length-1 : 0;
+    out.innerHTML=
+      '<span class="dim">"'+q+'" in 상품명</span>   ▸ <span class="hl">'+(has?'True':'False')+'</span>\n'+
+      '<span class="dim">상품명.find("'+q+'")</span> ▸ <span class="hl">'+pos+'</span>'+(pos===-1?'  <span class="err">(없음)</span>':'')+'\n'+
+      '<span class="dim">상품명.count("'+q+'")</span>▸ <span class="hl">'+cnt+'</span>';
+  }
+  document.getElementById('w4q').addEventListener('input',render); render();
+})();
+
+/* ===== W5: split / join ===== */
+(function(){
+  function render(){
+    var text=document.getElementById('w5text').value;
+    var sep=document.getElementById('w5sep').value;
+    var parts = sep==='' ? text.split(/\s+/).filter(Boolean) : text.split(sep);
+    var listStr='[' + parts.map(function(p){return "'"+p+"'";}).join(', ') + ']';
+    var joined = '-'.join ? '' : parts.join('-');
+    document.getElementById('w5out').innerHTML=
+      '<span class="dim">"'+text+'".split("'+sep+'")</span>\n  ▸ <span class="hl">'+listStr+'</span>   <span class="dim">(리스트, '+parts.length+'개)</span>\n\n'+
+      '<span class="dim">"-".join(리스트)</span>\n  ▸ <span class="hl">"'+parts.join('-')+'"</span>   <span class="dim">(다시 문자열)</span>';
+  }
+  document.getElementById('w5text').addEventListener('input',render);
+  document.getElementById('w5sep').addEventListener('input',render);
+  render();
+})();
+</script>
+</body>
+</html>

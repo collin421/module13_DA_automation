@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>데이터 분석 개요 · 6강 · 데이터 분석 프로세스</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;--accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;--serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:768px;color-scheme:light only;}
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.9;font-size:17px;-webkit-text-size-adjust:100%;background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:84px 22px 36px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(27px,5.4vw,42px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:50px 0 26px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 18px;line-height:1.3;}
+  h3{font-family:var(--serif);font-weight:700;font-size:19px;margin:26px 0 12px;color:#3a342e;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  .term{background:#eef5f3;border:1px solid #cfe3dd;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;}
+  .term b{color:var(--teal);}
+  .ex{background:#fbf3e6;border:1px solid #ecd9b8;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;color:#6b5526;}
+  .ex b{color:var(--gold);}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:24px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:14px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;color:#9ec79a;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:13.5px;min-height:42px;white-space:pre-wrap;line-height:1.7;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}.out .y{color:#e0b15f;}
+  .btn{border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:13px;padding:9px 15px;border-radius:9px;cursor:pointer;}
+  .btn.ghost{background:#fdfaf4;border:1.5px solid var(--line);color:var(--sub);}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+  .seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:var(--sans);transition:.15s;color:var(--ink);}
+  .seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  /* 프로세스 흐름 */
+  .flow{display:flex;flex-direction:column;gap:6px;margin:14px 0;}
+  .fstep{border:1.5px solid var(--line);border-radius:10px;padding:11px 14px;background:#fdfaf4;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:10px;}
+  .fstep.on{border-color:var(--accent);background:#fff;box-shadow:0 3px 12px rgba(194,65,12,.1);}
+  .fstep .num{width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+  .fstep .ftxt{font-size:13.5px;font-weight:700;}
+  .farrow{text-align:center;color:var(--line);font-size:14px;}
+  /* 시간 비중 도넛(막대) */
+  .timebar{display:flex;height:36px;border-radius:8px;overflow:hidden;margin:12px 0;font-size:11px;font-family:monospace;}
+  .timebar div{display:flex;align-items:center;justify-content:center;color:#fff;}
+  /* 순환 */
+  .cycle{text-align:center;font-family:monospace;font-size:12px;color:var(--teal);white-space:pre;line-height:1.5;background:#eef5f3;border-radius:10px;padding:14px;}
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<header class="hero">
+  <div class="eyebrow">데이터 분석 개요 및 기초 이론 · 6강</div>
+  <h1>데이터 분석<br>프로세스</h1>
+  <p class="lead">"어떤 유형의 분석을 하는가"(5강)를 봤으니, 이제 <strong>"실제로 어떤 순서와 절차로 진행하는가"</strong>를 배움. 이론에서 실전으로 한 걸음 더 가까워지는 강의임. 특히 두 가지 현실 — <strong>가장 중요한데 자주 생략되는 "문제 정의"</strong>와 <strong>시간의 70~80%를 쓰는 "정제"</strong> — 을 꼭 기억할 것.</p>
+  <div class="hero-meta">
+    <span class="chip">📊 개요 · 6/7</span>
+    <span class="chip t">문제정의→수집→정제→분석→시각화→결정</span>
+    <span class="chip t">완전 초보용</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- 6-1 전체 지도 -->
+  <section class="reveal">
+    <div class="sec-no">6-1</div>
+    <h2>분석은 "과정"이다 — 전체 지도</h2>
+    <p>데이터 분석은 한 번에 뚝딱 되는 게 아니라, <strong>여러 단계를 밟는 과정(process)</strong>임. 보통 아래 6단계로 진행됨. 각 단계를 눌러 무슨 일을 하는지 자세히 봄.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 분석 프로세스 6단계</span>
+      <p class="wdesc">각 단계를 눌러 보세요. 위에서 아래로 흐르며, 필요하면 되돌아가기도 함.</p>
+      <div class="flow" id="flow">
+        <div class="fstep on" data-k="0"><span class="num">1</span><span class="ftxt">문제 정의</span></div>
+        <div class="farrow">▼</div>
+        <div class="fstep" data-k="1"><span class="num">2</span><span class="ftxt">데이터 수집</span></div>
+        <div class="farrow">▼</div>
+        <div class="fstep" data-k="2"><span class="num">3</span><span class="ftxt">데이터 정제 ⏳</span></div>
+        <div class="farrow">▼</div>
+        <div class="fstep" data-k="3"><span class="num">4</span><span class="ftxt">분석·탐색</span></div>
+        <div class="farrow">▼</div>
+        <div class="fstep" data-k="4"><span class="num">5</span><span class="ftxt">시각화</span></div>
+        <div class="farrow">▼</div>
+        <div class="fstep" data-k="5"><span class="num">6</span><span class="ftxt">의사결정·공유</span></div>
+      </div>
+      <div class="out" id="flowout"></div>
+    </div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>데이터 분석은 여러 단계를 밟는 과정임.</li>
+      <li>문제정의→수집→정제→분석→시각화→의사결정의 6단계로 진행됨.</li>
+      <li>한 방향이 아니라, 필요하면 앞 단계로 되돌아가는 순환 과정임.</li>
+    </ol></div>
+  </section>
+
+  <!-- 6-2 문제 정의 -->
+  <section class="reveal">
+    <div class="sec-no">6-2</div>
+    <h2>① 문제 정의 — 가장 중요한데 가장 자주 생략됨</h2>
+    <p>가장 중요한 단계인데, 초보자가 가장 자주 건너뜀. <strong>"무엇을 알고 싶은가"</strong>를 분명히 하지 않고 무작정 데이터부터 만지는 것이 가장 흔한 실수임.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 문제 정의가 없으면?</span>
+      <p class="wdesc">두 분석가를 비교해 봄. 문제 정의의 유무가 결과를 어떻게 가르는지 봄.</p>
+      <div class="seg" id="prob">
+        <button class="on" data-k="no">❌ 문제 정의 없이</button>
+        <button data-k="yes">⭕ 문제 정의부터</button>
+      </div>
+      <div class="out" id="probout"></div>
+    </div>
+
+    <div class="ex"><b>비유 — 내비게이션의 목적지</b><br>아무리 좋은 내비게이션(도구·데이터)도 "어디로 갈지"(문제 정의)를 입력하지 않으면 출발조차 못 함. 분석도 "무엇을 알고 싶은가"가 목적지임. (7강에서 "좋은 질문"으로 더 깊이 다룸)</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>문제 정의는 가장 중요한데 가장 자주 생략되는 단계임.</li>
+      <li>"무엇을 알고 싶은가"가 분명해야 분석이 길을 잃지 않음.</li>
+      <li>좋은 문제 정의가 좋은 분석의 출발점임(내비게이션의 목적지).</li>
+    </ol></div>
+  </section>
+
+  <!-- 6-3,6-4 수집·정제 -->
+  <section class="reveal">
+    <div class="sec-no">6-3 · 6-4</div>
+    <h2>② 수집과 ③ 정제 — 가장 많은 시간이 드는 곳</h2>
+    <p><strong>② 수집</strong>은 필요한 데이터를 모으는 단계임(파일·데이터베이스·웹 등). 그리고 <strong>③ 정제</strong>는 — 초보자가 가장 놀라는 사실 — <strong>분석 전체 시간의 70~80%를 차지</strong>하는, 지루하지만 가장 중요한 단계임.</p>
+
+    <div class="widget">
+      <span class="wlabel">시각화 · 분석가의 시간은 어디에 쓰이나</span>
+      <p class="wdesc">실제 분석가가 시간을 어디에 쓰는지 봄. 화려한 분석보다 "정제"가 압도적임.</p>
+      <div class="timebar">
+        <div style="width:75%;background:var(--accent);">정제·준비 70~80%</div>
+        <div style="width:25%;background:var(--teal);">실제 분석</div>
+      </div>
+      <div class="out" id="cleanout"></div>
+    </div>
+
+    <div class="term"><b>정제(cleaning)에서 다루는 것들</b><br>· <b>결측치</b>: 빠진 값 (예: 나이 칸이 비어 있음)<br>· <b>이상치</b>: 말도 안 되는 값 (예: 나이 999세) — 2강의 "평균의 함정" 주범<br>· <b>중복</b>: 같은 데이터가 여러 번<br>· <b>형식 오류</b>: 날짜가 제각각(2024-01-01 vs 24/1/1)<br>→ 이런 "지저분한" 데이터를 깨끗이 다듬어야 분석이 정확해짐.</div>
+
+    <div class="note"><b>📌 "쓰레기를 넣으면 쓰레기가 나온다"</b><br>(Garbage In, Garbage Out) 아무리 좋은 분석 기법도, 지저분한 데이터를 넣으면 엉터리 결과가 나옴. 그래서 지루해 보이는 정제가 사실 분석의 성패를 가름. 우리가 배울 판다스가 바로 이 정제를 강력하게 해 주는 도구임.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>수집은 필요한 데이터를 모으는 단계(파일·DB·웹 등).</li>
+      <li>정제는 분석 시간의 70~80%를 차지하는, 지루하지만 핵심인 단계임.</li>
+      <li>결측치·이상치·중복·형식 오류를 다듬어야 정확한 분석이 가능함(쓰레기 입력=쓰레기 출력).</li>
+    </ol></div>
+  </section>
+
+  <!-- 6-5,6-6 분석·시각화 -->
+  <section class="reveal">
+    <div class="sec-no">6-5 · 6-6</div>
+    <h2>④ 분석·탐색과 ⑤ 시각화</h2>
+    <p>깨끗한 데이터가 준비되면 비로소 <strong>④ 분석·탐색</strong> — 패턴과 답을 찾는 단계 — 으로 들어감. 그리고 <strong>⑤ 시각화</strong>는 그 결과를 <strong>사람이 한눈에 이해할 그림</strong>으로 만드는 단계임.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 표 vs 그래프</span>
+      <p class="wdesc">같은 데이터를 표로 볼 때와 그래프로 볼 때, 무엇이 더 빨리 이해되는지 비교해 봄.</p>
+      <div class="seg" id="viz">
+        <button class="on" data-k="table">표로 보기</button>
+        <button data-k="chart">그래프로 보기</button>
+      </div>
+      <div class="out" id="vizout"></div>
+    </div>
+
+    <div class="note"><b>📌 시각화는 "설득"의 도구</b><br>분석 결과를 숫자 표로만 내밀면 사람들은 이해하기 어려움. 그래프로 보여 주면 "아, 여름에 매출이 확 오르네!"가 한눈에 보임. 1강에서 본 "데이터는 검증·공유가 쉽다"는 장점이 시각화로 완성됨 — 시각화는 결과를 남에게 전달하고 설득하는 핵심 도구임.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>분석·탐색은 깨끗한 데이터에서 패턴과 답을 찾는 단계임.</li>
+      <li>시각화는 결과를 사람이 한눈에 이해할 그림으로 만드는 단계임.</li>
+      <li>시각화는 결과를 전달하고 설득하는 핵심 도구임.</li>
+    </ol></div>
+  </section>
+
+  <!-- 6-7 의사결정·순환 -->
+  <section class="reveal">
+    <div class="sec-no">6-7</div>
+    <h2>⑥ 의사결정·공유, 그리고 순환</h2>
+    <p>분석의 마지막은 <strong>⑥ 의사결정·공유</strong>임. 분석은 그 자체가 목적이 아니라 <strong>"더 나은 결정으로 이어질 때"</strong> 가치가 있음(1강의 핵심!). 그리고 분석은 한 번에 끝나지 않고 <strong>순환</strong>함.</p>
+
+    <div class="widget">
+      <span class="wlabel">시각화 · 분석은 순환하는 과정</span>
+      <p class="wdesc">분석은 직선이 아니라 돌고 도는 과정임. "다시 돌기"를 눌러 순환을 따라가 봄.</p>
+      <div class="cycle" id="cycleviz"></div>
+      <div style="text-align:center;margin-top:10px;">
+        <button class="btn" id="cyclebtn">▶ 한 바퀴 돌기</button>
+        <button class="btn ghost" id="cyclereset">↻</button>
+      </div>
+      <div class="out" id="cycleout" style="margin-top:10px;"></div>
+    </div>
+
+    <div class="note"><b>📌 분석은 직선이 아니라 나선</b><br>현실의 분석은 "정의→수집→정제→분석→시각화→결정"을 한 번 하고 끝나지 않음. 결과를 보면 새 질문이 생기고(7강의 호기심!), 그러면 다시 문제를 다듬어 또 한 바퀴 돎. 이렇게 돌수록 분석이 깊어짐 — 직선이 아니라 위로 올라가는 나선에 가까움.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>분석의 마지막은 의사결정·공유이며, 결정으로 이어질 때 가치가 있음.</li>
+      <li>분석은 한 번에 끝나지 않고 돌고 도는 순환 과정임.</li>
+      <li>결과가 새 질문을 낳아 다시 도는, 위로 올라가는 나선에 가까움.</li>
+    </ol></div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="next-card">
+    <div class="nl">NEXT · 7강 (마지막)</div>
+    <div class="nt">분석가의 도구와 마인드셋</div>
+    <p style="margin-top:8px;">개요의 마지막 강의. 엑셀·SQL·파이썬·BI 등 <strong>분석 도구</strong>를 둘러보고 "왜 파이썬·판다스인가"를 짚음. 그리고 도구보다 중요한 <strong>마인드셋</strong>(호기심·의심·윤리)과 "좋은 질문이 좋은 분석을 만든다"를 다루며, 전체 학습 로드맵으로 개요를 마무리함.</p>
+  </div>
+  <p style="margin-top:24px;">데이터 분석 개요 및 기초 이론 · 6강 / 7강 · 데이터 분석 자동화 커리큘럼</p>
+</footer>
+
+<script>
+var prog=document.getElementById('progress');
+addEventListener('scroll',function(){var h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+
+/* flow */
+(function(){
+  var R=[
+    {t:'① 문제 정의',d:'"무엇을 알고 싶은가"를 분명히 함.\n<span class="y">가장 중요한데 가장 자주 생략됨!</span>\n예: "왜 이번 달 재구매율이 떨어졌나?"'},
+    {t:'② 데이터 수집',d:'필요한 데이터를 모음.\n파일·데이터베이스(SQL)·웹·설문 등에서 확보.\n<span class="dim">문제에 답하는 데 필요한 데이터가 무엇인지 정해야 함</span>'},
+    {t:'③ 데이터 정제 ⏳',d:'지저분한 데이터를 깨끗이 다듬음.\n<span class="y">분석 시간의 70~80%를 차지!</span>\n결측치·이상치·중복·형식 오류 처리.'},
+    {t:'④ 분석·탐색',d:'깨끗한 데이터에서 패턴과 답을 찾음.\n집계·통계·시각적 탐색 등(2강의 방법들).\n<span class="dim">5강의 묘사·진단·예측·처방이 여기서 일어남</span>'},
+    {t:'⑤ 시각화',d:'결과를 사람이 이해할 그림으로 만듦.\n그래프·차트·대시보드.\n<span class="dim">숫자 표보다 그래프가 한눈에 이해됨</span>'},
+    {t:'⑥ 의사결정·공유',d:'분석 결과를 결정으로 잇고 공유함.\n<span class="y">분석은 결정으로 이어질 때 가치가 있음(1강!)</span>\n그리고 새 질문이 생기면 다시 ①로 순환.'}
+  ];
+  var out=document.getElementById('flowout');
+  function sel(i){document.querySelectorAll('#flow .fstep').forEach(function(x){x.classList.remove('on');});document.querySelector('#flow [data-k="'+i+'"]').classList.add('on');out.innerHTML='<span class="hl">'+R[i].t+'</span>\n'+R[i].d;}
+  document.querySelectorAll('#flow .fstep').forEach(function(el){el.addEventListener('click',function(){sel(+el.dataset.k);});});
+  sel(0);
+})();
+
+/* 문제 정의 */
+(function(){
+  var R={
+    no:'<span class="y">❌ 문제 정의 없이 시작</span>\n"일단 데이터부터 열어 보자…"\n→ 이것저것 그래프만 잔뜩 그림\n→ "그래서 뭘 알아낸 거지?" 답이 없음\n<span class="dim">목적 없이 헤매다 시간만 소모</span>',
+    yes:'<span style="color:#9ec79a">⭕ 문제 정의부터</span>\n"이번 달 재구매율이 왜 떨어졌는지 알고 싶다"\n→ 필요한 데이터·분석이 명확해짐\n→ 답에 곧장 다가감\n<span class="dim">목적지가 분명하니 길을 잃지 않음</span>'
+  };
+  var out=document.getElementById('probout');
+  document.querySelectorAll('#prob button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#prob button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.no;
+})();
+
+/* 정제 */
+(function(){
+  document.getElementById('cleanout').innerHTML='<span class="hl">분석가 시간의 70~80%가 정제·준비에!</span>\n<span class="dim">화려한 분석·모델링은 의외로 작은 비중.\n"지저분한 데이터 다듬기"가 일의 대부분임.\n→ 그만큼 정제가 분석의 성패를 가름</span>';
+})();
+
+/* 표 vs 그래프 */
+(function(){
+  var R={
+    table:'<span class="hl">표로 보기 (월별 매출)</span>\n1월 320  2월 310  3월 350\n4월 410  5월 480  6월 620\n7월 720  8월 700  9월 510 ...\n<span class="dim">→ 숫자를 하나하나 읽어야 함.\n   "여름에 높다"가 한눈에 안 들어옴</span>',
+    chart:'<span class="hl">그래프로 보기 (월별 매출)</span>\n720|              ___\n   |           __/   \\\n480|        __/       \\_\n   |     __/\n320|___ /\n   +1--3--5--7--9-- 월\n<span style="color:#9ec79a">→ "여름(6~8월)에 확 오른다!"가 한눈에!</span>'
+  };
+  var out=document.getElementById('vizout');
+  document.querySelectorAll('#viz button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#viz button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.table;
+})();
+
+/* 순환 */
+(function(){
+  var diagram='   ┌─────────────────────────────┐\n   ▼                             │\n① 문제정의 → ② 수집 → ③ 정제 →    │\n                                  │\n   ④ 분석 → ⑤ 시각화 → ⑥ 의사결정 ┘\n        (새 질문이 생기면 다시 ①로)';
+  document.getElementById('cycleviz').textContent=diagram;
+  var steps=[
+    '<span class="dim">"한 바퀴 돌기"를 눌러 순환을 따라가 보세요</span>',
+    '<span class="y">① 문제정의</span> → ② 수집 → ③ 정제\n<span class="dim">무엇을 알고 싶은지 정하고, 데이터를 모아 다듬음</span>',
+    '③ 정제 → <span class="y">④ 분석 → ⑤ 시각화</span>\n<span class="dim">패턴을 찾고 그림으로 표현</span>',
+    '⑤ 시각화 → <span class="y">⑥ 의사결정</span>\n<span class="dim">결과를 결정으로 이음 — 분석의 가치!</span>',
+    '<span class="y">⑥ → 새 질문 → 다시 ①</span>\n<span style="color:#9ec79a">결과를 보니 새 궁금증이 생김(호기심!)\n→ 다시 한 바퀴. 돌수록 분석이 깊어짐 (나선)</span>'
+  ];
+  var i=0,out=document.getElementById('cycleout');
+  function r(){out.innerHTML=steps[i];}
+  document.getElementById('cyclebtn').addEventListener('click',function(){if(i<steps.length-1)i++;r();});
+  document.getElementById('cyclereset').addEventListener('click',function(){i=0;r();});
+  r();
+})();
+</script>
+</body>
+</html>

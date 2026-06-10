@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>선행 · 모듈 · 패키지 · 라이브러리</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:880px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(47,107,94,.05),transparent 40%),radial-gradient(circle at 90% 100%,rgba(194,65,12,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--teal);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:84px 22px 36px;}
+  .eyebrow{color:var(--teal);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:62ch;}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:#d8e8e3;color:#225349;}
+  .chip.o{background:var(--accent-soft);color:#8a3408;}
+  section{padding:54px 0 30px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--teal);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 18px;line-height:1.3;}
+  h3{font-family:var(--serif);font-weight:700;font-size:18px;margin:24px 0 10px;color:var(--ink);}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  .teal{color:var(--teal);font-weight:700;}
+  code{font-family:'Gowun Dodum',monospace;background:#efe7d8;color:#8a3408;padding:1.5px 7px;border-radius:6px;font-size:.92em;}
+  pre{background:#2b2723;color:#f4efe6;border-radius:12px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.7;margin:16px 0;white-space:pre;}
+  pre code{background:none;color:inherit;padding:0;}
+  pre .k{color:#e0935f;}pre .s{color:#9ec79a;}pre .c{color:#8b8175;font-style:italic;}pre .n{color:#9ec7d8;}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15.5px;color:var(--sub);}
+  .note b{color:var(--teal);}
+  .note.warn{border-left-color:var(--accent);}.note.warn b{color:var(--accent);}
+  .summary{background:#eaf0ec;border-radius:12px;padding:18px 20px;margin:22px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--teal);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--teal);padding:4px 11px;border-radius:999px;margin-bottom:16px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:14px;color:#9ec79a;min-height:42px;white-space:pre-wrap;line-height:1.7;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}.out .accent{color:#e0935f;font-weight:700;}
+  .tbl{width:100%;border-collapse:collapse;margin:14px 0;font-size:14.5px;}
+  .tbl th,.tbl td{border:1px solid var(--line);padding:9px 12px;text-align:left;}
+  .tbl th{background:#eaf0ec;color:var(--teal);font-weight:700;}
+  .tbl td b{color:var(--accent);}
+
+  /* segmented controls */
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+  .segbtn{border:1.5px solid var(--line);background:#fff;border-radius:9px;padding:8px 14px;cursor:pointer;font-family:var(--sans);font-weight:700;font-size:13px;color:var(--sub);transition:.15s;}
+  .segbtn.on{border-color:var(--teal);background:var(--teal);color:#fff;}
+  .stage{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;}
+
+  /* 포함관계 중첩 박스 */
+  .nest{padding:16px;border:2px solid var(--teal);border-radius:14px;background:#eef5f3;transition:.18s;}
+  .nest .nl2{font-size:11.5px;font-weight:700;letter-spacing:.05em;margin-bottom:8px;}
+  .nest>.nl2{color:var(--teal);}
+  .nest-pkg{padding:14px;border:2px solid var(--gold);border-radius:11px;background:#fbf3e6;margin-top:6px;transition:.18s;}
+  .nest-pkg .nl2{color:var(--gold);}
+  .nest-mods{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+  .nest-mod{padding:9px 14px;border:2px solid var(--accent);border-radius:8px;background:#fbe3d2;color:#8a3408;font-weight:700;font-size:13px;font-family:monospace;transition:.18s;}
+  .lvl-dim{opacity:.28;filter:grayscale(.4);}
+  .lvl-glow{box-shadow:0 0 0 4px rgba(47,107,94,.18);}
+  .descbox{margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px;font-size:14.5px;}
+  .descbox .dh{font-family:var(--serif);font-weight:700;font-size:16px;margin-bottom:4px;}
+
+  /* 폴더 트리 */
+  .tree{font-family:monospace;font-size:14px;line-height:2;background:#2b2723;border-radius:12px;padding:16px 18px;color:#d8cfc0;}
+  .tree .row{cursor:pointer;padding:1px 8px;border-radius:6px;transition:.12s;}
+  .tree .row:hover{background:rgba(255,255,255,.07);}
+  .tree .row.sel{background:rgba(158,199,154,.16);}
+  .tree .pkg{color:#e0935f;font-weight:700;}
+  .tree .init{color:#9ec7d8;}
+  .tree .mod{color:#9ec79a;}
+  .tree .tag{font-size:11px;color:#8b8175;}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#eef5f3);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;text-decoration:none;color:inherit;display:block;transition:.18s;}
+  .next-card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(80,60,30,.1);}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .crumb{display:inline-block;margin-bottom:8px;font-size:13px;color:var(--sub);text-decoration:none;}
+  .crumb:hover{color:var(--accent);}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<header class="hero">
+  <a class="crumb" href="../00_데이터분석_판다스_목차.html">← 전체 목차</a>
+  <div class="eyebrow">데이터 분석 · 판다스 · 선행 학습 ①</div>
+  <h1>모듈 · 패키지 · 라이브러리<br><span style="font-size:.6em;color:var(--sub);font-weight:400;">남의 코드를 가져다 쓰는 법</span></h1>
+  <p class="lead">지금까지는 코드를 직접 짰음. 하지만 실무에서는 <strong>이미 잘 만들어진 코드를 가져다</strong> 씀. <code>import</code> 한 줄이면 수학·날짜 함수는 물론, 곧 배울 <span class="teal">판다스</span>까지 내 것처럼 쓸 수 있음. 그 "가져다 쓰는" 단위가 모듈·패키지·라이브러리임.</p>
+  <div class="hero-meta">
+    <span class="chip">🧩 선행 학습</span>
+    <span class="chip o">import · pip · PyPI</span>
+    <span class="chip">예상 25분</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- S1 왜 나누는가 -->
+  <section class="reveal">
+    <div class="sec-no">01</div>
+    <h2>왜 나누는가 — 코드 재사용</h2>
+    <p>모든 코드를 한 파일에 짜면 길어지고, 같은 코드를 매번 다시 짜게 됨. 자주 쓰는 기능은 <strong>파일로 따로 빼두고(모듈), 필요할 때 불러(import)</strong> 재사용함.</p>
+    <p>예를 들어 원의 넓이를 구할 때 매번 <code>3.14159...</code>를 직접 적는 대신, 누군가 만들어 둔 <code>math</code> 모듈의 <code>math.pi</code>를 가져다 쓰면 됨.</p>
+    <div class="note"><b>📌 핵심</b> &nbsp;"직접 만들기"보다 "검증된 코드를 가져다 쓰기"가 빠르고 안전함. 그 결과 ① 중복이 사라지고 ② 유지보수가 쉬워지고 ③ 협업(각자 만든 걸 합치기)이 됨.</div>
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>자주 쓰는 코드는 파일로 빼서 재사용함.</li>
+      <li>가져다 쓰면 중복 제거·유지보수·협업에 유리.</li>
+      <li>가져오는 단위가 모듈 → 패키지 → 라이브러리.</li>
+    </ol></div>
+  </section>
+
+  <!-- S2 모듈 -->
+  <section class="reveal">
+    <div class="sec-no">02</div>
+    <h2>모듈(Module) — <code>.py</code> 파일 하나</h2>
+    <p>모듈은 <strong>함수·변수·클래스를 담아 둔 파이썬 파일(<code>.py</code>) 하나</strong>임. <code>import</code>로 불러오는 방법은 네 가지가 있음. 버튼을 눌러 코드와 사용법이 어떻게 달라지는지 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · import 4가지 방법</span>
+      <div class="seg" id="w1tab">
+        <button class="segbtn on" data-k="imp">import 모듈</button>
+        <button class="segbtn" data-k="from">from~import</button>
+        <button class="segbtn" data-k="as">as (별명)</button>
+        <button class="segbtn" data-k="star">import *</button>
+      </div>
+      <div class="stage">
+        <pre style="margin:0 0 10px;"><code id="w1code"></code></pre>
+        <div class="out" id="w1out"></div>
+        <div class="note" id="w1note" style="margin:12px 0 0;"></div>
+      </div>
+    </div>
+
+    <h3>표준 라이브러리 — 설치 없이 바로 쓰는 모듈</h3>
+    <p>파이썬을 깔면 <strong>기본으로 따라오는</strong> 모듈 묶음임.</p>
+    <pre><code><span class="k">import</span> math      <span class="c"># math.pi, math.sqrt(16) → 4.0</span>
+<span class="k">import</span> random    <span class="c"># random.randint(1, 6)</span>
+<span class="k">import</span> datetime  <span class="c"># datetime.date.today()</span></code></pre>
+    <div class="note"><b>📌 참고</b> &nbsp;내가 만든 <code>.py</code> 파일도 모듈임. <code>my_utils.py</code>를 만들면 <code>import my_utils</code>로 불러 쓸 수 있음. 관례적으로 <code>import numpy as np</code>, <code>import pandas as pd</code>처럼 별명을 붙임.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>모듈 = 함수·클래스를 담은 <code>.py</code> 파일 하나.</li>
+      <li><code>import</code>·<code>from~import</code>·<code>as</code>로 불러 씀.</li>
+      <li>math·random·datetime은 설치 없이 쓰는 표준 라이브러리.</li>
+    </ol></div>
+  </section>
+
+  <!-- S3 패키지 -->
+  <section class="reveal">
+    <div class="sec-no">03</div>
+    <h2>패키지(Package) — 모듈을 담은 폴더</h2>
+    <p>패키지는 <strong>여러 모듈을 폴더로 묶은 것</strong>임. 관련된 모듈을 주제별로 정리한 서랍장이죠. 트리에서 각 항목을 눌러 무엇인지 확인해 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 패키지 폴더 구조</span>
+      <div class="stage">
+        <div class="tree" id="w2tree">
+          <div class="row" data-k="pkg"><span class="pkg">📁 my_package/</span> <span class="tag"># 패키지(폴더)</span></div>
+          <div class="row" data-k="init">&nbsp;&nbsp;├── <span class="init">__init__.py</span> <span class="tag"># 패키지 표시</span></div>
+          <div class="row" data-k="mod1">&nbsp;&nbsp;├── <span class="mod">math_tools.py</span> <span class="tag"># 모듈</span></div>
+          <div class="row" data-k="mod2">&nbsp;&nbsp;└── <span class="mod">string_tools.py</span> <span class="tag"># 모듈</span></div>
+        </div>
+        <div class="descbox" id="w2desc"></div>
+      </div>
+    </div>
+
+    <p>점(<code>.</code>)으로 경로를 따라 접근함.</p>
+    <pre><code><span class="k">from</span> my_package <span class="k">import</span> math_tools
+<span class="k">from</span> my_package.string_tools <span class="k">import</span> clean_text</code></pre>
+    <div class="note"><b>📌 판다스로 직결</b> &nbsp;판다스도 거대한 패키지임. <code>from pandas.api.types import is_numeric_dtype</code>처럼 점으로 내부 모듈에 접근함.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>패키지 = 모듈을 담은 폴더.</li>
+      <li><code>__init__.py</code>가 있으면 패키지로 인식(관례).</li>
+      <li>점(<code>.</code>)으로 패키지 안 모듈·함수에 접근.</li>
+    </ol></div>
+  </section>
+
+  <!-- S4 라이브러리/프레임워크 -->
+  <section class="reveal">
+    <div class="sec-no">04</div>
+    <h2>라이브러리 · 프레임워크 — 용어 정리</h2>
+    <p>크기와 역할에 따라 부르는 이름이 다름. 버튼을 눌러 각 용어의 위치와 뜻을 확인해 보세요. 포함관계는 <strong>모듈 ⊂ 패키지 ⊂ 라이브러리</strong>임.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 포함관계</span>
+      <div class="seg" id="w3tab">
+        <button class="segbtn on" data-k="lib">라이브러리</button>
+        <button class="segbtn" data-k="pkg">패키지</button>
+        <button class="segbtn" data-k="mod">모듈</button>
+        <button class="segbtn" data-k="fw">프레임워크</button>
+      </div>
+      <div class="stage">
+        <div class="nest" id="nlib">
+          <div class="nl2">📚 라이브러리 (도서관)</div>
+          <div class="nest-pkg" id="npkg">
+            <div class="nl2">🗄️ 패키지 (책장 칸)</div>
+            <div class="nest-mods" id="nmods">
+              <span class="nest-mod">module_a.py</span>
+              <span class="nest-mod">module_b.py</span>
+            </div>
+          </div>
+        </div>
+        <div class="descbox" id="w3desc"></div>
+      </div>
+    </div>
+
+    <table class="tbl">
+      <tr><th>용어</th><th>뜻</th><th>비유</th></tr>
+      <tr><td><b>모듈</b></td><td><code>.py</code> 파일 하나</td><td>책 한 권</td></tr>
+      <tr><td><b>패키지</b></td><td>모듈을 담은 폴더</td><td>책장 한 칸</td></tr>
+      <tr><td><b>라이브러리</b></td><td>특정 목적의 코드 묶음</td><td>도서관</td></tr>
+      <tr><td><b>프레임워크</b></td><td>뼈대를 제공, 내가 채움</td><td>건물 골조</td></tr>
+    </table>
+
+    <div class="note"><b>📌 라이브러리 vs 프레임워크</b> &nbsp;라이브러리는 <b>내가 불러서</b> 쓰고(주도권: 나), 프레임워크는 <b>틀이 내 코드를 불러</b> 돌림(주도권: 틀). "라이브러리는 내가 부른다, 프레임워크는 나를 부름." 우리가 배울 <b>NumPy·pandas·matplotlib는 모두 라이브러리</b>임.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>모듈 ⊂ 패키지 ⊂ 라이브러리(규모가 커지는 순).</li>
+      <li>라이브러리는 내가 불러 쓰고, 프레임워크는 내 코드를 불러 돌림.</li>
+      <li>NumPy·pandas는 라이브러리.</li>
+    </ol></div>
+  </section>
+
+  <!-- S5 pip / PyPI -->
+  <section class="reveal">
+    <div class="sec-no">05</div>
+    <h2>pip 와 PyPI — 외부 라이브러리 설치</h2>
+    <p>표준 라이브러리에 없는 것은 <strong>외부 저장소에서 설치</strong>해서 씀. <strong>PyPI</strong>는 전 세계 개발자가 올린 파이썬 패키지 창고(파이썬 앱스토어)이고, <strong>pip</strong>은 거기서 내려받아 설치하는 도구임.</p>
+
+    <pre><code>pip install pandas          <span class="c"># 설치</span>
+pip install pandas==2.2.0   <span class="c"># 특정 버전</span>
+pip install --upgrade pandas<span class="c"># 업그레이드</span>
+pip list                    <span class="c"># 설치된 목록</span>
+pip uninstall pandas        <span class="c"># 삭제</span></code></pre>
+
+    <div class="note warn"><b>⚠️ 설치 ≠ 사용</b> &nbsp;<b>설치(pip install)</b>로 패키지를 컴퓨터에 내려받고, 코드에서는 <b>import</b>로 불러옴. 둘은 다른 단계임. <code>pip install pandas</code>로 깐 뒤 <code>import pandas as pd</code>로 사용함.</div>
+
+    <div class="note"><b>📌 참고</b> &nbsp;아나콘다를 쓰면 <code>conda install</code>로도 설치할 수 있음(다음 강의). 한 환경에서 pip·conda를 섞으면 충돌이 생길 수 있어, 한 방식으로 통일하는 것이 좋음.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>PyPI = 파이썬 패키지 창고, pip = 설치 도구.</li>
+      <li><code>pip install 패키지</code>로 설치, <code>import</code>로 사용(다른 단계).</li>
+      <li>판다스도 설치해서 쓰는 외부 라이브러리.</li>
+    </ol></div>
+  </section>
+
+  <!-- S6 마무리 -->
+  <section class="reveal">
+    <div class="sec-no">06</div>
+    <h2>마무리 — 판다스도 라이브러리임</h2>
+    <p>정리하면 <strong>모듈(파일) → 패키지(폴더) → 라이브러리(묶음)</strong> 순으로 커지고, <code>import</code>로 가져오며, 없으면 <code>pip install</code>로 설치함. <strong>판다스도 하나의 라이브러리</strong>일 뿐임.</p>
+    <p>그런데 라이브러리가 많아지면 서로 요구하는 <strong>버전이 충돌</strong>함. 이를 깔끔하게 관리하는 도구가 다음 강의의 <span class="teal">아나콘다와 가상환경</span>임.</p>
+  </section>
+
+</main>
+
+<footer>
+  <a class="next-card" href="00_선행2_아나콘다_가상환경_웹강의.html">
+    <div class="nl">NEXT · 선행 ②</div>
+    <div class="nt">아나콘다 · 의존성 · 가상환경</div>
+    <p style="margin-top:8px;">라이브러리를 마구 깔면 버전이 충돌함. 분석 도구를 한 번에 깔아주는 <strong>아나콘다</strong>와, 프로젝트를 깨끗하게 분리하는 <strong>가상환경</strong>을 익힘.</p>
+  </a>
+  <p style="margin-top:24px;">데이터 분석 프로세스와 판다스 활용하기 · 선행 ① 모듈·패키지·라이브러리</p>
+
+  <p style="margin-top:14px;"><a class="crumb" href="../00_데이터분석_판다스_목차.html">↑ 전체 목차로 돌아가기</a></p>
+</footer>
+
+<script>
+const prog=document.getElementById('progress');
+addEventListener('scroll',()=>{const h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ===== W1: import 방법 ===== */
+(function(){
+  const data={
+    imp:{code:'<span class="k">import</span> math\n\nprint(math.sqrt(16))',out:'<span class="dim">▸ </span><span class="hl">4.0</span>',note:'<b>import 모듈</b> — 모듈 전체를 가져옴. 쓸 때 <code>math.함수()</code> 형태라 <b>어디서 왔는지 명확</b>함.'},
+    from:{code:'<span class="k">from</span> math <span class="k">import</span> sqrt\n\nprint(sqrt(16))',out:'<span class="dim">▸ </span><span class="hl">4.0</span>',note:'<b>from 모듈 import 함수</b> — 필요한 것만 가져옴. <code>모듈.</code> 없이 <b>함수명만으로</b> 바로 사용함.'},
+    as:{code:'<span class="k">import</span> math <span class="k">as</span> m\n\nprint(m.sqrt(16))',out:'<span class="dim">▸ </span><span class="hl">4.0</span>',note:'<b>as 별명</b> — 긴 이름에 짧은 별명을 붙임. 관례: <code>import numpy as np</code>, <code>import pandas as pd</code>.'},
+    star:{code:'<span class="k">from</span> math <span class="k">import</span> *\n\nprint(sqrt(16))',out:'<span class="dim">▸ </span><span class="hl">4.0</span>  <span class="accent">← 동작하지만 비권장</span>',note:'<b>import *</b> — 모듈의 모든 이름을 가져옴. 편하지만 <b>다른 모듈과 이름이 충돌</b>할 수 있어 실무에서는 피함.'}
+  };
+  const code=document.getElementById('w1code'), out=document.getElementById('w1out'), note=document.getElementById('w1note');
+  function render(k){const d=data[k];code.innerHTML=d.code;out.innerHTML=d.out;note.innerHTML=d.note;note.className=(k==='star'?'note warn':'note');note.style.margin='12px 0 0';}
+  document.querySelectorAll('#w1tab .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w1tab .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(b.dataset.k);}));
+  render('imp');
+})();
+
+/* ===== W2: 폴더 트리 ===== */
+(function(){
+  const desc={
+    pkg:{h:'📁 패키지 (폴더)',t:'여러 모듈을 담은 폴더임. 관련 기능을 주제별로 묶음. 폴더 이름이 곧 패키지 이름(<code>import my_package</code>).'},
+    init:{h:'__init__.py',t:'"이 폴더는 패키지"라고 알려주는 파일. 비어 있어도 됨. (최신 파이썬은 없어도 인식하지만 관례상 둠.)'},
+    mod1:{h:'math_tools.py (모듈)',t:'함수·클래스를 담은 <code>.py</code> 파일 하나 = 모듈. <code>from my_package import math_tools</code>로 불러옴.'},
+    mod2:{h:'string_tools.py (모듈)',t:'또 다른 모듈. <code>from my_package.string_tools import clean_text</code>처럼 점(.)으로 내부 함수까지 콕 집어 가져올 수 있음.'}
+  };
+  const rows=document.querySelectorAll('#w2tree .row'), box=document.getElementById('w2desc');
+  function render(k){
+    rows.forEach(r=>r.classList.toggle('sel',r.dataset.k===k));
+    const d=desc[k];box.innerHTML='<div class="dh">'+d.h+'</div>'+d.t;
+  }
+  rows.forEach(r=>r.addEventListener('click',()=>render(r.dataset.k)));
+  render('pkg');
+})();
+
+/* ===== W3: 포함관계 ===== */
+(function(){
+  const nlib=document.getElementById('nlib'), npkg=document.getElementById('npkg'), nmods=document.getElementById('nmods'), box=document.getElementById('w3desc');
+  const info={
+    lib:{h:'📚 라이브러리',t:'특정 목적을 위한 코드 묶음 전체(여러 패키지·모듈). 비유는 도서관. <b>NumPy·pandas</b>가 여기에 해당함.',glow:[nlib]},
+    pkg:{h:'🗄️ 패키지',t:'모듈을 담은 폴더. 비유는 책장 한 칸. 라이브러리 안에 여러 패키지가 들어감.',glow:[npkg]},
+    mod:{h:'📄 모듈',t:'함수·클래스를 담은 <code>.py</code> 파일 하나. 비유는 책 한 권. 가장 작은 단위임.',glow:[nmods]},
+    fw:{h:'🏗️ 프레임워크',t:'앱의 뼈대를 제공하고 내가 그 안을 채우는 큰 틀. <b>라이브러리는 내가 부르고, 프레임워크는 나를 부름.</b> 예: Django·Flask. (NumPy·pandas는 프레임워크가 아니라 라이브러리)',glow:[]}
+  };
+  function render(k){
+    [nlib,npkg,nmods].forEach(el=>{el.classList.remove('lvl-glow');});
+    [nlib,npkg].forEach(el=>el.classList.remove('lvl-dim'));
+    nmods.querySelectorAll('.nest-mod').forEach(m=>m.classList.remove('lvl-dim'));
+    const d=info[k];
+    if(k==='lib'){npkg.classList.add('lvl-dim');}
+    if(k==='pkg'){nmods.querySelectorAll('.nest-mod').forEach(m=>m.classList.add('lvl-dim'));}
+    d.glow.forEach(el=>el.classList.add('lvl-glow'));
+    if(k==='fw'){nlib.classList.add('lvl-dim');}
+    box.innerHTML='<div class="dh">'+d.h+'</div>'+d.t;
+  }
+  document.querySelectorAll('#w3tab .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w3tab .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(b.dataset.k);}));
+  render('lib');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Part 9 · 조건문</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&amp;family=Gowun+Dodum&amp;display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:760px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:88px 22px 40px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:62ch;}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:76px 0 46px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 20px;line-height:1.3;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  code{font-family:'Gowun Dodum',monospace;background:#efe7d8;color:#8a3408;padding:1.5px 7px;border-radius:6px;font-size:.92em;}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15.5px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:22px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:16px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;color:#9ec79a;border-radius:10px;padding:13px 16px;font-family:monospace;font-size:14px;min-height:42px;white-space:pre-wrap;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}
+  .codebox{background:#2b2723;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:13.5px;line-height:1.8;color:#f4efe6;}
+  .codebox .cl{display:block;padding:2px 6px;border-radius:5px;transition:.25s;}
+  .codebox .cl.run{background:rgba(158,199,154,.18);}
+  .codebox .cl.skip{opacity:.32;}
+  .codebox .ind{color:#6f6457;}
+  .codebox .kw{color:#e0935f;}
+  .sl-row{display:flex;align-items:center;gap:10px;margin:12px 0;font-family:monospace;font-size:14px;}
+  .sl-row input[type=range]{flex:1;accent-color:var(--accent);}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+  .seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:monospace;transition:.15s;color:var(--ink);}
+  .seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  .pp-input{border:1.5px solid var(--line);border-radius:8px;padding:8px 12px;font-family:monospace;font-size:14px;background:#fff;color:var(--ink);}
+
+  /* gate (elif) */
+  .gate{display:flex;flex-direction:column;gap:6px;}
+  .gate-row{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:9px;padding:9px 13px;background:#fff;font-family:monospace;font-size:13px;transition:.25s;}
+  .gate-row.passed{opacity:.4;}
+  .gate-row.hit{border-color:var(--teal);background:#d8e8e3;color:#225349;font-weight:700;}
+  .gate-row.skip{opacity:.3;}
+  .gate-tag{flex:none;font-size:10px;padding:2px 7px;border-radius:5px;background:#efe7d8;color:var(--sub);}
+
+  /* logic switches */
+  .lg-sw{display:flex;gap:14px;justify-content:center;margin-bottom:12px;flex-wrap:wrap;}
+  .lg-chip{border:none;border-radius:999px;padding:9px 16px;font-family:monospace;font-weight:700;font-size:13px;cursor:pointer;transition:.2s;}
+  .lg-chip.t{background:#d8e8e3;color:#225349;}.lg-chip.f{background:#f3ddd2;color:#9a3a14;}
+  .lg-sw .lab{font-size:11px;color:var(--sub);text-align:center;margin-bottom:5px;font-family:monospace;}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}}
+</style>
+<style id="wide16x9">
+/* ===== 16:9 와이드 반응형 오버라이드 ===== */
+:root{--maxw:1320px;}
+header.hero{text-align:center;padding-top:70px;}
+header.hero .lead{margin-left:auto;margin-right:auto;}
+header.hero .hero-meta{justify-content:center;}
+main.wrap section.two-col .col-text>:first-child{margin-top:0;}
+main.wrap section.two-col .col-text .summary{margin-bottom:0;}
+@media(min-width:980px){
+  main.wrap section.two-col{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.06fr);
+    gap:46px;align-items:start;
+  }
+  main.wrap section.two-col .col-widget{position:sticky;top:22px;}
+  main.wrap section.two-col .col-text{padding-top:2px;}
+}
+@media(max-width:979px){
+  main.wrap section.two-col .col-widget{margin-top:6px;}
+}
+</style></head>
+<body>
+<div id="progress"></div>
+<header class="hero">
+<div class="eyebrow">파이썬 기초 문법 · Part 9 · 흐름 제어</div>
+<h1>조건문</h1>
+<p class="lead">상황에 따라 <strong>다르게 행동</strong>하는 법. "재고 있으면 판매, 없으면 품절"처럼, Part 2의 참/거짓이 드디어 <strong>판단에 따른 분기</strong>로 이어짐. 파이썬의 특징인 <strong>들여쓰기로 코드 묶음을 구분</strong>하는 원리도 익힘.</p>
+<div class="hero-meta">
+<span class="chip">🟠 흐름 제어 · 9/18</span>
+<span class="chip t">if · elif · else</span>
+<span class="chip t">예상 35분</span>
+</div>
+</header>
+<main class="wrap">
+<!-- 1 if -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">9-1</div><h2>if — 참일 때만 실행</h2><p><code>if 조건:</code>은 조건이 참일 때만 딸린 코드를 실행함. <code>if</code> 뒤엔 <strong>콜론 <code>:</code></strong>, 다음 줄은 <strong>들여쓰기</strong>(공백 4칸). 파이썬은 들여쓰기로 코드 묶음을 구분함.</p><div class="note"><b>📌 참고</b>  들여쓰기는 보통 <b>공백 4칸</b>으로 통일(편집기가 자동). 탭과 공백을 섞으면 오류. "콜론 다음 줄은 들여쓴다"가 조건문·반복문·함수 모두 같은 규칙임.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li><code>if 조건:</code>은 조건이 참일 때만 딸린 코드 실행.</li>
+<li><code>if</code> 뒤 콜론 <code>:</code>, 다음 줄은 들여쓰기.</li>
+<li>파이썬은 들여쓰기로 코드 묶음을 구분함.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 조건에 따라 실행/건너뜀</span>
+<p class="wdesc">재고를 슬라이더로 바꿔, 들여쓴 코드가 실행되는지(초록) 건너뛰는지(흐림) 봄.</p>
+<div class="sl-row">재고 = <b id="w1v" style="color:var(--accent)">12</b> <input id="w1s" max="20" min="0" type="range" value="12"/></div>
+<div class="codebox" id="w1code"></div>
+<div class="out" id="w1out" style="margin-top:10px;"></div>
+</div></div></section>
+<!-- 2 if-else -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">9-2</div><h2>if-else — 두 갈래</h2><p>조건이 참이면 <code>if</code>, 거짓이면 <code>else</code>. 둘 중 <strong>정확히 하나만</strong> 실행됨. <code>else</code>엔 조건을 적지 않음(나머지 전부).</p><div class="note"><b>📌 참고</b>  두 갈래 판단(있다/없다, 통과/탈락)에 딱 맞음. "조건에 따라 값을 다르게 정하기"(등급·상태·라벨)가 대표 쓰임. 세 갈래 이상은 <code>elif</code>.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li><code>else</code>는 조건이 거짓일 때 실행할 코드.</li>
+<li><code>if</code>-<code>else</code>는 둘 중 정확히 하나만 실행.</li>
+<li><code>else</code>엔 조건을 적지 않음(나머지 전부).</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 갈림길</span>
+<p class="wdesc">재고를 바꿔, if와 else 중 어느 길로 가는지 봄.</p>
+<div class="sl-row">재고 = <b id="w2v" style="color:var(--accent)">0</b> <input id="w2s" max="20" min="0" type="range" value="0"/></div>
+<div class="codebox" id="w2code"></div>
+<div class="out" id="w2out" style="margin-top:10px;"></div>
+</div></div></section>
+<!-- 3 elif -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">9-3</div><h2>elif — 여러 갈래 (검문소)</h2><p><code>elif</code>로 세 갈래 이상. 위에서부터 차례로 검사해 <strong>처음 참인 곳에서 멈춰</strong> 그 코드만 실행하고 나머지는 건너뜀 — 그래서 순서가 중요함.</p><div class="note"><b>📌 참고</b>  "처음 맞는 하나만 실행"이라 조건이 겹쳐도 위쪽 우선 — 보통 <b>엄격한(높은) 기준부터</b> 배치함. 순서를 거꾸로 두면 85가 <code>&gt;=70</code>에 먼저 걸려 엉뚱해짐.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li><code>elif</code>로 세 갈래 이상의 조건을 이어 붙임.</li>
+<li>위에서부터 검사해 <strong>처음 참인 하나만</strong> 실행.</li>
+<li>조건 순서가 중요함(보통 엄격한 것부터).</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 점수 → 학점 검문소</span>
+<p class="wdesc">점수를 바꿔, 위에서부터 검사하다 처음 통과하는 조건(초록)을 봄.</p>
+<div class="sl-row">점수 = <b id="w3v" style="color:var(--accent)">85</b> <input id="w3s" max="100" min="0" type="range" value="85"/></div>
+<div class="gate" id="w3gate"></div>
+<div class="out" id="w3out" style="margin-top:10px;"></div>
+</div></div></section>
+<!-- 4 logic -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">9-4</div><h2>조건 안의 논리</h2><p>조건에 <code>and</code>·<code>or</code>·<code>not</code>(Part 2)을 써 여러 조건을 묶음. 여러 자물쇠가 걸린 문처럼 — <code>and</code>는 모두 풀려야, <code>or</code>는 하나만 풀려도 열림.</p><div class="note"><b>📌 참고</b>  간단한 결합은 <code>and</code>/<code>or</code>로(권장), 단계별 안내가 필요할 때만 중첩. 복잡한 조건은 변수에 담으면(<code>프리미엄 = 가격&gt;=100000</code>) <code>if 프리미엄:</code>처럼 읽기 쉬워짐.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>조건에 <code>and</code>·<code>or</code>·<code>not</code>으로 여러 조건을 묶음.</li>
+<li><code>if</code> 안에 <code>if</code> 중첩도 가능함.</li>
+<li>간단한 결합은 논리로, 단계별 안내는 중첩으로.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 무료 배송 조건</span>
+<p class="wdesc">회원 여부와 구매액을 바꿔, <code>회원 and 구매액&gt;=50000</code> 조건의 결과를 봄.</p>
+<div class="lg-sw">
+<div><div class="lab">회원</div><button class="lg-chip t" id="w4member">True</button></div>
+</div>
+<div class="sl-row">구매액 = <b id="w4av" style="color:var(--accent)">60000</b> <input id="w4a" max="100000" min="0" step="10000" type="range" value="60000"/></div>
+<div class="codebox" id="w4code"></div>
+<div class="out" id="w4out" style="margin-top:10px;"></div>
+</div></div></section>
+<!-- 5 판정기 -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">9-5</div><h2>실전 — 딕셔너리 판정기</h2><p>Part 7의 딕셔너리에서 값을 꺼내 조건문으로 판정함 — "데이터 한 건을 규칙에 따라 처리"하는 기본 형태. 상품의 재고 상태와 가격 등급을 라벨로 붙임.</p><div class="note"><b>📌 참고</b>  지금은 <b>상품 한 개</b>를 판정했음. 1000개라면 이 판정을 1000번? → <b>반복문(Part 10)</b>이 필요. 조건문(판단) + 반복문(되풀이) = "모든 건에 판단 적용" = 진짜 자동화.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>딕셔너리에서 값을 꺼내 조건문으로 한 건을 판정.</li>
+<li><code>if-elif-else</code>로 상태·등급 라벨을 붙임.</li>
+<li>한 건 처리 규칙 + 반복문 = 전체 자동화.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 상품 판정기</span>
+<p class="wdesc">상품을 골라, 조건문이 재고 상태와 가격 등급을 어떻게 판정하는지 봄.</p>
+<div class="seg" id="w5pick">
+<button class="on" data-i="0">니트 (89k, 12)</button>
+<button data-i="1">코트 (120k, 3)</button>
+<button data-i="2">가디건 (79k, 0)</button>
+</div>
+<div class="out" id="w5out"></div>
+</div></div></section>
+</main>
+<footer>
+<div class="next-card">
+<div class="nl">NEXT · PART 10</div>
+<div class="nt">반복문 (for)</div>
+<p style="margin-top:8px;">"리스트의 모든 상품을 하나씩" 처리하는 법. 조건문(판단)과 반복문(되풀이)이 만나면, Part 8에서 손으로 하던 조회·집계·정렬·필터가 한 번에 자동으로 — 진짜 자동화가 시작됨!</p>
+</div>
+<p style="margin-top:24px;">파이썬 기초 문법 커리큘럼 · Part 9 / 18 · 데이터 분석 자동화를 위한 기초</p>
+</footer>
+<script>
+var prog=document.getElementById('progress');
+addEventListener('scroll',function(){var h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+
+/* W1 if */
+(function(){
+  var s=document.getElementById('w1s');
+  function render(){
+    var v=+s.value; document.getElementById('w1v').textContent=v;
+    var run = v>0;
+    document.getElementById('w1code').innerHTML=
+      '<span class="cl"><span class="kw">if</span> 재고 &gt; 0:</span>'+
+      '<span class="cl '+(run?'run':'skip')+'"><span class="ind">    </span>print("판매 중입니다")</span>'+
+      '<span class="cl run">print("안내 끝")</span>';
+    document.getElementById('w1out').innerHTML= run
+      ? '출력 ▸ <span class="hl">판매 중입니다</span>\n출력 ▸ <span class="hl">안내 끝</span>'
+      : '<span class="dim">(재고 > 0 거짓 → 들여쓴 줄 건너뜀)</span>\n출력 ▸ <span class="hl">안내 끝</span>';
+  }
+  s.addEventListener('input',render); render();
+})();
+
+/* W2 if-else */
+(function(){
+  var s=document.getElementById('w2s');
+  function render(){
+    var v=+s.value; document.getElementById('w2v').textContent=v;
+    var sell=v>0;
+    document.getElementById('w2code').innerHTML=
+      '<span class="cl"><span class="kw">if</span> 재고 &gt; 0:</span>'+
+      '<span class="cl '+(sell?'run':'skip')+'"><span class="ind">    </span>print("판매 중")</span>'+
+      '<span class="cl"><span class="kw">else</span>:</span>'+
+      '<span class="cl '+(sell?'skip':'run')+'"><span class="ind">    </span>print("품절")</span>';
+    document.getElementById('w2out').innerHTML='출력 ▸ <span class="hl">'+(sell?'판매 중':'품절')+'</span>   <span class="dim">(둘 중 하나만)</span>';
+  }
+  s.addEventListener('input',render); render();
+})();
+
+/* W3 elif gate */
+(function(){
+  var s=document.getElementById('w3s');
+  var conds=[['if','점수 >= 90','A',90],['elif','점수 >= 80','B',80],['elif','점수 >= 70','C',70],['else','(나머지)','F',-1]];
+  function render(){
+    var v=+s.value; document.getElementById('w3v').textContent=v;
+    var hitIdx=-1;
+    for(var i=0;i<conds.length;i++){ if(conds[i][3]<0 || v>=conds[i][3]){ hitIdx=i; break; } }
+    var html='';
+    conds.forEach(function(c,i){
+      var cls = i<hitIdx?'passed' : (i===hitIdx?'hit':'skip');
+      var tag = i<hitIdx?'검사 → 거짓' : (i===hitIdx?'✓ 처음 참!':'건너뜀');
+      html+='<div class="gate-row '+cls+'"><span class="gate-tag">'+tag+'</span><span>'+c[0]+' '+c[1]+' → 학점 "'+c[2]+'"</span></div>';
+    });
+    document.getElementById('w3gate').innerHTML=html;
+    document.getElementById('w3out').innerHTML='학점 = <span class="hl">'+conds[hitIdx][2]+'</span>   <span class="dim">(위에서부터 처음 참인 곳)</span>';
+  }
+  s.addEventListener('input',render); render();
+})();
+
+/* W4 logic */
+(function(){
+  var member=true;
+  var a=document.getElementById('w4a');
+  function render(){
+    var av=+a.value; document.getElementById('w4av').textContent=av.toLocaleString();
+    var cond1=member, cond2=av>=50000, res=cond1&&cond2;
+    document.getElementById('w4code').innerHTML=
+      '<span class="cl"><span class="kw">if</span> 회원 <span class="kw">and</span> 구매액 &gt;= 50000:</span>'+
+      '<span class="cl '+(res?'run':'skip')+'"><span class="ind">    </span>print("무료 배송")</span>';
+    document.getElementById('w4out').innerHTML='회원='+(member?'True':'False')+' <span class="kw" style="color:#e0935f">and</span> 구매액&gt;=50000='+(cond2?'True':'False')+'\n→ <span class="hl">'+(res?'True → 무료 배송':'False → (실행 안 됨)')+'</span>';
+  }
+  document.getElementById('w4member').addEventListener('click',function(){
+    member=!member; this.className='lg-chip '+(member?'t':'f'); this.textContent=member?'True':'False'; render();
+  });
+  a.addEventListener('input',render); render();
+})();
+
+/* W5 판정기 */
+(function(){
+  var data=[{이름:"니트",가격:89000,재고:12},{이름:"코트",가격:120000,재고:3},{이름:"가디건",가격:79000,재고:0}];
+  function judge(d){
+    var 재고상태 = d.재고===0?"품절" : (d.재고<=5?"재고 부족":"충분");
+    var 등급 = d.가격>=100000?"프리미엄":"일반";
+    return {재고상태:재고상태,등급:등급};
+  }
+  function render(i){
+    var d=data[i], r=judge(d);
+    document.getElementById('w5out').innerHTML=
+      '<span class="dim">상품 = {"이름":"'+d.이름+'", "가격":'+d.가격.toLocaleString()+', "재고":'+d.재고+'}</span>\n'+
+      '<span class="dim">재고 '+d.재고+' → </span><span class="hl">'+r.재고상태+'</span>\n'+
+      '<span class="dim">가격 '+d.가격.toLocaleString()+' → </span><span class="hl">'+r.등급+'</span>\n'+
+      '출력 ▸ <span class="hl">'+d.이름+': '+r.등급+', '+r.재고상태+'</span>';
+  }
+  document.querySelectorAll('#w5pick button').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#w5pick button').forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on'); render(+b.dataset.i);
+    });
+  });
+  render(0);
+})();
+</script>
+</body>
+</html>

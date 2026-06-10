@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>데이터 분석 개요 · 4강 · 데이터의 종류 — 측정 척도</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;--accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;--serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:768px;color-scheme:light only;}
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.9;font-size:17px;-webkit-text-size-adjust:100%;background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:84px 22px 36px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(27px,5.4vw,42px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:50px 0 26px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 18px;line-height:1.3;}
+  h3{font-family:var(--serif);font-weight:700;font-size:19px;margin:26px 0 12px;color:#3a342e;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  .term{background:#eef5f3;border:1px solid #cfe3dd;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;}
+  .term b{color:var(--teal);}
+  .ex{background:#fbf3e6;border:1px solid #ecd9b8;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;color:#6b5526;}
+  .ex b{color:var(--gold);}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:24px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:14px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;color:#9ec79a;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:13.5px;min-height:42px;white-space:pre-wrap;line-height:1.7;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}.out .y{color:#e0b15f;}
+  .btn{border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:13px;padding:9px 15px;border-radius:9px;cursor:pointer;}
+  .btn.ghost{background:#fdfaf4;border:1.5px solid var(--line);color:var(--sub);}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+  .seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:var(--sans);transition:.15s;color:var(--ink);}
+  .seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  /* 척도 계단 */
+  .stairs{display:flex;flex-direction:column;gap:5px;margin:14px 0;}
+  .stair{border-radius:9px;padding:11px 14px;color:#fff;cursor:pointer;transition:.2s;font-size:13px;display:flex;justify-content:space-between;align-items:center;}
+  .stair.dim{opacity:.4;}
+  .stair .lv{font-family:monospace;font-size:11px;opacity:.85;}
+  /* 능력 체크표 */
+  .cap{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+  .cap span{font-size:11.5px;font-family:monospace;padding:3px 8px;border-radius:6px;}
+  .cap .yes{background:#d8e8e3;color:#225349;}
+  .cap .no{background:#f3ddd3;color:#9a3a14;text-decoration:line-through;}
+  /* 종합표 */
+  .bigtable{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px;}
+  .bigtable th,.bigtable td{border:1px solid var(--line);padding:6px 7px;text-align:center;}
+  .bigtable th{background:#efe7d8;font-family:var(--sans);}
+  .bigtable td:first-child{text-align:left;font-weight:700;}
+  .bigtable .o{color:var(--teal);font-weight:700;}
+  .bigtable .x{color:var(--accent);}
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}.bigtable{font-size:10.5px;}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<header class="hero">
+  <div class="eyebrow">데이터 분석 개요 및 기초 이론 · 4강</div>
+  <h1>데이터의 종류<br>— 측정 척도</h1>
+  <p class="lead">3강의 "숫자처럼 보이는 정성 데이터" 함정을 정밀하게 발전시킴. 데이터는 네 가지 <strong>측정 척도</strong> — 명목·순서·등간·비율 — 로 나뉘고, <strong>척도가 무엇이냐에 따라 할 수 있는 계산과 그래프가 완전히 달라짐.</strong> 이걸 모르면 "혈액형의 평균" 같은 헛분석을 하게 됨.</p>
+  <div class="hero-meta">
+    <span class="chip">📊 개요 · 4/7</span>
+    <span class="chip t">명목 · 순서 · 등간 · 비율</span>
+    <span class="chip t">완전 초보용</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- 4-1 -->
+  <section class="reveal">
+    <div class="sec-no">4-1</div>
+    <h2>왜 "척도"를 구분하는가</h2>
+    <p>같은 숫자 "7"이라도 의미가 완전히 다름. <strong>등번호 7번</strong>의 7과 <strong>기온 7도</strong>의 7은 전혀 다른 종류임. 등번호는 더하거나 평균 낼 수 없지만(7번+9번=16번은 무의미), 기온은 가능함(7도와 9도의 평균 8도는 의미 있음). 직접 비교해 봄.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 같은 숫자 7, 다른 의미</span>
+      <p class="wdesc">두 가지 "7"을 눌러, 같은 숫자라도 할 수 있는 것이 왜 다른지 봄.</p>
+      <div class="seg" id="w1">
+        <button class="on" data-k="num">등번호 7번</button>
+        <button data-k="temp">기온 7도</button>
+      </div>
+      <div class="out" id="w1out"></div>
+    </div>
+
+    <div class="term"><b>측정 척도(scale of measurement)</b><br>데이터에 담긴 "정보의 정밀함"에 따라 데이터를 나눈 4단계 — <b>명목 → 순서 → 등간 → 비율</b>. 뒤로 갈수록 정보가 풍부해지고 할 수 있는 계산이 늘어남. 척도를 알아야 "이 데이터로 무엇을 할 수 있는지"를 알 수 있음.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>같은 숫자라도 척도가 다르면 의미와 가능한 계산이 완전히 다름.</li>
+      <li>측정 척도는 명목→순서→등간→비율의 4단계로, 뒤로 갈수록 정보가 풍부함.</li>
+      <li>척도를 알아야 "이 데이터로 무엇을 할 수 있는지"를 정확히 판단함.</li>
+    </ol></div>
+  </section>
+
+  <!-- 4-2~4-5 네 척도: 계단 위젯으로 통합 -->
+  <section class="reveal">
+    <div class="sec-no">4-2 ~ 4-5</div>
+    <h2>네 가지 척도 — 계단처럼 쌓인다</h2>
+    <p>네 척도는 정보의 정밀함이 점점 커지는 <strong>계단</strong>임. 아래에서 각 계단을 눌러, 정의·예시·할 수 있는 계산을 자세히 봄.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 측정 척도의 계단</span>
+      <p class="wdesc">각 척도를 눌러 보세요. 위로 갈수록 "할 수 있는 것"이 하나씩 늘어남.</p>
+      <div class="stairs" id="stairs">
+        <div class="stair" data-k="3" style="background:var(--accent);margin-left:30px;"><span>④ 비율형</span><span class="lv">절대 0 + 모든 계산</span></div>
+        <div class="stair" data-k="2" style="background:#b4622a;margin-left:20px;"><span>③ 등간형</span><span class="lv">간격 일정 (0은 임의)</span></div>
+        <div class="stair" data-k="1" style="background:var(--gold);margin-left:10px;"><span>② 순서형</span><span class="lv">순서 있음 (간격 불균등)</span></div>
+        <div class="stair" data-k="0" style="background:var(--teal);"><span>① 명목형</span><span class="lv">이름·분류만</span></div>
+      </div>
+      <div class="out" id="stairsout"></div>
+      <div class="cap" id="stairscap"></div>
+    </div>
+
+    <div class="ex"><b>외우기 비유 — 달리기 시합</b><br>· <b>명목</b>: 선수들의 <b>배번호·국적</b> (그냥 구분)<br>· <b>순서</b>: <b>등수(1·2·3위)</b> (순서는 알지만 1위와 2위 격차 ≠ 2위와 3위 격차)<br>· <b>등간</b>: 그날의 <b>기온</b> (10도→20도 간격은 일정하나 "0도=온도 없음"은 아님)<br>· <b>비율</b>: 각 선수의 <b>기록(초)</b> (0초=시간 없음이 진짜 0, 10초는 20초의 절반)</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>명목(이름)→순서(등급)→등간(간격 일정)→비율(절대 0)로 정보가 쌓임.</li>
+      <li>위 척도일수록 더 많은 계산이 가능함(분류→대소→덧셈→비율).</li>
+      <li>등간과 비율의 차이는 "절대 0(없음의 0)이 있느냐"임.</li>
+    </ol></div>
+  </section>
+
+  <!-- 핵심 구분: 등간 vs 비율 -->
+  <section class="reveal">
+    <div class="sec-no">핵심</div>
+    <h2>가장 헷갈리는 곳 — 등간 vs 비율</h2>
+    <p>초보자가 가장 헷갈리는 것이 등간형과 비율형의 차이임. 핵심은 단 하나 — <strong>"절대 0(아무것도 없음을 뜻하는 진짜 0)이 있는가"</strong>임.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · "2배"가 되는가?</span>
+      <p class="wdesc">"2배" 질문을 던져 보면 등간과 비율이 갈림. 각 예시를 눌러 확인해 봄.</p>
+      <div class="seg" id="ratio">
+        <button class="on" data-k="temp">온도 (등간)</button>
+        <button data-k="weight">무게 (비율)</button>
+        <button data-k="year">연도 (등간)</button>
+        <button data-k="money">금액 (비율)</button>
+      </div>
+      <div class="out" id="ratioout"></div>
+    </div>
+
+    <div class="note"><b>📌 왜 중요한가</b><br>비율형만 "몇 배"가 의미 있음. "오늘 20도가 어제 10도의 2배로 덥다"는 <b>틀린 말</b>임(온도는 등간형, 절대 0이 없음). 반면 "오늘 매출 100만 원이 어제 50만 원의 2배"는 <b>맞는 말</b>임(금액은 비율형). 척도를 모르면 이런 실수를 함.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>등간과 비율의 차이는 "절대 0(없음의 0)이 있느냐"임.</li>
+      <li>비율형만 "몇 배"가 의미 있음(무게·금액·개수).</li>
+      <li>온도·연도는 등간형이라 "2배 덥다/늦다" 같은 말은 성립하지 않음.</li>
+    </ol></div>
+  </section>
+
+  <!-- 4-6 총정리 + 활용 -->
+  <section class="reveal">
+    <div class="sec-no">4-6</div>
+    <h2>총정리와 분석에의 활용</h2>
+    <p>네 척도가 각각 무엇을 할 수 있는지 한 표로 정리함. <strong>척도에 따라 쓸 수 있는 계산·그래프가 달라진다</strong>는 것이 핵심임.</p>
+
+    <div class="widget">
+      <span class="wlabel">시각화 · 척도별 가능한 연산 총정리</span>
+      <p class="wdesc">아래 표에서 각 척도가 무엇을 할 수 있는지(⭕) 없는지(❌) 한눈에 비교해 봄.</p>
+      <table class="bigtable">
+        <tr><th>가능한 것</th><th>명목</th><th>순서</th><th>등간</th><th>비율</th></tr>
+        <tr><td>분류·구분 (=, ≠)</td><td class="o">⭕</td><td class="o">⭕</td><td class="o">⭕</td><td class="o">⭕</td></tr>
+        <tr><td>순서·대소 (&lt;, &gt;)</td><td class="x">❌</td><td class="o">⭕</td><td class="o">⭕</td><td class="o">⭕</td></tr>
+        <tr><td>덧셈·뺄셈 (간격)</td><td class="x">❌</td><td class="x">❌</td><td class="o">⭕</td><td class="o">⭕</td></tr>
+        <tr><td>곱셈·나눗셈 (몇 배)</td><td class="x">❌</td><td class="x">❌</td><td class="x">❌</td><td class="o">⭕</td></tr>
+        <tr><td>대표 예시</td><td>혈액형<br>지역</td><td>학점<br>만족도</td><td>온도<br>연도</td><td>매출<br>키·무게</td></tr>
+      </table>
+    </div>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 어떤 그래프를 그릴까?</span>
+      <p class="wdesc">척도에 따라 알맞은 그래프가 다름. 각 척도를 눌러 어울리는 시각화를 봄.</p>
+      <div class="seg" id="graph">
+        <button class="on" data-k="nom">명목</button>
+        <button data-k="ord">순서</button>
+        <button data-k="num">등간·비율</button>
+      </div>
+      <div class="out" id="graphout"></div>
+    </div>
+
+    <div class="note"><b>📌 분석의 첫 단추</b><br>데이터를 받으면 가장 먼저 "각 열이 어떤 척도인가"를 확인해야 함. 척도를 알아야 — 평균을 내도 되는지(등간·비율만), 순서로 정렬해도 되는지(순서 이상), 어떤 그래프가 맞는지 — 가 정해짐. 이것이 헛분석을 막는 첫 단추임.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>명목→순서→등간→비율로 갈수록 가능한 연산이 분류→대소→덧셈→곱셈으로 늘어남.</li>
+      <li>척도에 따라 알맞은 그래프가 다름(명목=막대·원, 등간비율=히스토그램·꺾은선).</li>
+      <li>데이터를 받으면 먼저 각 열의 척도를 확인하는 것이 헛분석을 막는 첫 단추임.</li>
+    </ol></div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="next-card">
+    <div class="nl">NEXT · 5강</div>
+    <div class="nt">분석의 4단계 유형</div>
+    <p style="margin-top:8px;">3·4강에서 "데이터 자체"를 배웠으니, 5강부터는 그 데이터로 "실제로 어떤 분석을 하는가"로 넘어감. 분석은 목적에 따라 <strong>묘사(무슨 일이?)·진단(왜?)·예측(어떻게 될까?)·처방(무엇을 할까?)</strong>의 네 단계로 나뉨 — 점점 어렵고 점점 가치 있는 "가치 사다리"임.</p>
+  </div>
+  <p style="margin-top:24px;">데이터 분석 개요 및 기초 이론 · 4강 / 7강 · 데이터 분석 자동화 커리큘럼</p>
+</footer>
+
+<script>
+var prog=document.getElementById('progress');
+addEventListener('scroll',function(){var h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+
+/* 4-1 */
+(function(){
+  var R={
+    num:'<span class="hl">등번호 7번</span>\n7번 선수 + 9번 선수 = 16번 선수? <span class="y">→ 무의미!</span>\n평균 등번호 8번? <span class="y">→ 무의미!</span>\n<span class="dim">등번호는 그냥 "이름표". 숫자처럼 보여도\n더하거나 평균 낼 수 없음 → 명목형(정성)</span>',
+    temp:'<span class="hl">기온 7도</span>\n7도 다음 날 9도 → 평균 8도 <span style="color:#9ec79a">→ 의미 있음!</span>\n9도 - 7도 = 2도 더 따뜻 <span style="color:#9ec79a">→ 의미 있음!</span>\n<span class="dim">기온은 간격이 일정한 측정값\n→ 더하고 평균 낼 수 있음 → 등간형(정량)</span>'
+  };
+  var out=document.getElementById('w1out');
+  document.querySelectorAll('#w1 button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#w1 button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.num;
+})();
+
+/* 계단 */
+(function(){
+  var R=[
+    {t:'① 명목형 (nominal) — 구분하는 이름표',d:'순서 없이 "종류"만 구분. 대소 비교 불가.\n예: 혈액형(A·B·O·AB), 성별, 지역, 직업',cap:['구분 가능','순서 ✗','덧셈 ✗','배수 ✗']},
+    {t:'② 순서형 (ordinal) — 순서가 있는 등급',d:'순서는 있지만 간격이 불균등.\n예: 학점(A·B·C), 만족도(좋음·보통·나쁨), 등수\n<span class="dim">1위와 2위 격차 ≠ 2위와 3위 격차</span>',cap:['구분 가능','순서 가능','덧셈 ✗','배수 ✗']},
+    {t:'③ 등간형 (interval) — 간격이 일정',d:'간격이 일정해 덧셈·뺄셈 가능. 단 "절대 0"이 없음.\n예: 온도(섭씨), 연도, 지능지수\n<span class="dim">0도가 "온도 없음"은 아님 → 배수 무의미</span>',cap:['구분 가능','순서 가능','덧셈 가능','배수 ✗']},
+    {t:'④ 비율형 (ratio) — 절대 0이 있는 완전한 수',d:'절대 0(없음)이 있어 모든 계산 가능.\n예: 매출, 키, 무게, 나이, 개수, 시간\n<span style="color:#9ec79a">0원=돈 없음(진짜 0) → "2배" 가능</span>',cap:['구분 가능','순서 가능','덧셈 가능','배수 가능']}
+  ];
+  var out=document.getElementById('stairsout'),cap=document.getElementById('stairscap');
+  function sel(i){
+    document.querySelectorAll('#stairs .stair').forEach(function(x){x.classList.add('dim');});
+    document.querySelector('#stairs [data-k="'+i+'"]').classList.remove('dim');
+    out.innerHTML='<span class="hl">'+R[i].t+'</span>\n'+R[i].d;
+    cap.innerHTML=R[i].cap.map(function(c){var no=c.indexOf('✗')>=0;return '<span class="'+(no?'no':'yes')+'">'+c.replace(' ✗','')+'</span>';}).join('');
+  }
+  document.querySelectorAll('#stairs .stair').forEach(function(el){el.addEventListener('click',function(){sel(+el.dataset.k);});});
+  document.querySelectorAll('#stairs .stair').forEach(function(x){x.classList.remove('dim');});
+  out.innerHTML='<span class="dim">각 계단을 눌러 보세요 (아래 명목 → 위 비율)</span>';cap.innerHTML='';
+})();
+
+/* 등간 vs 비율 */
+(function(){
+  var R={
+    temp:'<span class="hl">온도 (등간형)</span>\n"오늘 20도는 어제 10도의 2배로 덥다"?\n<span class="y">→ 틀림! 절대 0이 없어 "2배"가 무의미</span>\n<span class="dim">(0도는 "온도 없음"이 아니라 그냥 한 지점)</span>',
+    weight:'<span class="hl">무게 (비율형)</span>\n"20kg은 10kg의 2배"?\n<span style="color:#9ec79a">→ 맞음! 0kg=무게 없음(절대 0)</span>\n<span class="dim">절대 0이 있어 "몇 배"가 의미 있음</span>',
+    year:'<span class="hl">연도 (등간형)</span>\n"2000년은 1000년의 2배"?\n<span class="y">→ 틀림! 0년이 "시간 없음"이 아님</span>\n<span class="dim">간격(2000-1000=1000년)은 의미 있지만 배수는 무의미</span>',
+    money:'<span class="hl">금액 (비율형)</span>\n"매출 100만 원은 50만 원의 2배"?\n<span style="color:#9ec79a">→ 맞음! 0원=돈 없음(절대 0)</span>\n<span class="dim">비율형이라 "2배" 같은 비교가 정확히 성립</span>'
+  };
+  var out=document.getElementById('ratioout');
+  document.querySelectorAll('#ratio button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#ratio button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.temp;
+})();
+
+/* 그래프 */
+(function(){
+  var R={
+    nom:'<span class="hl">명목형 — 막대그래프 · 원그래프</span>\n범주별 "개수"나 "비율"을 보여 줌.\n예: 혈액형별 인원수(막대), 지역별 비중(원)\n<span class="dim">순서가 없으니 "추세선"은 그리지 않음</span>',
+    ord:'<span class="hl">순서형 — (순서 있는) 막대그래프</span>\n순서대로 늘어놓은 막대그래프.\n예: 만족도(나쁨→보통→좋음) 응답 수\n<span class="dim">순서가 있으니 순서대로 배열함</span>',
+    num:'<span class="hl">등간·비율형 — 히스토그램 · 꺾은선</span>\n· 히스토그램: 값의 분포(키·나이 분포)\n· 꺾은선: 시간에 따른 변화(월별 매출 추세)\n· 산점도: 두 수치의 관계(넓이 vs 가격)\n<span class="dim">숫자라서 분포·추세·관계를 그릴 수 있음</span>'
+  };
+  var out=document.getElementById('graphout');
+  document.querySelectorAll('#graph button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#graph button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.nom;
+})();
+</script>
+</body>
+</html>

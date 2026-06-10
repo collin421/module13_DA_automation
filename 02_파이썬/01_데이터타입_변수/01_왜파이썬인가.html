@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Part 0 · 왜 파이썬인가 — 데이터 분석 자동화의 첫걸음</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&amp;family=Gowun+Dodum&amp;display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:760px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:88px 22px 40px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:62ch;}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:76px 0 46px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 20px;line-height:1.3;}
+  p{margin:0 0 16px;}
+  .sub{color:var(--sub);}
+  strong{color:var(--accent);font-weight:700;}
+  code{font-family:'Gowun Dodum',monospace;background:#efe7d8;color:#8a3408;padding:1.5px 7px;border-radius:6px;font-size:.92em;}
+  pre{background:#2b2723;color:#f4efe6;border-radius:12px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.7;margin:16px 0;}
+  pre code{background:none;color:inherit;padding:0;}
+  pre .k{color:#e0935f;}pre .s{color:#9ec79a;}pre .c{color:#8b8175;font-style:italic;}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15.5px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:22px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:16px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .btn{border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:13.5px;padding:9px 18px;border-radius:9px;cursor:pointer;}
+  .btn.ghost{background:#fdfaf4;border:1px solid var(--line);color:var(--sub);}
+  .term{background:#2b2723;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:13.5px;color:#9ec79a;min-height:42px;white-space:pre-wrap;}
+  .term .prompt{color:#8b8175;}.term .err{color:#e0935f;}
+
+  /* W1: manual vs code slider */
+  .au-stage{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;}
+  .au-slider{width:100%;margin:6px 0 16px;accent-color:var(--accent);}
+  .au-rep{text-align:center;font-size:13px;color:var(--sub);margin-bottom:14px;}
+  .au-rep b{color:var(--accent);font-size:18px;font-family:var(--serif);}
+  .au-bars{display:flex;flex-direction:column;gap:12px;}
+  .au-bar{}
+  .au-bl{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px;font-weight:700;}
+  .au-track{height:22px;background:#efe7d8;border-radius:11px;overflow:hidden;}
+  .au-fill{height:100%;border-radius:11px;transition:width .3s;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:10.5px;color:#fff;font-weight:700;white-space:nowrap;}
+  .au-fill.manual{background:linear-gradient(90deg,#c98a6e,#b4451f);}
+  .au-fill.code{background:linear-gradient(90deg,#3f8676,#2f6b5e);}
+
+  /* W2: 3-tab why python */
+  .wt-tabs{display:flex;gap:6px;margin-bottom:14px;}
+  .wttab{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:9px;padding:9px 6px;cursor:pointer;font-family:var(--sans);font-weight:700;font-size:12px;color:var(--sub);transition:.15s;text-align:center;}
+  .wttab.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  .wt-panel{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;min-height:150px;}
+  /* rank bars */
+  .rk-row{display:flex;align-items:center;gap:10px;margin:7px 0;}
+  .rk-name{width:78px;font-size:12px;font-weight:700;text-align:right;}
+  .rk-track{flex:1;height:18px;background:#efe7d8;border-radius:9px;overflow:hidden;}
+  .rk-fill{height:100%;border-radius:9px;background:linear-gradient(90deg,#e9d5c4,#c2410c);transition:width 1s;}
+  .rk-fill.dim{background:linear-gradient(90deg,#e0d8c8,#a89a86);}
+  .rk-val{width:42px;font-size:11px;color:var(--sub);}
+  .lc-lines{font-size:12px;color:var(--sub);margin-top:10px;text-align:center;}
+  .rp-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
+  .rp-input{flex:1;border:1.5px solid var(--line);border-radius:8px;padding:7px 10px;font-family:monospace;font-size:13px;background:#fff;color:var(--ink);}
+
+  /* W3: ecosystem map */
+  .ec-center{text-align:center;margin-bottom:14px;}
+  .ec-py{display:inline-block;background:var(--ink);color:#fff;border-radius:14px;padding:12px 22px;font-weight:700;font-size:15px;}
+  .ec-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .ec-card{border:1.5px solid var(--line);border-radius:10px;padding:11px 13px;background:#fff;cursor:pointer;transition:.2s;}
+  .ec-card.on{border-color:var(--teal);background:#eef5f3;}
+  .ec-card .em{font-size:18px;}
+  .ec-card .nm{font-weight:700;font-size:12.5px;margin-top:3px;}
+  .ec-detail{margin-top:12px;background:#efe7d8;border-radius:9px;padding:12px 14px;font-size:13px;min-height:20px;}
+
+  /* W4: library + venv */
+  .lv-toggle{display:flex;gap:8px;margin-bottom:14px;}
+  .lvbtn{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:9px;padding:10px;cursor:pointer;font-family:var(--sans);font-weight:700;font-size:12.5px;color:var(--sub);transition:.15s;}
+  .lvbtn.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  .lv-panel{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;}
+  .lv-shelf{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+  .lv-book{border:1.5px solid var(--line);border-radius:9px;padding:9px 13px;font-size:12px;font-weight:700;background:#fdfaf4;cursor:pointer;transition:.15s;text-align:center;}
+  .lv-book:hover{border-color:var(--teal);background:#eef5f3;}
+  .lv-book .s{display:block;font-size:9.5px;color:var(--sub);font-weight:400;margin-top:2px;}
+  .lv-box{display:flex;gap:10px;}
+  .lv-env{flex:1;border:1.5px dashed var(--line);border-radius:10px;padding:11px;background:#fdfaf4;}
+  .lv-env .t{font-size:11px;font-weight:700;color:var(--sub);margin-bottom:6px;text-align:center;}
+  .lv-env .tool{font-size:11px;background:#efe7d8;border-radius:6px;padding:3px 7px;margin:2px;display:inline-block;}
+  .lv-cap{font-size:12px;color:var(--sub);text-align:center;margin-top:10px;}
+
+  /* W5: print playground */
+  .pp-quote{display:flex;gap:6px;margin-bottom:10px;}
+  .pp-qbtn{border:1.5px solid var(--line);background:#fdfaf4;border-radius:7px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:var(--sans);transition:.15s;}
+  .pp-qbtn.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  .pp-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+  .pp-row code{font-size:14px;}
+  .pp-input{flex:1;min-width:140px;border:1.5px solid var(--line);border-radius:8px;padding:8px 12px;font-family:monospace;font-size:14px;background:#fff;color:var(--ink);}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}.ec-grid{grid-template-columns:1fr;}.lv-box{flex-direction:column;}}
+</style>
+<style id="wide16x9">
+/* ===== 16:9 와이드 반응형 오버라이드 ===== */
+:root{--maxw:1320px;}
+header.hero{text-align:center;padding-top:70px;}
+header.hero .lead{margin-left:auto;margin-right:auto;}
+header.hero .hero-meta{justify-content:center;}
+main.wrap section.two-col .col-text>:first-child{margin-top:0;}
+main.wrap section.two-col .col-text .summary{margin-bottom:0;}
+@media(min-width:980px){
+  main.wrap section.two-col{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.06fr);
+    gap:46px;align-items:start;
+  }
+  main.wrap section.two-col .col-widget{position:sticky;top:22px;}
+  main.wrap section.two-col .col-text{padding-top:2px;}
+}
+@media(max-width:979px){
+  main.wrap section.two-col .col-widget{margin-top:6px;}
+}
+</style></head>
+<body>
+<div id="progress"></div>
+<header class="hero">
+<div class="eyebrow">파이썬 기초 문법 · Part 0 · 입문</div>
+<h1>왜 파이썬인가<br/><span style="font-size:.62em;color:var(--sub);font-weight:400;">데이터 분석 자동화의 첫걸음</span></h1>
+<p class="lead">문법을 외우기 전에 <strong>왜 파이썬을 배우는지</strong>부터 가슴에 새김. 이유가 분명해야 끝까지 집중할 수 있음. 이 수업은 단순한 코딩 강의가 아니라 <strong>데이터 분석 자동화</strong>로 가는 여정의 출발점임 — 가장 많이 쓰이고, 쉽고, 데이터·AI 시대의 중심인 파이썬을 왜 골랐는지 다섯 가지 이유를 깊이 살펴봄.</p>
+<div class="hero-meta">
+<span class="chip">🟢 입문 · 0/18</span>
+<span class="chip t">왜 파이썬 · 데이터 자동화</span>
+<span class="chip t">예상 30분</span>
+</div>
+</header>
+<main class="wrap">
+<!-- Section 1: destination = data automation -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">0-1 · 0-2</div><h2>목적지 = 데이터 분석 자동화</h2><p>이 강의의 최종 목적지는 <strong>데이터 분석 자동화</strong>임 — 사람이 엑셀로 일일이 하던 작업(모으고·정리하고·계산하고·그래프로·보고서로)을 <strong>코드 한 번으로 자동 처리</strong>하게 만드는 것. 프로그래밍의 본질이 바로 <strong>반복을 기계에게 넘기는 것</strong>이고, 데이터 작업이야말로 그 반복의 대명사임.</p><div class="note"><b>📌 참고</b>  "한 번만 할 일"은 굳이 코드로 안 짜도 됨. 프로그래밍의 진짜 가치는 <b>반복·대량·규칙적</b>인 작업에서 나옴 — 데이터 분석은 그 셋을 모두 갖춰 자동화 효과가 가장 큰 분야임. 오늘 배우는 기초 문법은 그 자동화를 짓는 벽돌과 시멘트임.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>이 수업의 목적지는 데이터 분석 자동화임.</li>
+<li>프로그래밍의 본질은 반복을 기계에게 넘기는 것임.</li>
+<li>코드는 한 번 짜면 반복 비용이 0에 수렴함.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 수작업 vs 코드</span>
+<p class="wdesc">같은 데이터 작업을 몇 번 반복하는지 슬라이더로 바꿔 봄. 수작업은 횟수만큼 시간이 늘지만, 코드는 한 번 짜면 거의 그대로임.</p>
+<div class="au-stage">
+<input class="au-slider" id="w1slider" max="50" min="1" type="range" value="1"/>
+<div class="au-rep">반복 횟수: <b id="w1rep">1</b> 회 (예: 매달 같은 매출 보고서)</div>
+<div class="au-bars">
+<div class="au-bar">
+<div class="au-bl"><span>🙍 손으로 (수작업)</span><span id="w1mlabel"></span></div>
+<div class="au-track"><div class="au-fill manual" id="w1mfill"></div></div>
+</div>
+<div class="au-bar">
+<div class="au-bl"><span>🐍 코드로 (자동화)</span><span id="w1clabel"></span></div>
+<div class="au-track"><div class="au-fill code" id="w1cfill"></div></div>
+</div>
+</div>
+</div>
+</div></div></section>
+<!-- Section 2: most used / easy / interpreter -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">0-3 · 0-4</div><h2>왜 파이썬 ① — 가장 많이 쓰고, 쉽고, 즉시 확인</h2><p>8000개가 넘는 언어 중 왜 파이썬일까? 첫 이유는 <strong>가장 많이 쓰이고, 가장 쉽고, 즉시 확인하며 배우기 좋기</strong> 때문임. 세 가지를 탭으로 확인해 봄.</p><div class="note"><b>📌 참고</b>  파이썬은 주요 인기 지표에서 수년째 <b>1위권</b>이며, 최근 AI·데이터 붐으로 사용률이 급상승해 입문자에게 <b>가장 권장되는 첫 언어</b>가 됨. "가장 인기"가 "모든 일에 최고"란 뜻은 아니지만, <b>입문·데이터·AI·자동화</b>라는 우리 목적엔 거의 모든 면에서 최적임.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>파이썬은 세계에서 가장 인기 있고 가장 쉬운 언어임.</li>
+<li>인터프리터 언어라 적자마자 실행해 결과를 봄(즉시 피드백).</li>
+<li>이 즉시 확인이 학습과 데이터 탐색을 빠르게 함.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 세 가지 강점</span>
+<div class="wt-tabs" id="w2tabs">
+<button class="wttab on" data-k="rank">📊 가장 많이 쓰임</button>
+<button class="wttab" data-k="easy">🪶 쉬움</button>
+<button class="wttab" data-k="interp">⚡ 인터프리터</button>
+</div>
+<div class="wt-panel" id="w2panel"></div>
+</div></div></section>
+<!-- Section 3: data analysis + AI / vibe coding -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">0-5 · 0-6</div><h2>왜 파이썬 ② — 데이터 분석의 공용어, AI 시대의 중심</h2><p>파이썬을 배우는 가장 직접적인 이유 — <strong>데이터 분석의 사실상 표준 언어</strong>이며, <strong>바이브코딩·AI 시대의 중심</strong>이기 때문임. 데이터 도구가 모두 파이썬 위에 있고, AI도 파이썬을 가장 잘 다룸.</p><div class="note"><b>📌 바이브코딩 시대엔 더 중요함</b>  "AI가 코드를 짜 주는데 왜 배우나?" → AI 코드도 <b>옳은지 읽고 검증</b>할 줄 알아야 안심하고 씀(자동 운전 보조도 운전을 알아야 안전). AI는 파이썬을 가장 잘 짜고, 파이썬은 사람이 읽기 가장 쉬움. 가장 위험한 건 "AI가 짜 줬으니 그냥 쓰자"임 — 기초가 있어야 AI 코드를 읽고·의심하고·고칠 수 있음.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>파이썬은 데이터 분석의 표준 — 핵심 도구가 모두 그 위에 있음.</li>
+<li>바이브코딩 시대에도 코드를 읽고 검증할 능력은 필수임.</li>
+<li>AI는 파이썬을 가장 잘 짜고, 사람이 읽기도 가장 쉬움.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 파이썬이 쓰이는 곳</span>
+<p class="wdesc">파이썬을 중심으로 한 생태계. 각 도구를 눌러 무엇에 쓰는지 봄. 모두 파이썬 기초 위에서 돎.</p>
+<div class="ec-center"><span class="ec-py">🐍 파이썬 (기초 문법)</span></div>
+<div class="ec-grid" id="w3grid">
+<div class="ec-card on" data-k="pandas"><span class="em">📊</span><div class="nm">pandas</div></div>
+<div class="ec-card" data-k="numpy"><span class="em">🔢</span><div class="nm">numpy</div></div>
+<div class="ec-card" data-k="plot"><span class="em">📈</span><div class="nm">matplotlib</div></div>
+<div class="ec-card" data-k="ai"><span class="em">🤖</span><div class="nm">AI · 머신러닝</div></div>
+</div>
+<div class="ec-detail" id="w3detail"></div>
+</div></div></section>
+<!-- Section 4: libraries + venv -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">0-7</div><h2>왜 파이썬 ③ — 라이브러리와 가상환경: 거인의 어깨</h2><p>파이썬은 <strong>남이 만든 강력한 도구를 가져다 쓰는 생태계</strong>가 세계 최고임. 직접 다 만들 필요 없이 <strong>라이브러리</strong>를 불러 쓰고, 프로젝트마다 도구를 분리하는 <strong>가상환경</strong>으로 깔끔하게 관리함.</p><div class="note"><b>📌 참고</b>  지금은 "라이브러리 = 남이 만든 도구를 <code>import</code>로 가져다 씀", "가상환경 = 프로젝트별 전용 공구함" 정도만 알면 충분함. "이런 기능 직접 만들어야 하나?" 싶을 땐 먼저 검색해 봄 — 파이썬엔 이미 만들어진 라이브러리가 있을 확률이 매우 높음.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>라이브러리로 남이 만든 강력한 도구를 가져다 씀(거인의 어깨).</li>
+<li>가상환경으로 프로젝트별 도구를 깔끔히 분리·관리함.</li>
+<li>이 풍부한 생태계가 파이썬을 배우는 강력한 이유임.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 거인의 어깨</span>
+<div class="lv-toggle" id="w4tog">
+<button class="lvbtn on" data-k="lib">📚 라이브러리</button>
+<button class="lvbtn" data-k="venv">🧰 가상환경</button>
+</div>
+<div class="lv-panel" id="w4panel"></div>
+</div></div></section>
+<!-- Section 5: first code print -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">0-8 · 0-9 · 0-10</div><h2>첫 코드 — print</h2><p>이유를 충분히 새겼으니 인생 첫 코드를 적어 봄. 화면에 글자를 띄우는 명령은 <code>print</code>임. 괄호 <code>( )</code> 안에 내용을 넣고, 글자는 따옴표 <code>" "</code>로 감쌈. 이 강의 실습은 한 줄씩 실행하는 <strong>노트북</strong>으로 제공됨(인터프리터의 장점을 살린, 데이터 분석가가 쓰는 환경).</p><div class="note"><b>📌 참고</b>  따옴표를 빼먹거나 괄호를 안 닫으면 오류가 남. 오류는 <b>잘못이 아니라</b> 컴퓨터가 "이 부분을 못 알아듣겠어요"라고 알려 주는 안내임 — 입문 단계에서 오류는 친구. <code>#</code> 뒤에 적는 <b>주석</b>은 컴퓨터가 무시하는 사람용 메모로, 코드 설명이나 잠시 막아 두기에 씀.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li><code>print(...)</code>는 괄호 안 내용을 화면에 출력함.</li>
+<li>글자는 따옴표로 감싸고, 숫자는 그대로 씀.</li>
+<li>오류는 고칠 곳 안내, <code>#</code> 뒤는 사람용 메모(주석)임.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · print 플레이그라운드</span>
+<p class="wdesc">출력할 글자를 바꿔 보고, 따옴표를 켜고 꺼 보며 결과(또는 오류)가 어떻게 달라지는지 봄.</p>
+<div class="pp-quote" id="w5quote">
+<button class="pp-qbtn on" data-q="yes">따옴표 있음 " "</button>
+<button class="pp-qbtn" data-q="no">따옴표 없음 (오류!)</button>
+</div>
+<div class="pp-row">
+<code>print(</code><span id="w5q1"></span>
+<input class="pp-input" id="w5input" value="안녕하세요, 파이썬!"/>
+<span id="w5q2"></span><code>)</code>
+</div>
+<div class="term" id="w5out"></div>
+</div></div></section>
+</main>
+<footer>
+<div class="next-card">
+<div class="nl">NEXT · PART 1</div>
+<div class="nt">변수와 자료형</div>
+<p style="margin-top:8px;">데이터를 담는 상자 <strong>변수</strong>와, 숫자·글자·참거짓 같은 데이터의 종류 <strong>자료형</strong>을 배움. 값을 저장하고 다루는 진짜 프로그래밍이 시작되며, 데이터 분석 자동화의 첫 벽돌을 쌓음.</p>
+</div>
+<p style="margin-top:24px;">파이썬 기초 문법 커리큘럼 · Part 0 / 18 · 데이터 분석 자동화를 위한 기초</p>
+</footer>
+<script>
+const prog=document.getElementById('progress');
+addEventListener('scroll',()=>{const h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ===== W1: manual vs code ===== */
+const w1s=document.getElementById('w1slider');
+function renderW1(){
+  const n=+w1s.value;
+  document.getElementById('w1rep').textContent=n;
+  // manual: 30분 per repeat ; code: 60분 once(작성) + 0.1분 per run
+  const manual=n*30;                 // 분
+  const code=60+ n*0.1;              // 분 (작성 1시간 + 실행 거의 0)
+  const max=Math.max(manual,code,60);
+  document.getElementById('w1mfill').style.width=(manual/ (50*30) *100)+'%';
+  document.getElementById('w1cfill').style.width=(code/ (50*30) *100)+'%';
+  const fmt=m=> m>=60? (m/60).toFixed(m%60?1:0)+'시간' : Math.round(m)+'분';
+  document.getElementById('w1mlabel').textContent=fmt(manual);
+  document.getElementById('w1clabel').textContent='약 '+fmt(code);
+  document.getElementById('w1mfill').textContent= n>=20?fmt(manual):'';
+  document.getElementById('w1cfill').textContent= n>=20?'거의 그대로':'';
+}
+w1s.addEventListener('input',renderW1);renderW1();
+
+/* ===== W2: 3 tabs ===== */
+const w2={
+  rank:`<div style="font-size:12px;color:var(--sub);margin-bottom:10px;">주요 인기 지표 종합 (2026) — 파이썬이 1위권</div>
+    <div class="rk-row"><span class="rk-name">🐍 파이썬</span><div class="rk-track"><div class="rk-fill" style="width:0" data-w="96"></div></div><span class="rk-val">최상위</span></div>
+    <div class="rk-row"><span class="rk-name">자바스크립트</span><div class="rk-track"><div class="rk-fill dim" style="width:0" data-w="78"></div></div><span class="rk-val">상위</span></div>
+    <div class="rk-row"><span class="rk-name">자바</span><div class="rk-track"><div class="rk-fill dim" style="width:0" data-w="60"></div></div><span class="rk-val">상위</span></div>
+    <div class="rk-row"><span class="rk-name">C / C++</span><div class="rk-track"><div class="rk-fill dim" style="width:0" data-w="55"></div></div><span class="rk-val">상위</span></div>
+    <div class="lc-lines">AI·데이터 붐으로 최근 사용률이 급상승 — 입문 1순위 언어</div>`,
+  easy:`<div style="font-size:12px;color:var(--sub);margin-bottom:10px;">"안녕하세요" 출력 — 같은 일, 다른 길이</div>
+    <pre style="margin:0 0 8px;"><code><span class="c"># 🐍 파이썬 — 1줄, 사람 말에 가까움</span>
+<span class="k">print</span>(<span class="s">"안녕하세요"</span>)</code></pre>
+    <pre style="margin:0;"><code><span class="c">// ☕ 자바 — 같은 일에 5줄</span>
+<span class="k">public class</span> Main {
+  <span class="k">public static void</span> main(String[] a){
+    System.out.println(<span class="s">"안녕하세요"</span>);
+  }
+}</code></pre>
+    <div class="lc-lines">읽기 쉬운 문법 → 가르치기 쉬워 전 세계 대학의 입문 언어</div>`,
+  interp:`<div style="font-size:12px;color:var(--sub);margin-bottom:10px;">인터프리터 = 한 줄 쓰면 즉시 실행해 결과 확인</div>
+    <div class="rp-row"><code>가격 = 89000</code><span style="font-size:11px;color:var(--teal)">▸ 값 저장됨</span></div>
+    <div class="rp-row"><input class="rp-input" id="w2calc" value="가격 * 0.9"><button class="btn" id="w2run" style="padding:7px 12px;">실행</button></div>
+    <div class="term" id="w2out" style="min-height:30px;">▸ 위 식을 실행해 보세요 (할인가 계산)</div>
+    <div class="lc-lines">적자마자 결과 확인 → 데이터 탐색·학습에 최적 (주피터의 원리)</div>`
+};
+function renderW2(k){
+  document.getElementById('w2panel').innerHTML=w2[k];
+  if(k==='rank'){
+    setTimeout(()=>document.querySelectorAll('#w2panel .rk-fill').forEach(f=>f.style.width=f.dataset.w+'%'),50);
+  }
+  if(k==='interp'){
+    const run=()=>{
+      const v=document.getElementById('w2calc').value.trim();
+      const out=document.getElementById('w2out');
+      // 매우 단순한 평가: 가격=89000 기준 '가격 * 0.9' 류만 처리
+      try{
+        let expr=v.replace(/가격/g,'89000');
+        if(/^[-0-9+*/.() ]+$/.test(expr)){
+          out.innerHTML='<span class="prompt">▸ </span>'+eval(expr);
+        }else{
+          out.innerHTML='<span class="prompt">▸ </span>(숫자·연산자만 입력해 보세요. 예: 가격 * 0.9)';
+        }
+      }catch(e){out.innerHTML='<span class="err">▸ 식을 확인해 주세요</span>';}
+    };
+    document.getElementById('w2run').addEventListener('click',run);
+  }
+}
+document.querySelectorAll('#w2tabs .wttab').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#w2tabs .wttab').forEach(x=>x.classList.remove('on'));b.classList.add('on');renderW2(b.dataset.k);}));
+renderW2('rank');
+
+/* ===== W3: ecosystem ===== */
+const w3={
+  pandas:'<b>📊 pandas</b> — 표(엑셀 같은) 데이터를 자유자재로 다루는 데이터 분석의 핵심 도구. 이 강의의 리스트·딕셔너리가 그대로 이어짐.',
+  numpy:'<b>🔢 numpy</b> — 대량의 숫자를 매우 빠르게 계산. 파이썬이 느리다는 약점을 내부적으로 메워 줌.',
+  plot:'<b>📈 matplotlib</b> — 데이터를 그래프·차트로 시각화. 분석 결과를 한눈에 보여 줌.',
+  ai:'<b>🤖 AI · 머신러닝</b> — 예측·분류 모델, 챗봇, AI 에이전트가 대부분 파이썬으로 돎. AI를 쓰는 자동화도 파이썬이 토대.'
+};
+function renderW3(k){
+  document.querySelectorAll('#w3grid .ec-card').forEach(c=>c.classList.toggle('on',c.dataset.k===k));
+  document.getElementById('w3detail').innerHTML=w3[k];
+}
+document.querySelectorAll('#w3grid .ec-card').forEach(c=>c.addEventListener('click',()=>renderW3(c.dataset.k)));
+renderW3('pandas');
+
+/* ===== W4: library / venv ===== */
+const w4={
+  lib:`<div class="lv-shelf">
+      <div class="lv-book">pandas<span class="s">데이터 표</span></div>
+      <div class="lv-book">numpy<span class="s">수치 계산</span></div>
+      <div class="lv-book">matplotlib<span class="s">그래프</span></div>
+      <div class="lv-book">requests<span class="s">웹 요청</span></div>
+      <div class="lv-book">openpyxl<span class="s">엑셀 다루기</span></div>
+      <div class="lv-book">…수십만 개<span class="s">거의 모든 기능</span></div>
+    </div>
+    <pre style="margin:14px 0 0;"><code><span class="k">import</span> pandas <span class="k">as</span> pd          <span class="c"># 남이 만든 도구를 불러옴</span>
+df = pd.read_csv(<span class="s">"매출.csv"</span>)  <span class="c"># 단 한 줄로 엑셀 데이터 다루기</span></code></pre>
+    <div class="lv-cap">레고 블록처럼 가져다 조립 — 거인의 어깨 위에 올라섬</div>`,
+  venv:`<div class="lv-box">
+      <div class="lv-env"><div class="t">📦 A 프로젝트</div><span class="tool">도구 v1.0</span><span class="tool">분석 도구</span></div>
+      <div class="lv-env"><div class="t">📦 B 프로젝트</div><span class="tool">도구 v2.0</span><span class="tool">웹 도구</span></div>
+    </div>
+    <div class="lv-cap">프로젝트마다 전용 공구함(가상환경)으로 도구·버전을 분리 →<br>서로 충돌 없이 공존. 본격 프로젝트는 처음부터 가상환경으로 시작.</div>`
+};
+function renderW4(k){document.getElementById('w4panel').innerHTML=w4[k];}
+document.querySelectorAll('#w4tog .lvbtn').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#w4tog .lvbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');renderW4(b.dataset.k);}));
+renderW4('lib');
+
+/* ===== W5: print playground ===== */
+let w5quote='yes';
+function renderW5(){
+  const txt=document.getElementById('w5input').value;
+  const q=document.getElementById('w5q1'),q2=document.getElementById('w5q2'),out=document.getElementById('w5out');
+  if(w5quote==='yes'){
+    q.innerHTML='<code>"</code>';q2.innerHTML='<code>"</code>';
+    out.innerHTML='<span class="prompt">출력 ▸ </span>'+(txt||'(빈 문자열)');
+  }else{
+    q.innerHTML='';q2.innerHTML='';
+    out.innerHTML='<span class="prompt">출력 ▸ </span><span class="err">NameError: 이름이 정의되지 않았습니다<br>→ 따옴표가 없어 컴퓨터가 글자를 이름으로 착각함. 따옴표를 켜보세요!</span>';
+  }
+}
+document.querySelectorAll('#w5quote .pp-qbtn').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#w5quote .pp-qbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');w5quote=b.dataset.q;renderW5();}));
+document.getElementById('w5input').addEventListener('input',renderW5);
+renderW5();
+</script>
+</body>
+</html>

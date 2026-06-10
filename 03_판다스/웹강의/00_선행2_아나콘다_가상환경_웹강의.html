@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>선행 · 아나콘다 · 의존성 · 가상환경</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:880px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(47,107,94,.05),transparent 40%),radial-gradient(circle at 90% 100%,rgba(194,65,12,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--teal);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:84px 22px 36px;}
+  .eyebrow{color:var(--teal);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:62ch;}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:#d8e8e3;color:#225349;}
+  .chip.o{background:var(--accent-soft);color:#8a3408;}
+  section{padding:54px 0 30px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--teal);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 18px;line-height:1.3;}
+  h3{font-family:var(--serif);font-weight:700;font-size:18px;margin:24px 0 10px;color:var(--ink);}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  .teal{color:var(--teal);font-weight:700;}
+  code{font-family:'Gowun Dodum',monospace;background:#efe7d8;color:#8a3408;padding:1.5px 7px;border-radius:6px;font-size:.92em;}
+  pre{background:#2b2723;color:#f4efe6;border-radius:12px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.7;margin:16px 0;white-space:pre;}
+  pre code{background:none;color:inherit;padding:0;}
+  pre .k{color:#e0935f;}pre .s{color:#9ec79a;}pre .c{color:#8b8175;font-style:italic;}pre .n{color:#9ec7d8;}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15.5px;color:var(--sub);}
+  .note b{color:var(--teal);}
+  .note.warn{border-left-color:var(--accent);}.note.warn b{color:var(--accent);}
+  .summary{background:#eaf0ec;border-radius:12px;padding:18px 20px;margin:22px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--teal);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--teal);padding:4px 11px;border-radius:999px;margin-bottom:16px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+  .segbtn{border:1.5px solid var(--line);background:#fff;border-radius:9px;padding:8px 14px;cursor:pointer;font-family:var(--sans);font-weight:700;font-size:13px;color:var(--sub);transition:.15s;}
+  .segbtn.on{border-color:var(--teal);background:var(--teal);color:#fff;}
+  .stage{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;}
+  .btn{border:none;background:var(--teal);color:#fff;font-family:var(--sans);font-weight:700;font-size:13px;padding:9px 14px;border-radius:9px;cursor:pointer;}
+  .btn.ghost{background:#fff;border:1.5px solid var(--line);color:var(--sub);}
+
+  /* 설치 스텝 */
+  .steps{display:flex;flex-direction:column;gap:10px;margin:8px 0;}
+  .step{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px;}
+  .step .num{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--teal);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;}
+  .step .stx{font-size:14.5px;line-height:1.6;}
+  .step .stx b{color:var(--accent);}
+
+  /* 의존성/환경 박스 */
+  .envwrap{display:flex;gap:14px;flex-wrap:wrap;}
+  .envbox{flex:1;min-width:160px;border:2px solid var(--line);border-radius:12px;padding:14px;background:#fff;}
+  .envbox .et{font-weight:700;font-size:13px;margin-bottom:8px;font-family:monospace;color:var(--ink);}
+  .envbox .pj{font-size:13px;margin:4px 0;color:var(--sub);}
+  .envbox .npv{font-family:monospace;font-weight:700;}
+  .envbox.bad{border-color:var(--accent);background:#fbe9e1;}
+  .envbox.good{border-color:var(--teal);background:#eef5f3;}
+  .verdict{margin-top:14px;font-weight:700;font-size:15.5px;text-align:center;}
+  .verdict.bad{color:var(--accent);}.verdict.good{color:var(--teal);}
+
+  /* 터미널 시뮬 */
+  .term2{background:#11100e;border-radius:12px;padding:14px 16px;font-family:monospace;font-size:13.5px;line-height:1.8;color:#cfc7b8;min-height:150px;white-space:pre-wrap;overflow-x:auto;}
+  .term2 .pr{color:#9ec79a;}
+  .term2 .cmd{color:#fff;font-weight:700;}
+  .term2 .ac{color:#e0935f;}
+  .term2 .dimt{color:#7c736322;color:#8b8175;}
+  .tbtns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#eef5f3);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;text-decoration:none;color:inherit;display:block;transition:.18s;}
+  .next-card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(80,60,30,.1);}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .crumb{display:inline-block;margin-bottom:8px;font-size:13px;color:var(--sub);text-decoration:none;}
+  .crumb:hover{color:var(--accent);}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<header class="hero">
+  <a class="crumb" href="../00_데이터분석_판다스_목차.html">← 전체 목차</a> &nbsp;·&nbsp; <a class="crumb" href="00_선행1_모듈과_라이브러리_웹강의.html">선행 ① 모듈·라이브러리</a>
+  <div class="eyebrow">데이터 분석 · 판다스 · 선행 학습 ②</div>
+  <h1>아나콘다 · 의존성 · 가상환경<br><span style="font-size:.58em;color:var(--sub);font-weight:400;">환경을 갖추고 깔끔하게 관리하기 · Windows</span></h1>
+  <p class="lead">라이브러리를 마구 깔다 보면 <strong>"A는 최신 버전이 필요한데 B는 옛 버전이 필요"</strong>한 충돌이 생김. <span class="teal">아나콘다</span>는 분석에 필요한 도구를 한 번에 깔아주고, <strong>가상환경</strong>으로 프로젝트마다 깨끗하게 분리해 줌.</p>
+  <div class="hero-meta">
+    <span class="chip">⚙️ 선행 학습</span>
+    <span class="chip o">Anaconda · conda · venv</span>
+    <span class="chip">예상 30분</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- S1 왜 아나콘다 -->
+  <section class="reveal">
+    <div class="sec-no">01</div>
+    <h2>왜 아나콘다인가</h2>
+    <p>파이썬만 설치하면 NumPy·pandas·Jupyter 등을 일일이 따로 깔아야 함. <strong>아나콘다(Anaconda)</strong>는 설치 한 번으로 <strong>파이썬 + 자주 쓰는 분석 라이브러리 수백 개 + Jupyter Notebook</strong>까지 포함된 배포판임.</p>
+    <p>핵심 도구는 <code>conda</code>임.</p>
+    <div class="note"><b>🧰 conda의 두 역할</b> &nbsp;① <b>패키지 관리자</b> — 라이브러리 설치·업그레이드·삭제(pip과 비슷). &nbsp;② <b>환경 관리자</b> — 가상환경 생성·전환(pip엔 없는 기능). 이 두 번째가 핵심임.</div>
+    <div class="note"><b>📌 참고</b> &nbsp;용량이 부담되면 파이썬+conda만 든 가벼운 <b>Miniconda</b>도 있음. 본 강의는 아나콘다 기준임.</div>
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>아나콘다 = 파이썬 + 분석 라이브러리 + Jupyter + conda.</li>
+      <li>conda는 패키지 관리 + 환경 관리를 모두 함.</li>
+      <li>데이터 분석 입문의 표준 출발점.</li>
+    </ol></div>
+  </section>
+
+  <!-- S2 설치 -->
+  <section class="reveal">
+    <div class="sec-no">02</div>
+    <h2>설치하기 (Windows)</h2>
+    <p><strong>anaconda.com</strong>에서 Windows 설치 파일을 받아 순서대로 진행함.</p>
+    <div class="steps">
+      <div class="step"><span class="num">1</span><span class="stx"><b>anaconda.com</b> 접속 → Download에서 <b>Windows 64-bit</b> 설치 파일(<code>.exe</code>) 내려받기.</span></div>
+      <div class="step"><span class="num">2</span><span class="stx">받은 <code>.exe</code> 실행 → <b>Next</b> → <b>I Agree</b>.</span></div>
+      <div class="step"><span class="num">3</span><span class="stx">설치 대상: <b>Just Me (recommended)</b> 선택.</span></div>
+      <div class="step"><span class="num">4</span><span class="stx">설치 경로: 기본값 유지(경로에 <b>한글·공백 없는</b> 곳 권장).</span></div>
+      <div class="step"><span class="num">5</span><span class="stx">옵션: <b>"Add to PATH"는 체크 안 함</b>(권장, 대신 Anaconda Prompt 사용) · "Register as default Python"은 체크.</span></div>
+      <div class="step"><span class="num">6</span><span class="stx"><b>Install</b> → 완료. 시작 메뉴에 <b>Anaconda Prompt</b>·<b>Anaconda Navigator</b>가 생김.</span></div>
+    </div>
+
+    <h3>설치 확인</h3>
+    <p>시작 메뉴에서 <strong>Anaconda Prompt</strong>(일반 cmd 아님)를 열고 입력함.</p>
+    <pre><code>conda --version      <span class="c"># conda 24.x.x 처럼 나오면 성공</span>
+python --version     <span class="c"># Python 3.x.x</span></code></pre>
+    <div class="note warn"><b>⚠️ 주의</b> &nbsp;명령은 일반 명령 프롬프트가 아니라 <b>Anaconda Prompt</b>에서 실행해야 conda가 인식됨. GUI를 선호하면 <b>Anaconda Navigator</b>로 클릭만으로 환경·Jupyter를 관리할 수 있음.</div>
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>anaconda.com에서 Windows 설치 파일 받아 실행.</li>
+      <li>"Just Me" + PATH 추가는 끄기(권장), Anaconda Prompt 사용.</li>
+      <li><code>conda --version</code>으로 설치 확인.</li>
+    </ol></div>
+  </section>
+
+  <!-- S3 의존성 -->
+  <section class="reveal">
+    <div class="sec-no">03</div>
+    <h2>의존성(Dependency)이란</h2>
+    <p>라이브러리는 <strong>다른 라이브러리에 기대어</strong> 동작함. 이 기댐의 사슬이 의존성임. 예를 들어 <strong>pandas는 내부적으로 NumPy를 사용</strong>하므로 pandas는 NumPy에 "의존"함. 게다가 보통 <strong>특정 버전 범위</strong>를 요구함.</p>
+    <p>버튼으로 "한 곳에 다 깔기"와 "환경 분리"를 비교해 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 의존성 충돌 vs 분리</span>
+      <div class="seg" id="w1tab">
+        <button class="segbtn on" data-k="one">한 환경에 전부</button>
+        <button class="segbtn" data-k="split">가상환경 분리</button>
+      </div>
+      <div class="stage">
+        <div id="w1vis"></div>
+        <div class="verdict" id="w1verdict"></div>
+      </div>
+    </div>
+
+    <div class="note"><b>📌 의존성 지옥</b> &nbsp;프로젝트 A는 <code>NumPy 1.26</code>이, 프로젝트 B는 <code>NumPy 1.21</code>만 필요할 때, 한 공간엔 NumPy가 하나뿐이라 <b>둘 중 하나가 깨짐</b>. 그래서 프로젝트마다 독립된 공간(가상환경)이 필요함.</div>
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>의존성 = 라이브러리가 다른 라이브러리·특정 버전에 기댐.</li>
+      <li>pandas는 NumPy에 의존.</li>
+      <li>요구 버전이 달라 한 공간에 다 깔면 충돌.</li>
+    </ol></div>
+  </section>
+
+  <!-- S4 가상환경 왜 -->
+  <section class="reveal">
+    <div class="sec-no">04</div>
+    <h2>가상환경은 왜 필요한가</h2>
+    <p>가상환경은 <strong>프로젝트별로 분리된 독립 파이썬 공간</strong>임. 프로젝트마다 <strong>각자의 작업실</strong>을 주는 셈이죠. A의 도구를 바꿔도 B의 작업실엔 영향이 없음.</p>
+    <p>한 컴퓨터 안에서 환경마다 <strong>다른 파이썬 버전 / 다른 라이브러리 버전</strong>을 둘 수 있음.</p>
+    <div class="note"><b>🧱 장점</b> &nbsp;① <b>충돌 방지</b>(프로젝트별 버전 독립) &nbsp;② <b>재현성</b>(같은 환경을 그대로 전달) &nbsp;③ <b>깔끔함</b>(기본 환경 base를 더럽히지 않음). 습관: <b>"프로젝트 하나 = 가상환경 하나"</b>.</div>
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>가상환경 = 프로젝트별 독립 파이썬 공간.</li>
+      <li>환경마다 파이썬·라이브러리 버전을 따로 둘 수 있어 충돌 방지.</li>
+      <li>프로젝트당 하나씩 만드는 게 권장.</li>
+    </ol></div>
+  </section>
+
+  <!-- S5 conda 실습 -->
+  <section class="reveal">
+    <div class="sec-no">05</div>
+    <h2>conda 가상환경 실습</h2>
+    <p>핵심 흐름은 <strong>create → activate → install → (작업) → deactivate</strong>임. 아래 버튼을 차례로 눌러 Anaconda Prompt에서 무슨 일이 일어나는지 따라가 보세요(프롬프트 맨 앞의 <code>(환경이름)</code>에 주목).</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · conda 터미널 시뮬레이터</span>
+      <div class="tbtns">
+        <button class="btn" data-cmd="create">conda create</button>
+        <button class="btn" data-cmd="activate">conda activate</button>
+        <button class="btn" data-cmd="install">conda install</button>
+        <button class="btn" data-cmd="list">conda list</button>
+        <button class="btn" data-cmd="deactivate">conda deactivate</button>
+        <button class="btn ghost" data-cmd="reset">초기화</button>
+      </div>
+      <div class="term2" id="term"></div>
+    </div>
+
+    <h3>전체 명령 정리</h3>
+    <pre><code>conda create -n myenv python=3.11   <span class="c"># 1) 환경 만들기</span>
+conda activate myenv                <span class="c"># 2) 활성화 (base)→(myenv)</span>
+conda install numpy pandas jupyter  <span class="c"># 3) 이 환경에만 설치</span>
+conda list                          <span class="c"># 4) 설치 목록</span>
+conda env list                      <span class="c"># 환경 목록(현재 *표시)</span>
+conda deactivate                    <span class="c"># 5) base로 복귀</span>
+conda env export > environment.yml  <span class="c"># 환경 저장(공유·재현)</span>
+conda remove -n myenv --all         <span class="c"># 환경 통째로 삭제</span></code></pre>
+
+    <div class="note warn"><b>⚠️ 활성화 확인</b> &nbsp;<code>activate</code>를 안 하면 <code>(base)</code>에 깔림. 프롬프트 맨 앞의 <code>(환경이름)</code>을 항상 확인하세요. <code>environment.yml</code>로 내보내면 다른 PC에서 <code>conda env create -f environment.yml</code>로 똑같이 복원됨.</div>
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>conda create -n 이름 python=버전</code> → <code>conda activate 이름</code>.</li>
+      <li>활성화 후 <code>conda install</code>(또는 pip)로 그 환경에만 설치.</li>
+      <li><code>env export</code>로 저장·공유, <code>remove --all</code>로 삭제.</li>
+    </ol></div>
+  </section>
+
+  <!-- S6 Jupyter -->
+  <section class="reveal">
+    <div class="sec-no">06</div>
+    <h2>Jupyter Notebook 연결</h2>
+    <p>만든 가상환경에서 Jupyter를 실행하면 그 환경의 라이브러리를 그대로 사용함.</p>
+    <pre><code>conda activate myenv
+conda install jupyter ipykernel
+python -m ipykernel install --user --name myenv --display-name <span class="s">"Python (myenv)"</span>
+jupyter notebook                    <span class="c"># 브라우저로 실행</span></code></pre>
+    <div class="note"><b>📌 정리</b> &nbsp;주피터 안에서 <b>Kernel → Change kernel → "Python (myenv)"</b>로 환경을 선택함. 또는 <b>Anaconda Navigator</b>에서 환경을 고른 뒤 Jupyter를 Launch 하면 됨.</div>
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>환경 활성화 후 <code>jupyter notebook</code> 실행.</li>
+      <li><code>ipykernel</code>로 환경을 주피터 커널로 등록.</li>
+      <li>Navigator로 클릭만으로도 실행 가능.</li>
+    </ol></div>
+  </section>
+
+  <!-- S7 마무리 -->
+  <section class="reveal">
+    <div class="sec-no">07</div>
+    <h2>마무리 — 이제 NumPy/pandas로</h2>
+    <p>아나콘다로 도구를 한 번에 깔고 → 의존성 충돌은 → 가상환경으로 분리해 해결하고 → 환경 안에서 Jupyter로 분석을 시작함. <strong>환경 준비가 끝남.</strong> 다음은 판다스의 엔진 <span class="teal">NumPy</span>부터임.</p>
+  </section>
+
+</main>
+
+<footer>
+  <a class="next-card" href="00_NumPy_웹강의.html">
+    <div class="nl">NEXT · 선행 ③</div>
+    <div class="nt">NumPy 기초 — 배열과 연산</div>
+    <p style="margin-top:8px;">환경이 준비됐으니 이제 판다스의 엔진으로 들어감. 리스트보다 빠른 <strong>배열(ndarray)</strong>, 벡터 연산, 브로드캐스팅, 축(axis) 집계를 익힘.</p>
+  </a>
+  <p style="margin-top:24px;">데이터 분석 프로세스와 판다스 활용하기 · 선행 ② 아나콘다·가상환경</p>
+
+  <p style="margin-top:14px;"><a class="crumb" href="../00_데이터분석_판다스_목차.html">↑ 전체 목차로 돌아가기</a></p>
+</footer>
+
+<script>
+const prog=document.getElementById('progress');
+addEventListener('scroll',()=>{const h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ===== W1: 의존성 충돌 vs 분리 ===== */
+(function(){
+  const vis=document.getElementById('w1vis'), verdict=document.getElementById('w1verdict');
+  function render(k){
+    if(k==='one'){
+      vis.innerHTML='<div class="envbox bad"><div class="et">(base) — 한 환경에 전부</div>'+
+        '<div class="pj">프로젝트 A → <span class="npv">NumPy 1.26</span> 필요</div>'+
+        '<div class="pj">프로젝트 B → <span class="npv">NumPy 1.21</span> 필요</div>'+
+        '<div class="pj" style="margin-top:8px;">설치된 NumPy: <span class="npv" style="color:var(--accent);">1.26 (하나뿐)</span></div></div>';
+      verdict.className='verdict bad';
+      verdict.innerHTML='❌ 충돌 — 프로젝트 B가 요구하는 1.21이 없어 B가 깨짐';
+    }else{
+      vis.innerHTML='<div class="envwrap">'+
+        '<div class="envbox good"><div class="et">(projA)</div><div class="pj">프로젝트 A</div><div class="pj">NumPy <span class="npv">1.26</span> ✓</div></div>'+
+        '<div class="envbox good"><div class="et">(projB)</div><div class="pj">프로젝트 B</div><div class="pj">NumPy <span class="npv">1.21</span> ✓</div></div></div>';
+      verdict.className='verdict good';
+      verdict.innerHTML='✅ 안전 — 환경이 분리돼 각자 필요한 버전을 그대로 사용';
+    }
+  }
+  document.querySelectorAll('#w1tab .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w1tab .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(b.dataset.k);}));
+  render('one');
+})();
+
+/* ===== W2: conda 터미널 시뮬 ===== */
+(function(){
+  const term=document.getElementById('term');
+  let env='base';       // 현재 활성 환경
+  let created=false;     // myenv 생성 여부
+  let log=[];
+  function prompt(){return '('+env+') C:\\Users\\me>';}
+  function push(cmd, outLines){
+    log.push('<span class="pr">'+prompt()+'</span> <span class="cmd">'+cmd+'</span>');
+    (outLines||[]).forEach(l=>log.push(l));
+  }
+  function render(){
+    if(log.length===0){term.innerHTML='<span class="pr">('+env+') C:\\Users\\me></span> <span class="dimt">_  ← 버튼을 눌러 명령을 실행해 보세요</span>';return;}
+    term.innerHTML=log.join('\n')+'\n<span class="pr">'+prompt()+'</span> <span class="dimt">_</span>';
+    term.scrollTop=term.scrollHeight;
+  }
+  const actions={
+    create(){
+      if(created){push('conda create -n myenv python=3.11',['<span class="dimt"># 이미 myenv가 있음.</span>']);return;}
+      created=true;
+      push('conda create -n myenv python=3.11',[
+        'Collecting package metadata ... done',
+        'Solving environment ... done',
+        '<span class="ac"># myenv 환경 생성됨 (python 3.11)</span>',
+        '<span class="dimt"># To activate: conda activate myenv</span>']);
+    },
+    activate(){
+      if(!created){push('conda activate myenv',['<span class="ac">EnvironmentNameNotFound</span>: \'myenv\' 가 없음. 먼저 create 하세요.']);return;}
+      env='myenv';
+      push('conda activate myenv',['<span class="dimt"># 프롬프트가 (base) → (myenv) 로 바뀜</span>']);
+    },
+    install(){
+      const where = env==='myenv' ? 'myenv' : 'base';
+      const warn = env==='myenv' ? '' : ' <span class="ac">(주의: base에 설치됨 — activate 먼저!)</span>';
+      push('conda install numpy pandas jupyter',[
+        'Solving environment ... done',
+        'Downloading and Extracting Packages ...',
+        '<span class="ac"># numpy, pandas, jupyter 설치 완료 → '+where+'</span>'+warn]);
+    },
+    list(){
+      push('conda list',[
+        '<span class="dimt"># Name        Version</span>',
+        'numpy         1.26.4',
+        'pandas        2.2.2',
+        'python        '+(env==='myenv'?'3.11.x':'3.12.x')]);
+    },
+    deactivate(){
+      if(env==='base'){push('conda deactivate',['<span class="dimt"># 이미 base 임.</span>']);return;}
+      env='base';
+      push('conda deactivate',['<span class="dimt"># (myenv) → (base) 로 복귀</span>']);
+    },
+    reset(){env='base';created=false;log=[];}
+  };
+  document.querySelectorAll('.tbtns .btn').forEach(b=>b.addEventListener('click',()=>{
+    actions[b.dataset.cmd]();render();}));
+  render();
+})();
+</script>
+</body>
+</html>

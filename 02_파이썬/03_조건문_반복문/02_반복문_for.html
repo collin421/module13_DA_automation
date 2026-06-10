@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Part 10 · 반복문 (for)</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&amp;family=Gowun+Dodum&amp;display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:760px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:88px 22px 40px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:62ch;}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:76px 0 46px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 20px;line-height:1.3;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  code{font-family:'Gowun Dodum',monospace;background:#efe7d8;color:#8a3408;padding:1.5px 7px;border-radius:6px;font-size:.92em;}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15.5px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:22px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:16px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;color:#9ec79a;border-radius:10px;padding:13px 16px;font-family:monospace;font-size:14px;min-height:42px;white-space:pre-wrap;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}
+  .btn{border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:13px;padding:9px 15px;border-radius:9px;cursor:pointer;}
+  .btn.ghost{background:#fdfaf4;border:1.5px solid var(--line);color:var(--sub);}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+  .seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:monospace;transition:.15s;color:var(--ink);}
+  .seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+
+  /* belt items */
+  .belt{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:12px 0;}
+  .belt-item{border:1.5px solid var(--line);border-radius:9px;padding:9px 13px;font-family:monospace;font-size:13px;background:#fff;transition:.25s;position:relative;}
+  .belt-item.cur{border-color:var(--accent);background:var(--accent);color:#fff;transform:translateY(-4px);box-shadow:0 6px 14px rgba(194,65,12,.25);}
+  .belt-item.done{opacity:.4;}
+  .belt-item.pass{border-color:var(--teal);background:#d8e8e3;color:#225349;}
+  .belt-item.fail{opacity:.3;}
+  .var-tag{text-align:center;font-family:monospace;font-size:14px;margin:8px 0;color:var(--sub);}
+  .var-tag b{color:var(--accent);}
+
+  .jar{text-align:center;margin:12px 0;}
+  .jar-box{display:inline-block;border:3px solid var(--gold);border-radius:0 0 14px 14px;border-top:none;background:#fbf3e6;padding:12px 28px;}
+  .jar-lbl{font-family:monospace;font-size:11px;color:var(--gold);font-weight:700;}
+  .jar-val{font-family:monospace;font-size:24px;font-weight:700;}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}}
+</style>
+<style id="wide16x9">
+/* ===== 16:9 와이드 반응형 오버라이드 ===== */
+:root{--maxw:1320px;}
+header.hero{text-align:center;padding-top:70px;}
+header.hero .lead{margin-left:auto;margin-right:auto;}
+header.hero .hero-meta{justify-content:center;}
+main.wrap section.two-col .col-text>:first-child{margin-top:0;}
+main.wrap section.two-col .col-text .summary{margin-bottom:0;}
+@media(min-width:980px){
+  main.wrap section.two-col{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.06fr);
+    gap:46px;align-items:start;
+  }
+  main.wrap section.two-col .col-widget{position:sticky;top:22px;}
+  main.wrap section.two-col .col-text{padding-top:2px;}
+}
+@media(max-width:979px){
+  main.wrap section.two-col .col-widget{margin-top:6px;}
+}
+</style></head>
+<body>
+<div id="progress"></div>
+<header class="hero">
+<div class="eyebrow">파이썬 기초 문법 · Part 10 · 흐름 제어</div>
+<h1>반복문 (for)</h1>
+<p class="lead">자동화의 심장. <code>for</code>는 "리스트의 모든 값을 하나씩 꺼내" 같은 처리를 <strong>자동으로 되풀이</strong>함. 조건문(Part 9)과 만나면, Part 8에서 손으로 하던 조회·집계·정렬·필터가 <strong>데이터가 몇 개든 한 번에</strong> 처리됨 — 데이터 분석 자동화의 본질.</p>
+<div class="hero-meta">
+<span class="chip">🟠 흐름 제어 · 10/18</span>
+<span class="chip t">for · range · 누적</span>
+<span class="chip t">예상 35분</span>
+</div>
+</header>
+<main class="wrap">
+<!-- 1 for -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">10-1</div><h2>for — 하나씩 꺼내 반복</h2><p><code>for 변수 in 묶음:</code>은 묶음(iterable)에서 값을 <strong>하나씩 꺼내 변수에 담고</strong> 들여쓴 코드를 실행함 — 더 꺼낼 값이 없을 때까지. 컨베이어 벨트처럼 값이 하나씩 옴.</p><div class="note"><b>📌 참고</b>  리스트·문자열·딕셔너리 등 "반복 가능한(iterable)" 것이면 모두 같은 방식으로 순회됨. Part 8에서 <code>목록[0]</code>,<code>[1]</code>… 손으로 쓰던 걸 <code>for 상품 in 상품목록:</code> 한 줄이 대신함.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li><code>for 변수 in 묶음:</code>은 값을 하나씩 꺼내 반복.</li>
+<li>리스트·문자열·딕셔너리 등 iterable이면 순회 가능.</li>
+<li>손으로 하나씩 쓰던 것을 한 줄로 자동화함.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 컨베이어 벨트 순회</span>
+<p class="wdesc">"한 단계씩"을 눌러, for가 값을 하나씩 꺼내 변수(상품)에 담는 과정을 봄.</p>
+<div class="belt" id="w1belt"></div>
+<div class="var-tag" id="w1var">상품 = <b>?</b></div>
+<div style="text-align:center;">
+<button class="btn" id="w1step">▶ 한 단계씩</button>
+<button class="btn ghost" id="w1reset">↻</button>
+</div>
+<div class="out" id="w1out" style="margin-top:10px;"></div>
+</div></div></section>
+<!-- 2 range -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">10-2</div><h2>range — 숫자 범위로 반복</h2><p><code>range(n)</code>은 0부터 n−1까지 숫자를 내어 줌(<strong>끝 불포함</strong> — 슬라이싱과 같은 약속). 횟수 반복이나 연속 숫자가 필요할 때 씀.</p><div class="note"><b>📌 참고</b>  <code>range(3)</code>은 <b>3개</b>(0,1,2) — 끝 불포함. 반복 변수를 안 쓰면 관례로 <code>_</code>(밑줄). 값이 필요하면 <code>for 값 in 리스트:</code>, 위치가 필요하면 <code>range(len(...))</code>.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li><code>range(n)</code>은 0~n−1 숫자를 내어 줌(끝 불포함).</li>
+<li><code>range(시작,끝,간격)</code>으로 범위·간격 조절.</li>
+<li>횟수 반복에 씀, 값만 필요하면 직접 순회가 깔끔.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · range 실험</span>
+<p class="wdesc">시작·끝·간격을 바꿔, range가 어떤 숫자들을 내어 주는지 봄.</p>
+<div class="seg" id="w2form">
+<button class="on" data-k="a">range(5)</button>
+<button data-k="b">range(1, 6)</button>
+<button data-k="c">range(0, 10, 2)</button>
+</div>
+<div class="belt" id="w2belt"></div>
+<div class="out" id="w2out"></div>
+</div></div></section>
+<!-- 3 누적 -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">10-3</div><h2>누적과 집계</h2><p>빈 그릇(<code>0</code> 또는 <code>[]</code>)에서 시작해 반복하며 <code>+=</code>/<code>.append()</code>로 쌓음. Part 8에서 값을 일일이 꺼내 모으던 걸 <code>for</code>가 자동으로 해 줌.</p><div class="note"><b>📌 참고</b>  누적 변수는 반복 <b>밖에서</b> 초기화(<code>총합=0</code>), 반복 <b>안에서</b> 채움 — 안에서 초기화하면 매번 리셋되는 실수가 흔함. 단순 합계는 <code>sum()</code>이 간단하지만, 조건부 합계·가공 모으기엔 누적 패턴이 빛남.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>누적은 빈 그릇(0/[])에서 시작해 채우는 패턴.</li>
+<li>합계는 <code>+=</code>, 모으기는 <code>.append()</code>.</li>
+<li>조건부 집계·가공 모으기에 강력함.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 합계 누적</span>
+<p class="wdesc">"한 단계씩"을 눌러, 가격을 하나씩 더해 총합이 쌓이는 걸 봄.</p>
+<div class="belt" id="w3belt"></div>
+<div class="jar"><div class="jar-box"><div class="jar-lbl">총합 +=</div><div class="jar-val" id="w3jar">0</div></div></div>
+<div style="text-align:center;">
+<button class="btn" id="w3step">▶ 한 단계씩</button>
+<button class="btn ghost" id="w3reset">↻</button>
+</div>
+<div class="out" id="w3out" style="margin-top:10px;"></div>
+</div></div></section>
+<!-- 4 for+if -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">10-4</div><h2>for + if — 필터 자동화</h2><p>반복문 안에 조건문을 넣어 <strong>각 값을 검사해 맞는 것만</strong> 처리함. Part 8에서 손으로 하던 필터가 자동화됨 — 데이터가 몇 개든 한 번에.</p><div class="note"><b>📌 참고</b>  Part 9의 <b>단건 판정</b>을 <code>for</code>로 감싸면 <b>전체에 자동 적용</b>됨 — "한 건 처리 규칙(if) + 되풀이(for) = 전체 자동화". 상품이 4개든 4만 개든 코드는 그대로.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li><code>for</code> + <code>if</code>로 각 값을 검사해 맞는 것만 처리.</li>
+<li>조건 통과한 것만 <code>append</code>로 모으면 필터.</li>
+<li>단건 판정 + 반복 = 전체 데이터 자동 처리.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 재고 있는 상품만 (필터)</span>
+<p class="wdesc">"한 단계씩"을 눌러, 각 상품의 재고를 검사해 통과(초록)/탈락(흐림)을 봄.</p>
+<div class="belt" id="w4belt"></div>
+<div style="text-align:center;">
+<button class="btn" id="w4step">▶ 한 단계씩</button>
+<button class="btn ghost" id="w4reset">↻</button>
+</div>
+<div class="out" id="w4out" style="margin-top:10px;"></div>
+</div></div></section>
+<!-- 5 dict -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">10-5</div><h2>딕셔너리 순회</h2><p>딕셔너리도 <code>for</code>로 순회. 그냥 돌리면 <strong>키</strong>가 나오고, 값은 <code>.values()</code>, 키-값 짝은 <code>.items()</code> + 언패킹(Part 6·7이 결합).</p><div class="note"><b>📌 참고</b>  딕셔너리를 그냥 <code>for x in 딕트:</code>로 돌리면 <b>키</b>가 나옴(값 아님 — 주의). <code>for 키, 값 in 딕트.items():</code>가 딕셔너리 처리의 가장 흔한 패턴. 순회+조건+누적이면 데이터를 자유롭게 분석함.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>딕셔너리를 <code>for</code>로 돌리면 키가 나옴.</li>
+<li><code>.items()</code> + 언패킹으로 키-값 둘 다 처리.</li>
+<li>순회 + 조건 + 누적으로 데이터를 자유롭게 분석.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 세 가지 순회 방식</span>
+<p class="wdesc">순회 방식을 골라, for가 무엇을 하나씩 꺼내는지 봄.</p>
+<div class="seg" id="w5form">
+<button class="on" data-k="key">for 이름 in 가격표</button>
+<button data-k="val">.values()</button>
+<button data-k="items">.items()</button>
+</div>
+<div class="out" id="w5out"></div>
+</div></div></section>
+</main>
+<footer>
+<div class="next-card">
+<div class="nl">NEXT · PART 11</div>
+<div class="nt">while과 반복 제어</div>
+<p style="margin-top:8px;"><code>for</code>가 "정해진 묶음을 끝까지" 도는 반복이라면, <code>while</code>은 "<strong>조건이 참인 동안</strong>" 계속하는 반복. 그리고 <code>break</code>(멈춤)·<code>continue</code>(건너뛰기)로 반복을 더 정교하게 다룸.</p>
+</div>
+<p style="margin-top:24px;">파이썬 기초 문법 커리큘럼 · Part 10 / 18 · 데이터 분석 자동화를 위한 기초</p>
+</footer>
+<script>
+var prog=document.getElementById('progress');
+addEventListener('scroll',function(){var h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+
+/* W1 for belt */
+(function(){
+  var items=["니트","코트","가디건"], step=-1;
+  var belt=document.getElementById('w1belt'), vt=document.getElementById('w1var'), out=document.getElementById('w1out');
+  function render(){
+    belt.innerHTML=items.map(function(v,i){
+      var c = i<step?'done' : (i===step?'cur':'');
+      return '<div class="belt-item '+c+'">"'+v+'"</div>';
+    }).join('');
+    if(step<0){ vt.innerHTML='상품 = <b>?</b>'; out.innerHTML='<span class="dim">for 상품 in 상품들:  ← "한 단계씩"을 눌러 시작</span>'; }
+    else if(step<items.length){ vt.innerHTML='상품 = <b>"'+items[step]+'"</b>'; out.innerHTML='출력 ▸ <span class="hl">'+items[step]+'</span>'; }
+    else { vt.innerHTML='상품 = <b>(끝)</b>'; out.innerHTML='<span class="dim">더 꺼낼 값이 없음 → 반복 종료</span>'; }
+  }
+  document.getElementById('w1step').addEventListener('click',function(){ if(step<items.length) step++; render(); });
+  document.getElementById('w1reset').addEventListener('click',function(){ step=-1; render(); });
+  render();
+})();
+
+/* W2 range */
+(function(){
+  function calc(k){
+    if(k==='a') return [0,1,2,3,4];
+    if(k==='b') return [1,2,3,4,5];
+    return [0,2,4,6,8];
+  }
+  var label={a:'range(5)',b:'range(1, 6)',c:'range(0, 10, 2)'};
+  function render(k){
+    var arr=calc(k);
+    document.getElementById('w2belt').innerHTML=arr.map(function(n){return '<div class="belt-item pass">'+n+'</div>';}).join('');
+    document.getElementById('w2out').innerHTML='<span class="dim">for i in '+label[k]+':</span>\n→ i가 <span class="hl">'+arr.join(', ')+'</span> 순으로 ('+arr.length+'개)';
+  }
+  document.querySelectorAll('#w2form button').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#w2form button').forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on'); render(b.dataset.k);
+    });
+  });
+  render('a');
+})();
+
+/* W3 누적 */
+(function(){
+  var prices=[89000,120000,79000], step=-1, total=0;
+  var belt=document.getElementById('w3belt'), jar=document.getElementById('w3jar'), out=document.getElementById('w3out');
+  function render(){
+    belt.innerHTML=prices.map(function(v,i){
+      var c=i<step?'done':(i===step?'cur':'');
+      return '<div class="belt-item '+c+'">'+v.toLocaleString()+'</div>';
+    }).join('');
+    jar.textContent=total.toLocaleString();
+    if(step<0) out.innerHTML='<span class="dim">총합 = 0 에서 시작 — "한 단계씩"을 누르세요</span>';
+    else if(step<prices.length) out.innerHTML='<span class="dim">총합 += '+prices[step].toLocaleString()+'</span> → <span class="hl">'+total.toLocaleString()+'</span>';
+    else out.innerHTML='<span class="dim">반복 종료 —</span> 최종 합계 <span class="hl">'+total.toLocaleString()+'</span>';
+  }
+  document.getElementById('w3step').addEventListener('click',function(){
+    if(step<prices.length-1){ step++; total+=prices[step]; }
+    else if(step===prices.length-1){ step++; }
+    render();
+  });
+  document.getElementById('w3reset').addEventListener('click',function(){ step=-1; total=0; render(); });
+  render();
+})();
+
+/* W4 for+if */
+(function(){
+  var data=[{이름:"니트",재고:12},{이름:"코트",재고:3},{이름:"가디건",재고:0}], step=-1, passed=[];
+  var belt=document.getElementById('w4belt'), out=document.getElementById('w4out');
+  function render(){
+    belt.innerHTML=data.map(function(d,i){
+      var c='';
+      if(i<step){ c = d.재고>0?'pass':'fail'; }
+      else if(i===step){ c='cur'; }
+      return '<div class="belt-item '+c+'">'+d.이름+'<br><span style="font-size:10px">재고 '+d.재고+'</span></div>';
+    }).join('');
+    if(step<0) out.innerHTML='<span class="dim">판매가능 = [] 에서 시작 — "한 단계씩"</span>';
+    else if(step<data.length){
+      var d=data[step], ok=d.재고>0;
+      out.innerHTML='<span class="dim">if '+d.이름+'.재고('+d.재고+') > 0 → '+(ok?'True':'False')+'</span>\n'+(ok?'append("'+d.이름+'")':'(건너뜀)')+'\n판매가능 = <span class="hl">['+passed.map(function(x){return "'"+x+"'";}).join(', ')+']</span>';
+    } else out.innerHTML='<span class="dim">반복 종료 —</span> 판매가능 = <span class="hl">['+passed.map(function(x){return "'"+x+"'";}).join(', ')+']</span>';
+  }
+  document.getElementById('w4step').addEventListener('click',function(){
+    if(step<data.length-1){ step++; if(data[step].재고>0) passed.push(data[step].이름); }
+    else if(step===data.length-1){ step++; }
+    render();
+  });
+  document.getElementById('w4reset').addEventListener('click',function(){ step=-1; passed=[]; render(); });
+  render();
+})();
+
+/* W5 dict */
+(function(){
+  var R={
+    key:'<span class="dim">for 이름 in 가격표:</span>\n→ <span class="hl">니트</span>, <span class="hl">코트</span>, <span class="hl">가디건</span>  <span class="dim">(키가 나옴)</span>',
+    val:'<span class="dim">for 가격 in 가격표.values():</span>\n→ <span class="hl">89000</span>, <span class="hl">120000</span>, <span class="hl">79000</span>  <span class="dim">(값)</span>',
+    items:'<span class="dim">for 이름, 가격 in 가격표.items():</span>\n→ <span class="hl">(니트, 89000)</span>, <span class="hl">(코트, 120000)</span> ...\n<span class="dim">언패킹해서 이름·가격 둘 다 사용</span>'
+  };
+  var out=document.getElementById('w5out');
+  document.querySelectorAll('#w5form button').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#w5form button').forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on'); out.innerHTML=R[b.dataset.k];
+    });
+  });
+  out.innerHTML=R.key;
+})();
+</script>
+</body>
+</html>

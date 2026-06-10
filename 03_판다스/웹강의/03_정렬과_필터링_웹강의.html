@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 3 · 정렬과 필터링 — 원하는 데이터만 골라내기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--theme:#c2410c;--themed:#8a3408;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:880px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.06),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--theme);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:84px 22px 36px;}
+  .eyebrow{color:var(--theme);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:62ch;}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:54px 0 30px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--theme);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 18px;line-height:1.3;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  code{font-family:'Gowun Dodum',monospace;background:#efe7d8;color:#8a3408;padding:1.5px 7px;border-radius:6px;font-size:.92em;}
+  pre{background:#2b2723;color:#f4efe6;border-radius:12px;padding:16px 18px;overflow-x:auto;font-size:13.5px;line-height:1.7;margin:16px 0;white-space:pre;}
+  pre code{background:none;color:inherit;padding:0;}
+  pre .k{color:#e0935f;}pre .s{color:#9ec79a;}pre .c{color:#8b8175;font-style:italic;}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--theme);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15.5px;color:var(--sub);}
+  .note b{color:var(--themed);}
+  .summary{background:#f3e7df;border-radius:12px;padding:18px 20px;margin:22px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--themed);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--theme);padding:4px 11px;border-radius:999px;margin-bottom:16px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;border-radius:10px;padding:12px 15px;font-family:monospace;font-size:13.5px;color:#9ec79a;min-height:38px;white-space:pre-wrap;line-height:1.65;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}.out .accent{color:#e0935f;font-weight:700;}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+  .segbtn{border:1.5px solid var(--line);background:#fff;border-radius:9px;padding:8px 13px;cursor:pointer;font-family:var(--sans);font-weight:700;font-size:12.5px;color:var(--sub);transition:.15s;}
+  .segbtn.on{border-color:var(--theme);background:var(--theme);color:#fff;}
+  .stage{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;}
+  .lbl{font-size:12px;color:var(--sub);font-weight:700;}
+
+  .dft{border-collapse:collapse;font-family:monospace;font-size:13px;margin:4px 0;width:100%;}
+  .dft th,.dft td{border:1px solid var(--line);padding:5px 8px;text-align:right;}
+  .dft th{background:#efe7d8;color:#8a3408;font-weight:700;text-align:center;}
+  .dft td.nm{text-align:left;}
+  .dft td{background:#fff;}
+  .dft tr.on td{background:#fbe7da;}
+  .dft tr.off td{opacity:.32;}
+  .dft td.tf{font-weight:700;}
+  .dft td.tf.t{color:#2f6b5e;}.dft td.tf.f{color:#b04a2a;}
+  .cnt{font-size:13px;color:var(--themed);font-weight:700;margin-top:8px;}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f7ece4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;text-decoration:none;color:inherit;display:block;transition:.18s;}
+  .next-card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(80,60,30,.1);}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--theme);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .crumb{display:inline-block;margin-bottom:8px;font-size:13px;color:var(--sub);text-decoration:none;}
+  .crumb:hover{color:var(--accent);}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}.dft{font-size:11.5px;}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<header class="hero">
+  <a class="crumb" href="../00_데이터분석_판다스_목차.html">← 전체 목차</a>
+  <div class="eyebrow">데이터 분석 · 판다스 · 3단계</div>
+  <h1>정렬과 필터링<br><span style="font-size:.62em;color:var(--sub);font-weight:400;">원하는 데이터만 골라내기</span></h1>
+  <p class="lead">분석은 결국 <strong>"어떤 조건의 데이터를, 어떤 순서로 보느냐"</strong>의 반복입니다. 줄을 세우는 <strong>정렬</strong>(sort_values)과 조건에 맞는 행만 남기는 <strong>필터링</strong>(불리언 인덱싱)을 직접 만져봄. 엑셀의 정렬·필터 버튼을 코드로.</p>
+  <div class="hero-meta">
+    <span class="chip">🟠 3단계 · 가공·정제</span>
+    <span class="chip t">sort · 불리언 · loc · isin</span>
+    <span class="chip t">예상 35분</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- S1 정렬 -->
+  <section class="reveal">
+    <div class="sec-no">01</div>
+    <h2>정렬 — sort_values</h2>
+    <p>특정 열의 <strong>값</strong> 크기에 따라 행을 다시 줄 세웁니다. <code>ascending=True</code>면 오름차순(작은→큰), <code>False</code>면 내림차순. 원본은 그대로 두고 정렬된 새 결과를 돌려줍니다. 기준을 바꿔 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · sort_values</span>
+      <p class="wdesc">예시 8개 종목(종목명·현재가·거래량·지역). 정렬 기준을 누르면 표가 다시 줄 섭니다.</p>
+      <div class="seg" id="w1btn">
+        <button class="segbtn on" data-k="price_asc">현재가 ↑ 오름차순</button>
+        <button class="segbtn" data-k="price_desc">현재가 ↓ 내림차순</button>
+        <button class="segbtn" data-k="vol_desc">거래량 ↓ 내림차순</button>
+      </div>
+      <table class="dft" id="w1table"></table>
+      <pre style="margin:10px 0 0;"><code id="w1code"></code></pre>
+    </div>
+
+    <div class="note"><b>📌 참고</b> &nbsp;여러 열 기준은 리스트로(<code>by=['지역','현재가']</code> → 지역으로 묶고 그 안에서 현재가순). 열마다 방향을 다르게 하려면 <code>ascending=[True, False]</code>. "거래량 많은 순 상위 N"처럼 랭킹의 기본 도구입니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>sort_values(by=, ascending=)</code>로 값 기준 정렬.</li>
+      <li>여러 열·방향은 리스트로 지정.</li>
+      <li>인덱스 기준 정렬은 <code>sort_index()</code>.</li>
+    </ol></div>
+  </section>
+
+  <!-- S2 불리언 인덱싱 -->
+  <section class="reveal">
+    <div class="sec-no">02</div>
+    <h2>필터의 원리 — 불리언 인덱싱</h2>
+    <p>판다스 필터링의 핵심 원리입니다. <strong>① 조건식을 쓰면</strong> 각 행에 참/거짓(True/False) <strong>불리언 Series</strong>가 만들어지고, <strong>② 그걸 <code>df[...]</code>에 넣으면</strong> True인 행만 선택됩니다. 조건을 바꿔 두 단계를 확인해 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 조건 → True/False → 필터</span>
+      <div class="seg" id="w2btn">
+        <button class="segbtn on" data-k="price">현재가 &gt;= 200000</button>
+        <button class="segbtn" data-k="seoul">지역 == '서울'</button>
+        <button class="segbtn" data-k="vol">거래량 &gt;= 500000</button>
+      </div>
+      <div class="stage">
+        <div class="lbl" style="margin-bottom:6px;">① 조건식 결과 (불리언 Series) — True인 행만 ②에서 선택됨</div>
+        <table class="dft" id="w2table"></table>
+        <div class="cnt" id="w2cnt"></div>
+      </div>
+    </div>
+
+    <div class="note"><b>📌 핵심</b> &nbsp;<code>df[조건]</code>의 "조건" 자리에는 항상 <b>True/False로 이루어진 Series</b>가 들어갑니다. 이 원리만 이해하면 모든 필터링이 같습니다. 비교 연산자: <code>==</code> 같다, <code>!=</code> 다르다, <code>&gt;= &lt;=</code> 이상·이하.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>조건식 → 불리언 Series → <code>df[불리언]</code>.</li>
+      <li>True인 행만 선택됨.</li>
+      <li>모든 필터링이 이 한 가지 원리.</li>
+    </ol></div>
+  </section>
+
+  <!-- S3 복합 조건 -->
+  <section class="reveal">
+    <div class="sec-no">03</div>
+    <h2>복합 조건 — AND &amp; · OR | · NOT ~</h2>
+    <p>여러 조건을 결합합니다. <strong>파이썬의 <code>and</code>/<code>or</code>가 아니라 <code>&amp;</code>/<code>|</code>/<code>~</code></strong>를 쓰고, 각 조건을 반드시 <strong>괄호 <code>( )</code></strong>로 묶습니다. 두 조건과 결합 방식을 바꿔 매칭 행을 확인해 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · & | ~</span>
+      <div class="rowflex" style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px;">
+        <div><div class="lbl">조건 A</div><div class="seg" id="w3a" style="margin:4px 0 0;">
+          <button class="segbtn on" data-k="p100">현재가≥10만</button>
+          <button class="segbtn" data-k="seoul">지역=서울</button>
+        </div></div>
+        <div><div class="lbl">결합</div><div class="seg" id="w3op" style="margin:4px 0 0;">
+          <button class="segbtn on" data-k="and">AND &</button>
+          <button class="segbtn" data-k="or">OR |</button>
+          <button class="segbtn" data-k="nota">NOT ~A</button>
+        </div></div>
+        <div><div class="lbl">조건 B</div><div class="seg" id="w3b" style="margin:4px 0 0;">
+          <button class="segbtn on" data-k="v500">거래량≥50만</button>
+          <button class="segbtn" data-k="seongnam">지역=성남</button>
+        </div></div>
+      </div>
+      <div class="stage">
+        <pre style="margin:0 0 10px;"><code id="w3code"></code></pre>
+        <table class="dft" id="w3table"></table>
+        <div class="cnt" id="w3cnt"></div>
+      </div>
+    </div>
+
+    <div class="note"><b>⚠️ 가장 흔한 실수</b> &nbsp;① <code>and</code>/<code>or</code>를 쓰면 오류(ValueError) → 반드시 <code>&amp;</code>/<code>|</code>. ② 괄호를 빼면 우선순위 때문에 엉뚱한 결과 → <b>조건마다 <code>( )</code> 필수</b>.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>&amp;</code>(AND)·<code>|</code>(OR)·<code>~</code>(NOT)로 조건 결합.</li>
+      <li>각 조건은 괄호로 감싼다.</li>
+      <li><code>and/or</code>는 사용 불가(오류).</li>
+    </ol></div>
+  </section>
+
+  <!-- S4 loc -->
+  <section class="reveal">
+    <div class="sec-no">04</div>
+    <h2>loc — 조건과 열을 동시에</h2>
+    <p><code>df[조건]</code>은 모든 열을 가져옵니다. 조건을 만족하는 <strong>행 중 특정 열만</strong> 보려면 <code>loc[조건, 열목록]</code>을 씁니다. 복잡한 조건은 변수로 빼면 읽기 쉽습니다.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · loc[조건, 열]</span>
+      <div class="seg" id="w4btn">
+        <button class="segbtn on" data-k="a">loc[현재가≥20만, ['종목명','현재가']]</button>
+        <button class="segbtn" data-k="b">loc[조건1 &amp; 조건2, ['종목명','현재가','거래량']]</button>
+      </div>
+      <div class="stage">
+        <pre style="margin:0 0 10px;"><code id="w4code"></code></pre>
+        <table class="dft" id="w4table"></table>
+        <div class="cnt" id="w4cnt"></div>
+      </div>
+    </div>
+
+    <div class="note"><b>💡 팁</b> &nbsp;조건이 길어지면 <code>cond1 = (df['현재가']&gt;=200000)</code>처럼 <b>이름을 붙여 조립</b>하면 실수가 줄고 가독성이 좋아집니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>loc[행조건, [열]]</code>로 행·열 동시 선택.</li>
+      <li>복잡한 조건은 변수로 분리.</li>
+      <li><code>df[조건]</code>은 전체 열, <code>loc</code>는 열 한정.</li>
+    </ol></div>
+  </section>
+
+  <!-- S5 필터 함수 -->
+  <section class="reveal">
+    <div class="sec-no">05</div>
+    <h2>자주 쓰는 필터 함수</h2>
+    <p>비교 연산자만으로 불편한 경우를 위한 전용 메소드입니다. 목록 일치 <code>isin</code>, 범위 <code>between</code>, 문자 포함 <code>str.contains</code>. 탭을 바꿔 결과를 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · isin · between · contains</span>
+      <div class="seg" id="w5btn">
+        <button class="segbtn on" data-k="isin">isin(['서울','성남'])</button>
+        <button class="segbtn" data-k="between">현재가.between(100000, 300000)</button>
+        <button class="segbtn" data-k="contains">종목명.str.contains('삼성')</button>
+      </div>
+      <div class="stage">
+        <pre style="margin:0 0 10px;"><code id="w5code"></code></pre>
+        <table class="dft" id="w5table"></table>
+        <div class="cnt" id="w5cnt"></div>
+      </div>
+    </div>
+
+    <div class="note"><b>📌 참고</b> &nbsp;<code>isin</code>에는 반드시 <b>리스트</b>를 넣습니다. <code>between</code>은 기본이 <b>양끝 포함</b>(<code>inclusive='both'</code>). <code>str.contains</code>는 문자열 열에만 쓰고, 결측이 있으면 <code>na=False</code>를 함께 줍니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>isin</code>(목록)·<code>between</code>(범위)·<code>str.contains</code>(포함).</li>
+      <li>여러 <code>==</code>를 <code>|</code>로 잇는 것보다 <code>isin</code>이 깔끔.</li>
+      <li>필터 → 정렬 → 상위 N이 실전 패턴.</li>
+    </ol></div>
+  </section>
+
+</main>
+
+<footer>
+  <a class="next-card" href="04_실습과_저장_웹강의.html">
+    <div class="nl">NEXT · PART 4</div>
+    <div class="nt">종합 실습과 파일 저장</div>
+    <p style="margin-top:8px;">지금까지 배운 탐색·정렬·필터를 실제 데이터에 적용해 결과를 만들고, <strong>to_csv</strong>·<strong>to_excel</strong>로 파일로 내보내는 한 사이클을 수행합니다.</p>
+  </a>
+  <p style="margin-top:24px;">데이터 분석 프로세스와 판다스 활용하기 · Part 3 / 9 · 가공·정제</p>
+</footer>
+
+<script>
+const prog=document.getElementById('progress');
+addEventListener('scroll',()=>{const h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* 공통 데이터: 8개 종목 */
+const DATA=[
+  {종목명:'삼성전자', 현재가:70000, 거래량:1000000, 지역:'서울'},
+  {종목명:'삼성SDI', 현재가:200000, 거래량:250000, 지역:'서울'},
+  {종목명:'SK하이닉스', 현재가:120000, 거래량:800000, 지역:'서울'},
+  {종목명:'NAVER', 현재가:380000, 거래량:500000, 지역:'성남'},
+  {종목명:'카카오', 현재가:135000, 거래량:600000, 지역:'성남'},
+  {종목명:'LG화학', 현재가:800000, 거래량:300000, 지역:'서울'},
+  {종목명:'현대차', 현재가:200000, 거래량:400000, 지역:'울산'},
+  {종목명:'셀트리온', 현재가:230000, 거래량:550000, 지역:'인천'}
+];
+const COLS=['종목명','현재가','거래량','지역'];
+function tableHTML(rows, opt){
+  opt=opt||{};
+  let cols=opt.cols||COLS;
+  let h='<tr>';cols.forEach(c=>h+='<th>'+c+'</th>');if(opt.extra)h+='<th>'+opt.extra+'</th>';h+='</tr>';
+  rows.forEach(r=>{
+    const cls=opt.cls?opt.cls(r):'';
+    h+='<tr class="'+cls+'">';
+    cols.forEach(c=>h+='<td class="'+(c==='종목명'?'nm':'')+'">'+(typeof r[c]==='number'?r[c].toLocaleString():r[c])+'</td>');
+    if(opt.extra)h+=opt.extraCell(r);
+    h+='</tr>';
+  });
+  return h;
+}
+
+/* ===== W1 sort ===== */
+(function(){
+  const t=document.getElementById('w1table'), code=document.getElementById('w1code');
+  function render(k){
+    let rows=[...DATA], c;
+    if(k==='price_asc'){rows.sort((a,b)=>a.현재가-b.현재가);c='df.sort_values(by=<span class="s">\x27현재가\x27</span>)';}
+    else if(k==='price_desc'){rows.sort((a,b)=>b.현재가-a.현재가);c='df.sort_values(by=<span class="s">\x27현재가\x27</span>, ascending=<span class="k">False</span>)';}
+    else{rows.sort((a,b)=>b.거래량-a.거래량);c='df.sort_values(by=<span class="s">\x27거래량\x27</span>, ascending=<span class="k">False</span>)';}
+    t.innerHTML=tableHTML(rows);code.innerHTML=c;
+  }
+  document.querySelectorAll('#w1btn .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w1btn .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(b.dataset.k);}));
+  render('price_asc');
+})();
+
+/* ===== W2 boolean ===== */
+(function(){
+  const t=document.getElementById('w2table'), cnt=document.getElementById('w2cnt');
+  const conds={price:r=>r.현재가>=200000, seoul:r=>r.지역==='서울', vol:r=>r.거래량>=500000};
+  const lbl={price:"df['현재가'] >= 200000", seoul:"df['지역'] == '서울'", vol:"df['거래량'] >= 500000"};
+  function render(k){
+    const f=conds[k];
+    let h='<tr><th>종목명</th><th>'+(k==='seoul'?'지역':k==='vol'?'거래량':'현재가')+'</th><th>조건 결과</th></tr>';
+    DATA.forEach(r=>{
+      const v=f(r);const col=k==='seoul'?r.지역:(k==='vol'?r.거래량:r.현재가);
+      h+='<tr class="'+(v?'on':'off')+'"><td class="nm">'+r.종목명+'</td><td>'+(typeof col==='number'?col.toLocaleString():col)+'</td><td class="tf '+(v?'t':'f')+'">'+(v?'True':'False')+'</td></tr>';
+    });
+    t.innerHTML=h;
+    const n=DATA.filter(f).length;
+    cnt.innerHTML='df[ '+lbl[k]+' ] ▸ <b>'+n+'개</b> 행 선택 (True인 행만)';
+  }
+  document.querySelectorAll('#w2btn .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w2btn .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(b.dataset.k);}));
+  render('price');
+})();
+
+/* ===== W3 복합 조건 ===== */
+(function(){
+  let a='p100', op='and', b='v500';
+  const condA={p100:{f:r=>r.현재가>=100000, s:"(df['현재가']>=100000)"}, seoul:{f:r=>r.지역==='서울', s:"(df['지역']=='서울')"}};
+  const condB={v500:{f:r=>r.거래량>=500000, s:"(df['거래량']>=500000)"}, seongnam:{f:r=>r.지역==='성남', s:"(df['지역']=='성남')"}};
+  const t=document.getElementById('w3table'), code=document.getElementById('w3code'), cnt=document.getElementById('w3cnt');
+  function render(){
+    const A=condA[a], B=condB[b];
+    let f, expr;
+    if(op==='and'){f=r=>A.f(r)&&B.f(r);expr='df[ '+A.s+' <span class="k">&</span> '+B.s+' ]';}
+    else if(op==='or'){f=r=>A.f(r)||B.f(r);expr='df[ '+A.s+' <span class="k">|</span> '+B.s+' ]';}
+    else{f=r=>!A.f(r);expr='df[ <span class="k">~</span>'+A.s+' ]   <span class="c"># 조건 A의 반대</span>';}
+    code.innerHTML=expr;
+    t.innerHTML=tableHTML(DATA,{cls:r=>f(r)?'on':'off'});
+    cnt.innerHTML='매칭 ▸ <b>'+DATA.filter(f).length+'개</b> 행';
+  }
+  document.querySelectorAll('#w3a .segbtn').forEach(x=>x.addEventListener('click',()=>{document.querySelectorAll('#w3a .segbtn').forEach(y=>y.classList.remove('on'));x.classList.add('on');a=x.dataset.k;render();}));
+  document.querySelectorAll('#w3op .segbtn').forEach(x=>x.addEventListener('click',()=>{document.querySelectorAll('#w3op .segbtn').forEach(y=>y.classList.remove('on'));x.classList.add('on');op=x.dataset.k;render();}));
+  document.querySelectorAll('#w3b .segbtn').forEach(x=>x.addEventListener('click',()=>{document.querySelectorAll('#w3b .segbtn').forEach(y=>y.classList.remove('on'));x.classList.add('on');b=x.dataset.k;render();}));
+  render();
+})();
+
+/* ===== W4 loc ===== */
+(function(){
+  const t=document.getElementById('w4table'), code=document.getElementById('w4code'), cnt=document.getElementById('w4cnt');
+  function render(k){
+    if(k==='a'){
+      const rows=DATA.filter(r=>r.현재가>=200000);
+      code.innerHTML='df.<span class="k">loc</span>[df[<span class="s">\x27현재가\x27</span>]>=200000, [<span class="s">\x27종목명\x27</span>, <span class="s">\x27현재가\x27</span>]]';
+      t.innerHTML=tableHTML(rows,{cols:['종목명','현재가']});
+      cnt.innerHTML='<b>'+rows.length+'개</b> 행 × 2개 열';
+    }else{
+      const rows=DATA.filter(r=>r.현재가>=100000 && r.거래량>=500000);
+      code.innerHTML='cond1 = (df[<span class="s">\x27현재가\x27</span>]>=100000)\ncond2 = (df[<span class="s">\x27거래량\x27</span>]>=500000)\ndf.<span class="k">loc</span>[cond1 & cond2, [<span class="s">\x27종목명\x27</span>, <span class="s">\x27현재가\x27</span>, <span class="s">\x27거래량\x27</span>]]';
+      t.innerHTML=tableHTML(rows,{cols:['종목명','현재가','거래량']});
+      cnt.innerHTML='<b>'+rows.length+'개</b> 행 × 3개 열';
+    }
+  }
+  document.querySelectorAll('#w4btn .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w4btn .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(b.dataset.k);}));
+  render('a');
+})();
+
+/* ===== W5 필터 함수 ===== */
+(function(){
+  const t=document.getElementById('w5table'), code=document.getElementById('w5code'), cnt=document.getElementById('w5cnt');
+  function render(k){
+    let rows, c, note;
+    if(k==='isin'){
+      rows=DATA.filter(r=>['서울','성남'].includes(r.지역));
+      c='df[df[<span class="s">\x27지역\x27</span>].<span class="k">isin</span>([<span class="s">\x27서울\x27</span>, <span class="s">\x27성남\x27</span>])]';
+      note='서울 또는 성남 종목';
+    }else if(k==='between'){
+      rows=DATA.filter(r=>r.현재가>=100000 && r.현재가<=300000);
+      c='df[df[<span class="s">\x27현재가\x27</span>].<span class="k">between</span>(100000, 300000)]   <span class="c"># 양끝 포함</span>';
+      note='현재가 10만~30만 원';
+    }else{
+      rows=DATA.filter(r=>r.종목명.includes('삼성'));
+      c='df[df[<span class="s">\x27종목명\x27</span>].str.<span class="k">contains</span>(<span class="s">\x27삼성\x27</span>)]';
+      note="이름에 '삼성' 포함";
+    }
+    code.innerHTML=c;t.innerHTML=tableHTML(rows);
+    cnt.innerHTML=note+' ▸ <b>'+rows.length+'개</b> 행';
+  }
+  document.querySelectorAll('#w5btn .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w5btn .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(b.dataset.k);}));
+  render('isin');
+})();
+</script>
+</body>
+</html>

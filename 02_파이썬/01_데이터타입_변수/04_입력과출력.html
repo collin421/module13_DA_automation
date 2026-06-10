@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Part 3 · 입력과 출력</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&amp;family=Gowun+Dodum&amp;display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:760px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:88px 22px 40px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:62ch;}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:76px 0 46px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 20px;line-height:1.3;}
+  p{margin:0 0 16px;}
+  .sub{color:var(--sub);}
+  strong{color:var(--accent);font-weight:700;}
+  code{font-family:'Gowun Dodum',monospace;background:#efe7d8;color:#8a3408;padding:1.5px 7px;border-radius:6px;font-size:.92em;}
+  pre{background:#2b2723;color:#f4efe6;border-radius:12px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.7;margin:16px 0;}
+  pre code{background:none;color:inherit;padding:0;}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15.5px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:22px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:16px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .pp-input{border:1.5px solid var(--line);border-radius:8px;padding:8px 12px;font-family:monospace;font-size:14px;background:#fff;color:var(--ink);}
+  .out{background:#2b2723;color:#9ec79a;border-radius:10px;padding:13px 16px;font-family:monospace;font-size:15px;min-height:42px;white-space:pre-wrap;}
+  .out .dim{color:#8b8175;}.out .err{color:#e0935f;}.out .hl{color:#fff;font-weight:700;}
+
+  /* seg buttons */
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+  .seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:monospace;transition:.15s;color:var(--ink);}
+  .seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+  .lbl{font-size:12px;color:var(--sub);font-family:monospace;}
+
+  /* W2: input flow */
+  .if-screen{background:#2b2723;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:14px;min-height:90px;white-space:pre-wrap;}
+  .if-prompt{color:#8b8175;}
+  .if-typed{color:#9ec79a;}
+  .if-caret{color:#e0935f;}
+  .if-result{color:#fff;margin-top:8px;}
+  .if-ctl{margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+
+  /* W4: f-string fill */
+  .fs-template{background:#fff;border:1.5px dashed var(--line);border-radius:10px;padding:14px;font-size:16px;line-height:2.2;margin-bottom:12px;}
+  .fs-slot{display:inline-block;background:#fbf3e6;border:1.5px solid var(--gold);border-radius:7px;padding:1px 8px;font-family:monospace;font-size:13px;color:#8a5a1a;}
+  .fs-inputs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+  .fs-field{flex:1;min-width:120px;}
+  .fs-field .lbl{display:block;margin-bottom:4px;}
+  .fs-field .pp-input{width:100%;}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}}
+</style>
+<style id="wide16x9">
+/* ===== 16:9 와이드 반응형 오버라이드 ===== */
+:root{--maxw:1320px;}
+header.hero{text-align:center;padding-top:70px;}
+header.hero .lead{margin-left:auto;margin-right:auto;}
+header.hero .hero-meta{justify-content:center;}
+main.wrap section.two-col .col-text>:first-child{margin-top:0;}
+main.wrap section.two-col .col-text .summary{margin-bottom:0;}
+@media(min-width:980px){
+  main.wrap section.two-col{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.06fr);
+    gap:46px;align-items:start;
+  }
+  main.wrap section.two-col .col-widget{position:sticky;top:22px;}
+  main.wrap section.two-col .col-text{padding-top:2px;}
+}
+@media(max-width:979px){
+  main.wrap section.two-col .col-widget{margin-top:6px;}
+}
+</style></head>
+<body>
+<div id="progress"></div>
+<header class="hero">
+<div class="eyebrow">파이썬 기초 문법 · Part 3 · 입문</div>
+<h1>입력과 출력</h1>
+<p class="lead">프로그램이 사람과 <strong>주고받음</strong>. 보기 좋게 내보내는 <code>print</code> 활용, 값을 받는 <code>input</code>, 값을 문장에 깔끔히 끼워 넣는 <strong>f-string</strong>. Part 1의 "입력은 문자열" 문제를 형변환과 함께 제대로 다룸 — 결과를 보고서로 내보내고 설정값을 입력받는 자동화의 기초.</p>
+<div class="hero-meta">
+<span class="chip">🟢 입문 · 3/18</span>
+<span class="chip t">input · f-string</span>
+<span class="chip t">예상 30분</span>
+</div>
+</header>
+<main class="wrap">
+<!-- Section 1: print options -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">3-1</div><h2>print 더 잘 쓰기</h2><p>쉼표 <code>,</code>로 여러 값을 한 번에 출력하고, <code>sep</code>(값 사이)·<code>end</code>(출력 끝)로 모양을 다듬음. 기본은 사이에 공백, 끝에 줄바꿈임.</p><div class="note"><b>📌 참고</b>  쉼표 <code>,</code> 출력은 자동으로 공백을 넣고 <b>숫자도 형변환 없이</b> 섞을 수 있어 빠른 확인용으로 편함(문자열 <code>+</code>는 <code>str()</code> 필요). 보기 좋은 문장은 f-string(3-4)이 더 깔끔함.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li><code>print</code>에 쉼표로 여러 값을 넘기면 공백으로 이어 출력함.</li>
+<li><code>sep</code>은 값 사이, <code>end</code>는 출력 끝(기본 줄바꿈)을 정함.</li>
+<li>쉼표 출력은 숫자·문자를 형변환 없이 섞을 수 있음.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · sep / end 실험</span>
+<p class="wdesc"><code>print("2025", "01", "15", sep=?)</code> 의 sep을 바꿔, 출력 모양이 어떻게 달라지는지 봄.</p>
+<div class="row"><span class="lbl">sep =</span>
+<div class="seg" id="w1sep" style="margin-bottom:0;">
+<button class="on" data-v=" ">" " (공백)</button>
+<button data-v="-">"-"</button>
+<button data-v="/">"/"</button>
+<button data-v="">"" (없음)</button>
+</div>
+</div>
+<div class="out" id="w1out"></div>
+</div></div></section>
+<!-- Section 2: input flow -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">3-2</div><h2>input — 사용자에게 값 받기</h2><p><code>input("안내문구")</code>는 문구를 보여 주고 입력을 <strong>기다림</strong>. 사용자가 친 값을 받아 변수에 담아 씀 — 코드가 사람과 대화하는 창구임.</p><div class="note"><b>📌 참고</b>  노트북·온라인 환경에서 <code>input()</code>을 실행하면 입력창이 뜨고, 엔터를 눌러야 다음으로 진행됨. 노트북 실습에선 값을 직접 지정해 같은 흐름을 연습하는 예시도 함께 제공함.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li><code>input()</code>은 사용자가 입력한 값을 받아 옴.</li>
+<li>안내 문구를 보여 주고 입력(엔터)을 기다림.</li>
+<li>받은 값을 변수에 담아 코드를 유연하게 만듦.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 입력 흐름 따라가기</span>
+<p class="wdesc">값을 입력하고 "엔터(받기)"를 누르면, 프로그램이 그 값을 받아 처리하는 과정을 봄.</p>
+<div class="if-screen" id="w2screen"></div>
+<div class="if-ctl">
+<span class="lbl">입력:</span>
+<input class="pp-input" id="w2input" style="width:140px;" value="춘현"/>
+<button class="btn" id="w2enter" style="border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:13px;padding:9px 16px;border-radius:9px;cursor:pointer;">⏎ 엔터(받기)</button>
+</div>
+</div></div></section>
+<!-- Section 3: input is string -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">3-3</div><h2>input은 문자열 — 형변환</h2><p>⚠️ 가장 중요한 주의점 — <code>input()</code>으로 받은 값은 <strong>무조건 문자열</strong>임. 숫자를 입력해도 <code>"100"</code>처럼 들어옴. 계산하려면 <code>int()</code>로 감싸야 함.</p><div class="note"><b>📌 참고</b>  입력값으로 계산이 안 되면 십중팔구 "문자열인데 숫자처럼 보여서"임 — <code>int()</code>/<code>float()</code>로 감쌌는지 확인. 이름·상품명처럼 계산 안 할 값은 변환 불필요, <b>계산할 값만</b> 변환함. <code>int(input(...))</code> 패턴을 익혀 둘 것.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li><code>input()</code>으로 받은 값은 무조건 문자열임.</li>
+<li>계산하려면 <code>int()</code>·<code>float()</code>로 숫자로 바꿔야 함.</li>
+<li><code>int(input(...))</code> 패턴을 익혀 두면 편함.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 변환 전 vs 후</span>
+<p class="wdesc">입력값 "3"으로 <code>+ 1</code>을 해 봄. 그냥 더할 때(오류)와 <code>int()</code>로 바꿔 더할 때를 비교.</p>
+<div class="seg" id="w3tog">
+<button class="on" data-k="bad">수량 + 1  (그냥)</button>
+<button data-k="good">int(수량) + 1  (변환)</button>
+</div>
+<div class="out" id="w3out"></div>
+</div></div></section>
+<!-- Section 4: f-string -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">3-4</div><h2>f-string — 값을 문구에 끼워 넣기</h2><p>따옴표 앞에 <code>f</code>, 문장 속 <code>{변수}</code> 자리에 값이 들어감. <strong>빈칸 채우기 양식</strong>처럼 깔끔하고, 형변환이 필요 없음.</p><div class="note"><b>📌 참고</b>  f-string은 <b>형변환이 필요 없고</b>, <code>{}</code> 안에서 계산도 됨(예: <code>{가격*0.9}</code>). 파이썬에서 문장을 만드는 사실상 표준 방법으로, 데이터 분석 결과를 보고 문장으로 만들 때 거의 항상 씀.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>f-string은 <code>f</code> + 문장 속 <code>{변수}</code>로 값을 끼워 넣음.</li>
+<li>형변환이 필요 없고, <code>{}</code> 안에서 계산도 됨.</li>
+<li>파이썬에서 문장을 만드는 사실상 표준 방법임.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 빈칸 채우기</span>
+<p class="wdesc">상품명·가격을 바꾸면, f-string 양식의 <code>{}</code> 자리에 값이 채워져 문장이 완성됨.</p>
+<div class="fs-template">
+<code>f"</code><span class="fs-slot">{상품명}</span>의 가격은 <span class="fs-slot">{가격}</span>원<code>"</code>
+</div>
+<div class="fs-inputs">
+<div class="fs-field"><span class="lbl">상품명 =</span><input class="pp-input" id="w4name" value="베이지 니트"/></div>
+<div class="fs-field"><span class="lbl">가격 =</span><input class="pp-input" id="w4price" type="number" value="89000"/></div>
+</div>
+<div class="out" id="w4out"></div>
+</div></div></section>
+<!-- Section 5: f-string format -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">3-5</div><h2>f-string 다듬기 — 천 단위·소수점</h2><p><code>{값:형식}</code>으로 출력 모양을 다듬음. 맨숫자에 콤마라는 옷을 입히고, 긴 소수를 단정하게 정리함. 자주 쓰는 둘 — <strong>천 단위 콤마</strong>와 <strong>소수점 자릿수</strong>.</p><div class="note"><b>📌 참고</b>  형식은 종류가 많지만 입문 단계엔 <b>콤마 <code>,</code></b>와 <b>소수점 <code>.2f</code></b> 둘이면 충분함. 형식 지정은 <b>보이는 모양만</b> 바꿀 뿐 변수에 담긴 값 자체는 그대로임.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li><code>{값:형식}</code>으로 출력 모양을 다듬음.</li>
+<li>천 단위 콤마 <code>{값:,}</code>, 소수점 <code>{값:.2f}</code>가 자주 쓰임.</li>
+<li>형식 지정은 보이는 모양만 바꾸고 값 자체는 그대로임.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 형식 비교</span>
+<p class="wdesc">같은 값에 형식을 켜고 끄며, 보이는 모양이 어떻게 달라지는지 봄(값 자체는 그대로).</p>
+<div class="seg" id="w5tog">
+<button class="on" data-k="plain">형식 없음</button>
+<button data-k="comma">{값:,} 콤마</button>
+<button data-k="float">{평점:.2f} 소수점</button>
+<button data-k="pct">{율:.1%} 백분율</button>
+</div>
+<div class="out" id="w5out"></div>
+</div></div></section>
+</main>
+<footer>
+<div class="next-card">
+<div class="nl">NEXT · PART 4 · 자료구조 시작</div>
+<div class="nt">문자열 다루기</div>
+<p style="margin-top:8px;">글자 묶음을 한 글자씩 꺼내고(인덱싱), 잘라내고(슬라이싱), 다양한 메서드로 가공하는 법. 데이터 정리·전처리의 첫걸음이 시작됨.</p>
+</div>
+<p style="margin-top:24px;">파이썬 기초 문법 커리큘럼 · Part 3 / 18 · 데이터 분석 자동화를 위한 기초</p>
+</footer>
+<script>
+var prog=document.getElementById('progress');
+addEventListener('scroll',function(){var h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+
+function commafy(n){
+  var neg=n<0; n=Math.abs(Math.round(n));
+  var s=String(n), out='', c=0;
+  for(var i=s.length-1;i>=0;i--){ out=s[i]+out; if(++c%3===0 && i>0) out=','+out; }
+  return (neg?'-':'')+out;
+}
+
+/* ===== W1: print sep ===== */
+(function(){
+  var sep=' ';
+  function render(){
+    var parts=['2025','01','15'];
+    var joined=parts.join(sep);
+    var sepShow= sep===' ' ? '" "(공백)' : (sep==='' ? '""(없음)' : '"'+sep+'"');
+    document.getElementById('w1out').innerHTML='<span class="dim">print("2025", "01", "15", sep='+sepShow+')</span>\n출력 ▸ <span class="hl">'+joined+'</span>';
+  }
+  document.querySelectorAll('#w1sep button').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#w1sep button').forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on'); sep=b.dataset.v; render();
+    });
+  });
+  render();
+})();
+
+/* ===== W2: input flow ===== */
+(function(){
+  var screen=document.getElementById('w2screen'), inp=document.getElementById('w2input');
+  var state='wait';
+  function render(){
+    if(state==='wait'){
+      screen.innerHTML='<span class="if-prompt">이름을 입력하세요: </span><span class="if-caret">▌</span>\n<span class="dim">(값을 입력하고 "엔터(받기)"를 누르세요)</span>';
+    }else{
+      var v=inp.value.trim()||'(빈 값)';
+      screen.innerHTML='<span class="if-prompt">이름을 입력하세요: </span><span class="if-typed">'+v+'</span>\n<span class="dim">→ input()이 "'+v+'"를 돌려줌 → 변수 이름에 담김 (문자열)</span>\n<span class="if-result">안녕하세요, '+v+' 님!</span>';
+    }
+  }
+  document.getElementById('w2enter').addEventListener('click',function(){ state='done'; render(); });
+  inp.addEventListener('input',function(){ if(state==='done') render(); });
+  render();
+})();
+
+/* ===== W3: input is string ===== */
+(function(){
+  var mode='bad';
+  function render(){
+    var out=document.getElementById('w3out');
+    if(mode==='bad'){
+      out.innerHTML='<span class="dim">수량 = "3"   (input은 문자열!)</span>\n수량 + 1\n<span class="err">❌ TypeError: 문자열 + 숫자는 안 됨</span>';
+    }else{
+      out.innerHTML='<span class="dim">수량 = int("3")   (정수로 변환 → 3)</span>\nint(수량) + 1\n= 3 + 1\n= <span class="hl">4</span>   <span class="dim">✅ 계산됨!</span>';
+    }
+  }
+  document.querySelectorAll('#w3tog button').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#w3tog button').forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on'); mode=b.dataset.k; render();
+    });
+  });
+  render();
+})();
+
+/* ===== W4: f-string fill ===== */
+(function(){
+  function render(){
+    var name=document.getElementById('w4name').value||'(빈칸)';
+    var price=document.getElementById('w4price').value||'0';
+    document.getElementById('w4out').innerHTML='<span class="dim">f"{상품명}의 가격은 {가격}원"</span>\n출력 ▸ <span class="hl">'+name+'의 가격은 '+price+'원</span>';
+  }
+  document.getElementById('w4name').addEventListener('input',render);
+  document.getElementById('w4price').addEventListener('input',render);
+  render();
+})();
+
+/* ===== W5: f-string format ===== */
+(function(){
+  var mode='plain';
+  function render(){
+    var out=document.getElementById('w5out');
+    if(mode==='plain'){
+      out.innerHTML='<span class="dim">f"가격: {가격}원"   (가격=1234567)</span>\n출력 ▸ <span class="hl">가격: 1234567원</span>';
+    }else if(mode==='comma'){
+      out.innerHTML='<span class="dim">f"가격: {가격:,}원"   (가격=1234567)</span>\n출력 ▸ <span class="hl">가격: '+commafy(1234567)+'원</span>';
+    }else if(mode==='float'){
+      out.innerHTML='<span class="dim">f"평점: {평점:.2f}"   (평점=4.5678)</span>\n출력 ▸ <span class="hl">평점: 4.57</span>';
+    }else{
+      out.innerHTML='<span class="dim">f"전월 대비 {율:.1%}"   (율=0.0856)</span>\n출력 ▸ <span class="hl">전월 대비 8.6%</span>';
+    }
+  }
+  document.querySelectorAll('#w5tog button').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#w5tog button').forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on'); mode=b.dataset.k; render();
+    });
+  });
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Part 7 · 딕셔너리</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&amp;family=Gowun+Dodum&amp;display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:760px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:88px 22px 40px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:62ch;}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:76px 0 46px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 20px;line-height:1.3;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  code{font-family:'Gowun Dodum',monospace;background:#efe7d8;color:#8a3408;padding:1.5px 7px;border-radius:6px;font-size:.92em;}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15.5px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:22px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:16px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;color:#9ec79a;border-radius:10px;padding:13px 16px;font-family:monospace;font-size:15px;min-height:42px;white-space:pre-wrap;}
+  .out .dim{color:#8b8175;}.out .err{color:#e0935f;}.out .hl{color:#fff;font-weight:700;}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+  .seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:monospace;transition:.15s;color:var(--ink);}
+  .seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  .pp-input{border:1.5px solid var(--line);border-radius:8px;padding:8px 12px;font-family:monospace;font-size:14px;background:#fff;color:var(--ink);}
+
+  /* dict view */
+  .dv{display:flex;flex-direction:column;gap:6px;margin:10px 0;}
+  .dv-row{display:flex;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:9px;padding:8px 12px;background:#fff;font-family:monospace;font-size:14px;cursor:pointer;transition:.15s;}
+  .dv-row.sel{border-color:var(--accent);background:#fdf2ec;}
+  .dv-key{background:var(--accent-soft);color:#8a3408;border-radius:6px;padding:2px 9px;font-weight:700;}
+  .dv-colon{color:var(--sub);}
+  .dv-val{color:var(--ink);}
+
+  /* W3 hash race */
+  .hr-col{display:flex;flex-direction:column;gap:8px;}
+  .hr-track{display:flex;gap:4px;flex-wrap:wrap;}
+  .hr-cell{width:34px;height:30px;border:1.5px solid var(--line);border-radius:6px;display:grid;place-items:center;font-family:monospace;font-size:11px;background:#fff;transition:.12s;}
+  .hr-cell.check{background:#fbe8c8;border-color:var(--gold);}
+  .hr-cell.hit{background:var(--teal);color:#fff;border-color:var(--teal);}
+  .hr-lbl{font-size:12px;font-weight:700;}
+
+  /* W4 iterate */
+  .it-tabs{display:flex;gap:6px;margin-bottom:12px;}
+
+  /* W5 records */
+  .rc-list{display:flex;flex-direction:column;gap:8px;}
+  .rc-card{border:1.5px solid var(--line);border-radius:10px;padding:10px 14px;background:#fff;font-family:monospace;font-size:13px;cursor:pointer;transition:.15s;}
+  .rc-card.sel{border-color:var(--accent);background:#fdf2ec;}
+  .rc-idx{color:var(--accent);font-weight:700;}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}}
+</style>
+<style id="wide16x9">
+/* ===== 16:9 와이드 반응형 오버라이드 ===== */
+:root{--maxw:1320px;}
+header.hero{text-align:center;padding-top:70px;}
+header.hero .lead{margin-left:auto;margin-right:auto;}
+header.hero .hero-meta{justify-content:center;}
+main.wrap section.two-col .col-text>:first-child{margin-top:0;}
+main.wrap section.two-col .col-text .summary{margin-bottom:0;}
+@media(min-width:980px){
+  main.wrap section.two-col{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.06fr);
+    gap:46px;align-items:start;
+  }
+  main.wrap section.two-col .col-widget{position:sticky;top:22px;}
+  main.wrap section.two-col .col-text{padding-top:2px;}
+}
+@media(max-width:979px){
+  main.wrap section.two-col .col-widget{margin-top:6px;}
+}
+</style></head>
+<body>
+<div id="progress"></div>
+<header class="hero">
+<div class="eyebrow">파이썬 기초 문법 · Part 7 · 자료구조</div>
+<h1>딕셔너리</h1>
+<p class="lead">번호(인덱스) 대신 <strong>이름(키)으로 값을 찾는</strong> 자료구조. <code>{"가격": 89000, "재고": 12}</code>처럼 의미 있는 이름표로 데이터를 담아 사람이 읽기 좋고 찾기 빠른 구조를 만듦 — 세트의 <strong>해시</strong> 원리가 다시 등장함.</p>
+<div class="hero-meta">
+<span class="chip">🟡 자료구조 · 7/18</span>
+<span class="chip t">키-값 · 해시 · 순회</span>
+<span class="chip t">예상 35분</span>
+</div>
+</header>
+<main class="wrap">
+<!-- 1 -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">7-1</div><h2>이름으로 값을 찾기</h2><p><code>{키: 값}</code> 형태로 만들고 <code>딕트[키]</code>로 값을 꺼냄. 번호가 아니라 <strong>의미 있는 이름</strong>으로 찾아, 코드만 봐도 무슨 뜻인지 읽힘 — 데이터의 의미가 코드에 드러남.</p><div class="note"><b>📌 참고</b>  리스트 <code>상품[1]</code>은 "1번이 가격"이라고 외워야 하지만, 딕셔너리 <code>상품["가격"]</code>은 의미가 또렷함. 키는 보통 문자열, 값은 어떤 자료형이든 됨. 빈 딕셔너리는 <code>{}</code>.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>딕셔너리는 <code>{키: 값}</code>, 키(이름)로 값을 찾음.</li>
+<li>번호 대신 이름으로 찾아 코드가 읽기 쉬움.</li>
+<li>여러 속성을 가진 데이터 한 건 표현에 적합함.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 키로 값 꺼내기</span>
+<p class="wdesc">키(이름표)를 클릭하면 그 값을 꺼내는 코드와 결과가 나타남.</p>
+<div class="dv" id="w1dv"></div>
+<div class="out" id="w1out"></div>
+</div></div></section>
+<!-- 2 -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">7-2</div><h2>조회·추가·수정·삭제</h2><p>가변이라 자유롭게 다룸. <code>딕트[키] = 값</code>은 <strong>있는 키면 수정, 없는 키면 추가</strong>. 없는 키를 <code>[]</code>로 꺼내면 오류라, 안전하게는 <code>.get(키, 기본값)</code>을 씀.</p><div class="note"><b>📌 참고</b>  "있을지 없을지 모르는 키"는 <code>.get()</code>으로 안전하게 꺼내거나 <code>in</code>으로 먼저 확인. 데이터 분석에서 누락 항목 다룰 때 <code>.get(키, 기본값)</code>이 유용함.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li><code>딕트[키]=값</code>으로 수정·추가(있으면 수정, 없으면 추가).</li>
+<li>없는 키는 <code>[]</code>면 오류, <code>.get()</code>이면 안전.</li>
+<li><code>in</code>으로 키 존재를 확인할 수 있음.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · [] vs .get()</span>
+<p class="wdesc">조회할 키를 입력해, <code>[]</code>(없으면 오류)와 <code>.get()</code>(없으면 기본값)의 차이를 봄.</p>
+<div style="font-family:monospace;font-size:13px;margin-bottom:8px;color:var(--sub);">상품 = {"이름": "니트", "가격": 79000}</div>
+<div class="seg" style="align-items:center;">
+<span style="font-size:13px;color:var(--sub)">키:</span>
+<input class="pp-input" id="w2key" style="width:110px;" value="가격"/>
+</div>
+<div class="out" id="w2out"></div>
+</div></div></section>
+<!-- 3 hash -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">7-3</div><h2>빠른 이유 — 해시 ⭐</h2><p>딕셔너리는 키를 <strong>해시</strong>로 계산해 <strong>곧장 그 자리로</strong> 감 — 리스트처럼 앞에서부터 훑지 않음. 그래서 값이 아주 많아도 거의 즉시 찾음. 세트와 같은 원리(키는 고유).</p><div class="note"><b>📌 참고</b>  "딕셔너리 키 = 세트 원소"는 같은 해시 원리 위에 있음(둘 다 고유·빠름). 그래서 키는 변하지 않는 값(문자열·숫자·튜플)만 가능 — 리스트는 키가 될 수 없음(가변).</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>딕셔너리는 키를 해시로 계산해 값을 거의 즉시 찾음.</li>
+<li>리스트는 앞에서부터 훑지만 딕셔너리는 곧장 그 자리로.</li>
+<li>키는 고유하며 변하지 않는 값만 가능함.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 리스트 훑기 vs 딕셔너리 즉시</span>
+<p class="wdesc">"코트" 찾기를 두 방식으로 비교. 리스트는 하나씩 훑고, 딕셔너리는 바로 도착함.</p>
+<div class="hr-col" style="margin-bottom:12px;">
+<div class="hr-lbl">📜 리스트 (앞에서부터 비교)</div>
+<div class="hr-track" id="w3list"></div>
+</div>
+<div class="hr-col" style="margin-bottom:12px;">
+<div class="hr-lbl">📖 딕셔너리 (해시로 즉시)</div>
+<div class="hr-track" id="w3dict"></div>
+</div>
+<div style="text-align:center;">
+<button class="seg" style="display:inline-flex;"><button id="w3go" style="border-color:var(--accent);">"코트" 찾기</button></button>
+</div>
+<div class="out" id="w3out" style="margin-top:10px;"></div>
+</div></div></section>
+<!-- 4 iterate -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">7-4</div><h2>순회 — keys, values, items</h2><p><code>.keys()</code>(키 전체)·<code>.values()</code>(값 전체)·<code>.items()</code>(키-값 짝). <code>.items()</code>의 짝은 <strong>튜플</strong>이고, 반복문에서 <strong>언패킹</strong>해 씀(Part 6과 연결).</p><div class="note"><b>📌 참고</b>  "모든 가격 합계"는 <code>sum(딕트.values())</code> 한 줄. <code>.items()</code> + 반복문(<code>for 키, 값 in ...</code>)이 키-값을 함께 다루는 정석 패턴임(Part 10에서 활용).</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li><code>.keys()·.values()·.items()</code>로 통째로 훑음.</li>
+<li><code>.items()</code>는 키-값을 튜플 짝으로 묶어 줌.</li>
+<li><code>sum(.values())</code> 등으로 집계, 반복문과 함께 강력.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 세 가지로 훑기</span>
+<p class="wdesc">버튼으로 keys/values/items가 각각 무엇을 돌려주는지 봄.</p>
+<div style="font-family:monospace;font-size:13px;margin-bottom:10px;color:var(--sub);">가격표 = {"니트": 89000, "코트": 120000, "가디건": 79000}</div>
+<div class="seg" id="w4tabs">
+<button class="on" data-k="keys">.keys()</button>
+<button data-k="values">.values()</button>
+<button data-k="items">.items()</button>
+<button data-k="sum">sum(.values())</button>
+</div>
+<div class="out" id="w4out"></div>
+</div></div></section>
+<!-- 5 records -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">7-5</div><h2>중첩 — 딕셔너리들의 리스트</h2><p>딕셔너리 안에 리스트·딕셔너리를 담아 계층을 표현함. 특히 <strong>딕셔너리들의 리스트</strong>(여러 건, 각 건은 여러 속성)가 데이터 분석 데이터의 표준 형태 — pandas로 바로 변환되는 구조임.</p><div class="note"><b>📌 참고</b>  5-5의 "리스트의 리스트(표)"보다 딕셔너리 쪽이 각 값의 의미(키)가 드러나 더 읽기 좋음. 그래서 실무 데이터(JSON·API 응답)는 대부분 이 형태임.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>딕셔너리 안에 리스트·딕셔너리를 담아 계층 표현.</li>
+<li>꺼낼 땐 바깥에서 안으로 차례로 접근.</li>
+<li>"딕셔너리들의 리스트"가 데이터의 표준 형태.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 상품 목록(딕셔너리들의 리스트)</span>
+<p class="wdesc">카드(한 건)를 클릭하면, 그 건에 접근하는 <code>[번호]["키"]</code> 코드가 나타남.</p>
+<div class="rc-list" id="w5list"></div>
+<div class="out" id="w5out" style="margin-top:12px;"></div>
+</div></div></section>
+</main>
+<footer>
+<div class="next-card">
+<div class="nl">NEXT · PART 8 · 자료구조 캡스톤</div>
+<div class="nt">자료구조 미니 프로젝트</div>
+<p style="margin-top:8px;">딕셔너리들의 리스트로 상품 목록을 만들고 조회·집계·정렬·필터를 구현. 문자열·리스트·튜플·세트·딕셔너리를 하나로 묶는 자료구조 단계의 첫 캡스톤!</p>
+</div>
+<p style="margin-top:24px;">파이썬 기초 문법 커리큘럼 · Part 7 / 18 · 데이터 분석 자동화를 위한 기초</p>
+</footer>
+<script>
+var prog=document.getElementById('progress');
+addEventListener('scroll',function(){var h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+
+/* W1 */
+(function(){
+  var d=[["이름","\"니트\""],["가격","89000"],["재고","12"]];
+  var box=document.getElementById('w1dv'), out=document.getElementById('w1out'), sel=0;
+  function render(){
+    box.innerHTML=d.map(function(x,i){
+      return '<div class="dv-row'+(i===sel?' sel':'')+'" data-i="'+i+'"><span class="dv-key">"'+x[0]+'"</span><span class="dv-colon">:</span><span class="dv-val">'+x[1]+'</span></div>';
+    }).join('');
+    box.querySelectorAll('.dv-row').forEach(function(r){ r.addEventListener('click',function(){sel=+r.dataset.i;render();}); });
+    out.innerHTML='<span class="dim">상품["'+d[sel][0]+'"]</span> → <span class="hl">'+d[sel][1]+'</span>';
+  }
+  render();
+})();
+
+/* W2 get */
+(function(){
+  var dict={"이름":'"니트"',"가격":"79000"};
+  function render(){
+    var k=document.getElementById('w2key').value.trim();
+    var out=document.getElementById('w2out');
+    var has=Object.prototype.hasOwnProperty.call(dict,k);
+    var line1, line2;
+    if(has){
+      line1='<span class="dim">상품["'+k+'"]</span> → <span class="hl">'+dict[k]+'</span>';
+      line2='<span class="dim">상품.get("'+k+'")</span> → <span class="hl">'+dict[k]+'</span>';
+    }else{
+      line1='<span class="dim">상품["'+k+'"]</span> → <span class="err">❌ KeyError (없는 키)</span>';
+      line2='<span class="dim">상품.get("'+k+'", "없음")</span> → <span class="hl">"없음"</span>  <span style="color:#9ec79a">(안전!)</span>';
+    }
+    out.innerHTML=line1+'\n'+line2;
+  }
+  document.getElementById('w2key').addEventListener('input',render); render();
+})();
+
+/* W3 hash race */
+(function(){
+  var listKeys=["니트","바지","코트","가디건","패딩"]; // 코트는 index 2
+  var listBox=document.getElementById('w3list'), dictBox=document.getElementById('w3dict'), out=document.getElementById('w3out');
+  function build(){
+    listBox.innerHTML=listKeys.map(function(k,i){return '<div class="hr-cell" data-i="'+i+'">'+k+'</div>';}).join('');
+    dictBox.innerHTML=listKeys.map(function(k){return '<div class="hr-cell" data-k="'+k+'">'+k+'</div>';}).join('');
+    out.innerHTML='<span class="dim">"코트"를 찾아보세요</span>';
+  }
+  build();
+  document.getElementById('w3go').addEventListener('click',function(){
+    build();
+    var lcells=listBox.querySelectorAll('.hr-cell');
+    var target=2, step=0;
+    var timer=setInterval(function(){
+      if(step>0) lcells[step-1].classList.remove('check');
+      if(step>target){
+        clearInterval(timer);
+        // dict instant
+        var dcells=dictBox.querySelectorAll('.hr-cell');
+        dcells.forEach(function(c){ if(c.dataset.k==='코트') c.classList.add('hit'); });
+        lcells[target].classList.add('hit');
+        out.innerHTML='<span class="dim">리스트: 앞에서부터 '+(target+1)+'번 비교해서 찾음 (느림)</span>\n<span class="dim">딕셔너리: 해시로 곧장 도착 (즉시!)</span>';
+        return;
+      }
+      lcells[step].classList.add('check');
+      step++;
+    },350);
+  });
+})();
+
+/* W4 iterate */
+(function(){
+  var out=document.getElementById('w4out');
+  var R={
+    keys:'<span class="dim">가격표.keys()</span>\n→ <span class="hl">[\'니트\', \'코트\', \'가디건\']</span>  (상품명 목록)',
+    values:'<span class="dim">가격표.values()</span>\n→ <span class="hl">[89000, 120000, 79000]</span>  (가격 목록)',
+    items:'<span class="dim">가격표.items()</span>\n→ <span class="hl">[(\'니트\',89000), (\'코트\',120000), (\'가디건\',79000)]</span>\n<span class="dim">(키-값 튜플 짝 — 반복문에서 언패킹)</span>',
+    sum:'<span class="dim">sum(가격표.values())</span>\n→ <span class="hl">288000</span>  (전체 가격 합계)'
+  };
+  document.querySelectorAll('#w4tabs button').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#w4tabs button').forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on'); out.innerHTML=R[b.dataset.k];
+    });
+  });
+  out.innerHTML=R.keys;
+})();
+
+/* W5 records */
+(function(){
+  var data=[{이름:"니트",가격:89000},{이름:"코트",가격:120000},{이름:"가디건",가격:79000}];
+  var box=document.getElementById('w5list'), out=document.getElementById('w5out'), sel=null;
+  function render(){
+    box.innerHTML=data.map(function(d,i){
+      return '<div class="rc-card'+(i===sel?' sel':'')+'" data-i="'+i+'"><span class="rc-idx">['+i+']</span> {"이름": "'+d.이름+'", "가격": '+d.가격+'}</div>';
+    }).join('');
+    box.querySelectorAll('.rc-card').forEach(function(c){ c.addEventListener('click',function(){sel=+c.dataset.i;render();}); });
+    if(sel==null) out.innerHTML='<span class="dim">카드를 클릭해 접근 코드를 보세요</span>';
+    else out.innerHTML='<span class="dim">상품목록['+sel+']["이름"]</span> → <span class="hl">"'+data[sel].이름+'"</span>\n<span class="dim">상품목록['+sel+']["가격"]</span> → <span class="hl">'+data[sel].가격+'</span>';
+  }
+  render();
+})();
+</script>
+</body>
+</html>

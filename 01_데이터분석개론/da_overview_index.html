@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>데이터 분석 개요 및 기초 이론 — 전체 과정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;--accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;--serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:860px;color-scheme:light only;}
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.8;font-size:17px;background-image:radial-gradient(circle at 15% 0%,rgba(194,65,12,.05),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.05),transparent 45%);}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:80px 22px 36px;text-align:center;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,48px);line-height:1.2;margin:14px 0 16px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:60ch;margin:0 auto;}
+  .meta{margin-top:24px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  .quote{max-width:var(--maxw);margin:30px auto 0;padding:0 22px;}
+  .quote .q{background:linear-gradient(135deg,#fbf8f2,#fbf3e6);border:1px solid var(--line);border-radius:14px;padding:22px;text-align:center;font-family:var(--serif);font-weight:700;font-size:20px;color:var(--accent);}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:13px;margin-top:36px;}
+  .lc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 19px;transition:.18s;text-decoration:none;color:inherit;display:block;}
+  .lc:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(80,60,30,.1);border-color:var(--accent-soft);}
+  .lc .ln{font-family:'Gowun Dodum',monospace;font-size:11.5px;font-weight:700;letter-spacing:.08em;color:var(--accent);}
+  .lc .lt{font-family:var(--serif);font-weight:700;font-size:18px;margin:5px 0 7px;line-height:1.3;}
+  .lc .ld{font-size:13px;color:var(--sub);line-height:1.6;}
+  .lc.cap{border-color:var(--gold);background:linear-gradient(135deg,#fbf8f2,#fbf3e6);}
+  .lc.cap .ln{color:var(--gold);}
+  .principle{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:20px 22px;margin:36px 0 0;}
+  .principle .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:16px;margin-bottom:8px;}
+  .principle p{font-size:14.5px;color:var(--sub);margin:0;}
+  .roadmap{margin:30px 0 0;background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;}
+  .roadmap .h{font-family:var(--serif);font-weight:700;font-size:16px;color:var(--teal);margin-bottom:10px;}
+  .rdrow{display:flex;align-items:center;gap:8px;font-size:13px;padding:4px 0;color:var(--sub);}
+  .rdrow.now{color:var(--ink);font-weight:700;}
+  .rdrow .dot{width:9px;height:9px;border-radius:50%;background:#b9ad99;flex-shrink:0;}
+  .rdrow.now .dot{background:var(--accent);}
+  footer{text-align:center;padding:48px 22px 70px;color:var(--sub);font-size:14px;margin-top:30px;border-top:1px solid var(--line);}
+  .reveal{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}.cards{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="eyebrow">데이터 분석 자동화 커리큘럼 · 모듈 ①</div>
+  <h1>데이터 분석 개요<br>및 기초 이론</h1>
+  <p class="lead">미리 알아야 할 지식은 아무것도 없는 <strong style="color:var(--accent)">완전 초보용</strong> 강의. "데이터 분석이 무엇이고 왜 하는가"부터 데이터·척도·분석 유형·프로세스·도구·마인드셋까지, 비유와 인터랙티브로 아주 자세히 익히는 7강 과정.</p>
+  <div class="meta">
+    <span class="chip">전 7강</span>
+    <span class="chip t">개념 중심 · 코드 없음</span>
+    <span class="chip t">비유·사례·인터랙티브 풍부</span>
+  </div>
+</header>
+
+<div class="quote">
+  <div class="q">"감(感)이 아니라 데이터(근거)로<br>더 나은 결정을 내린다."</div>
+</div>
+
+<main class="wrap">
+
+  <div class="cards reveal">
+    <a class="lc" href="da_overview_part1/1강_웹강의.html">
+      <div class="ln">LESSON 1</div>
+      <div class="lt">데이터 분석이란 / 왜 하는가</div>
+      <div class="ld">감 vs 근거, 1865년 BI 기원(디벤스·퍼니스), 테일러·포드의 측정, 컨설팅 산업, 기술 발전, 데이터 대중화 — 비즈니스 관점의 역사.</div>
+    </a>
+    <a class="lc" href="da_overview_part2/2강_웹강의.html">
+      <div class="ln">LESSON 2</div>
+      <div class="lt">데이터 분석 방법의 진화</div>
+      <div class="ld">집계 → 통계(표본으로 전체 추정·분포·회귀) → 데이터 마이닝 → 머신러닝 → 딥러닝·AI. "진화는 대체가 아니라 누적".</div>
+    </a>
+    <a class="lc" href="da_overview_part3/3강_웹강의.html">
+      <div class="ln">LESSON 3</div>
+      <div class="lt">데이터란 무엇인가</div>
+      <div class="ld">데이터의 정의, DIKW 피라미드(데이터→정보→지식→지혜), 정형 vs 비정형, 정량 vs 정성, "숫자처럼 보이는 정성" 함정.</div>
+    </a>
+    <a class="lc" href="da_overview_part4/4강_웹강의.html">
+      <div class="ln">LESSON 4</div>
+      <div class="lt">데이터의 종류 — 측정 척도</div>
+      <div class="ld">명목·순서·등간·비율 네 척도, 같은 숫자 7의 다른 의미, 등간 vs 비율("2배"가 되는가), 척도별 가능한 연산·그래프.</div>
+    </a>
+    <a class="lc" href="da_overview_part5/5강_웹강의.html">
+      <div class="ln">LESSON 5</div>
+      <div class="lt">분석의 4단계 유형</div>
+      <div class="ld">묘사(무슨 일?)·진단(왜?)·예측(어떻게 될까?)·처방(무엇을 할까?). 점점 어렵고 가치 있는 "가치 사다리".</div>
+    </a>
+    <a class="lc" href="da_overview_part6/6강_웹강의.html">
+      <div class="ln">LESSON 6</div>
+      <div class="lt">데이터 분석 프로세스</div>
+      <div class="ld">문제정의→수집→정제→분석→시각화→의사결정. 가장 자주 생략되는 문제정의, 시간의 70~80%를 쓰는 정제, 순환 과정.</div>
+    </a>
+    <a class="lc cap" href="da_overview_part7/7강_웹강의.html">
+      <div class="ln">LESSON 7 · 마무리</div>
+      <div class="lt">분석가의 도구와 마인드셋</div>
+      <div class="ld">엑셀·SQL·파이썬·BI 도구, 왜 파이썬·판다스인가, 마인드셋(호기심·의심·윤리), 좋은 질문, 전체 로드맵.</div>
+    </a>
+  </div>
+
+  <div class="principle reveal">
+    <div class="h">⭐ 이 강의의 특징</div>
+    <p>완전 초보를 위해 아주 자세하고 상세하게 풀어 씀. 모든 용어는 처음 나올 때 쉬운 정의와 함께 설명하고(예: "intelligence는 지능이 아니라 정보·첩보"), 비즈니스 역사를 이야기로 이해하게 하며, 분식집·국 맛보기·맥주와 기저귀·스팸 필터·연장통 등 풍부한 비유와 완전 비교 예시를 담음. 각 강의는 읽는 본문과 함께 시각화·차트·인터랙티브 위젯으로 같은 개념을 두 번 이해하도록 구성함.</p>
+  </div>
+
+  <div class="roadmap reveal">
+    <div class="h">전체 커리큘럼 로드맵</div>
+    <div class="rdrow now"><span class="dot"></span>① 데이터 분석 개요 및 기초 이론 (지금 여기)</div>
+    <div class="rdrow"><span class="dot"></span>② 파이썬 문법 기초 — 분석의 도구 익히기</div>
+    <div class="rdrow"><span class="dot"></span>③ 데이터 분석 기초·중급 이론 + 분석 프로세스</div>
+    <div class="rdrow"><span class="dot"></span>④ 판다스란 무엇인가 — 핵심 도구</div>
+    <div class="rdrow"><span class="dot"></span>⑤ 판다스 + 데이터 분석 프로세스 — 실전 분석</div>
+  </div>
+
+</main>
+
+<footer>
+  <p>데이터 분석 개요 및 기초 이론 (1~7강) · 데이터 분석 자동화 커리큘럼</p>
+  <p style="margin-top:6px;">완전 초보용 · 개념 중심 · 비유와 인터랙티브로 배우는 데이터 분석의 첫걸음</p>
+</footer>
+
+<script>
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.06});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+</script>
+</body>
+</html>

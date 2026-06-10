@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>파이썬 기초 — 실습 순서 강의 목차</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:920px;color-scheme:light only;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.8;font-size:17px;
+    background-image:radial-gradient(circle at 15% 0%,rgba(194,65,12,.05),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.05),transparent 45%);}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:72px 22px 30px;text-align:center;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,48px);line-height:1.2;margin:14px 0 16px;letter-spacing:-.01em;}
+  .lead{font-size:17px;color:var(--sub);max-width:62ch;margin:0 auto;}
+  .meta{margin-top:22px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  .stage{margin:40px 0 0;}
+  .stage-head{display:flex;align-items:baseline;gap:12px;margin-bottom:4px;padding-bottom:10px;border-bottom:2px solid var(--line);flex-wrap:wrap;}
+  .stage-tag{font-family:var(--serif);font-weight:700;font-size:clamp(19px,3.6vw,24px);}
+  .stage-sub{font-size:13px;color:var(--sub);}
+  .pair{font-size:12px;font-family:monospace;font-weight:700;padding:3px 10px;border-radius:7px;background:#d8e8e3;color:#225349;margin-left:auto;}
+  .g1 .stage-tag{color:#3f7d4f;} .g2 .stage-tag{color:#a8762f;} .g3 .stage-tag{color:#c2410c;}
+  .g4 .stage-tag{color:#2f6b5e;} .g5 .stage-tag{color:#b4451f;} .g6 .stage-tag{color:#6f6457;}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin-top:16px;}
+  .pcard{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:15px 17px;transition:.18s;text-decoration:none;color:inherit;display:block;}
+  .pcard:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(80,60,30,.1);border-color:var(--accent-soft);}
+  .pcard .pn{font-family:monospace;font-size:11.5px;font-weight:700;letter-spacing:.06em;color:var(--accent);}
+  .pcard .pt{font-family:var(--serif);font-weight:700;font-size:16.5px;margin:5px 0 5px;line-height:1.3;}
+  .pcard .pd{font-size:12.5px;color:var(--sub);line-height:1.55;}
+  .bonus .pcard{border-style:dashed;background:linear-gradient(135deg,#fbf8f2,#fbf3e6);}
+  .note{font-size:12.5px;color:var(--sub);margin-top:10px;}
+  .principle{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:18px 22px;margin:38px 0 0;}
+  .principle .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15.5px;margin-bottom:8px;}
+  .principle p{font-size:14px;color:var(--sub);margin:0;}
+  footer{text-align:center;padding:46px 22px 64px;color:var(--sub);font-size:13.5px;margin-top:28px;border-top:1px solid var(--line);}
+  @media(max-width:480px){body{font-size:16px;}.cards{grid-template-columns:1fr;}.pair{margin-left:0;}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="eyebrow">실습 순서 정렬판 · 파이썬 기초</div>
+  <h1>파이썬 기초 문법 — 실습 순서 강의</h1>
+  <p class="lead">이론 웹강의를 <b>파이썬-실습파일</b> 폴더 순서(01~05)에 맞춰 5개 그룹으로 재배치했습니다. 강의 폴더 0X와 실습 폴더 0X를 나란히 열어 진행하세요. 실습이 없는 캡스톤·모듈 강의는 맨 뒤 보강 그룹으로 모았습니다.</p>
+  <div class="meta">
+    <span class="chip">5개 그룹 + 보강</span>
+    <span class="chip t">실습 폴더와 1:1 대응</span>
+    <span class="chip">총 19개 강의</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="stage g1">
+    <div class="stage-head">
+      <span class="stage-tag">01 · 데이터타입 · 변수</span>
+      <span class="stage-sub">변수·연산·입출력·문자열</span>
+      <span class="pair">↔ 실습 01_데이터타입_변수</span>
+    </div>
+    <div class="cards">
+      <a class="pcard" href="01_데이터타입_변수/01_왜파이썬인가.html"><div class="pn">강의 01</div><div class="pt">왜 파이썬인가</div><div class="pd">데이터 분석 자동화의 첫걸음</div></a>
+      <a class="pcard" href="01_데이터타입_변수/02_변수와자료형.html"><div class="pn">강의 02</div><div class="pt">변수와 자료형</div><div class="pd">값은 메모리에, 변수는 이름표</div></a>
+      <a class="pcard" href="01_데이터타입_변수/03_연산자.html"><div class="pn">강의 03</div><div class="pt">연산자</div><div class="pd">산술·비교·논리 연산</div></a>
+      <a class="pcard" href="01_데이터타입_변수/04_입력과출력.html"><div class="pn">강의 04</div><div class="pt">입력과 출력</div><div class="pd">input · print · 포매팅 기초</div></a>
+      <a class="pcard" href="01_데이터타입_변수/05_문자열다루기.html"><div class="pn">강의 05</div><div class="pt">문자열 다루기</div><div class="pd">불변·슬라이싱·포매팅</div></a>
+    </div>
+    <p class="note">↔ 실습: 시작하기 · 문자열1 · 문자열2 · formating</p>
+  </section>
+
+  <section class="stage g2">
+    <div class="stage-head">
+      <span class="stage-tag">02 · 데이터구조</span>
+      <span class="stage-sub">리스트·딕셔너리·튜플·세트</span>
+      <span class="pair">↔ 실습 02_데이터구조</span>
+    </div>
+    <div class="cards">
+      <a class="pcard" href="02_데이터구조/01_리스트.html"><div class="pn">강의 01</div><div class="pt">리스트</div><div class="pd">가변·참조·정렬</div></a>
+      <a class="pcard" href="02_데이터구조/02_딕셔너리.html"><div class="pn">강의 02</div><div class="pt">딕셔너리</div><div class="pd">키-값·해시 조회</div></a>
+      <a class="pcard" href="02_데이터구조/03_튜플과세트.html"><div class="pn">강의 03</div><div class="pt">튜플과 세트</div><div class="pd">불변 튜플·중복 없는 세트</div></a>
+    </div>
+    <p class="note">↔ 실습: LIST · dict · tuple_set (실습 순서대로 딕셔너리를 튜플·세트보다 먼저 배치)</p>
+  </section>
+
+  <section class="stage g3">
+    <div class="stage-head">
+      <span class="stage-tag">03 · 조건문 · 반복문</span>
+      <span class="stage-sub">if·for·while·반복 제어</span>
+      <span class="pair">↔ 실습 03_조건문_반복문</span>
+    </div>
+    <div class="cards">
+      <a class="pcard" href="03_조건문_반복문/01_조건문.html"><div class="pn">강의 01</div><div class="pt">조건문</div><div class="pd">if · elif · else</div></a>
+      <a class="pcard" href="03_조건문_반복문/02_반복문_for.html"><div class="pn">강의 02</div><div class="pt">반복문 (for)</div><div class="pd">for · range · 중첩</div></a>
+      <a class="pcard" href="03_조건문_반복문/03_while과반복제어.html"><div class="pn">강의 03</div><div class="pt">while과 반복 제어</div><div class="pd">while · break · continue</div></a>
+    </div>
+    <p class="note">↔ 실습: if문 · for문 · for_if중첩 · while문 · 종합문제</p>
+  </section>
+
+  <section class="stage g4">
+    <div class="stage-head">
+      <span class="stage-tag">04 · 함수</span>
+      <span class="stage-sub">def·스코프·람다·컴프리헨션</span>
+      <span class="pair">↔ 실습 04_함수</span>
+    </div>
+    <div class="cards">
+      <a class="pcard" href="04_함수/01_함수기초.html"><div class="pn">강의 01</div><div class="pt">함수 기초</div><div class="pd">def · return · 인자</div></a>
+      <a class="pcard" href="04_함수/02_함수심화.html"><div class="pn">강의 02</div><div class="pt">함수 심화</div><div class="pd">스코프 · 람다 · 고차 함수</div></a>
+      <a class="pcard" href="04_함수/03_컴프리헨션과내장함수.html"><div class="pn">강의 03</div><div class="pt">컴프리헨션과 내장 함수</div><div class="pd">comprehension · 내장 함수</div></a>
+    </div>
+    <p class="note">↔ 실습: 함수_01 · 함수_02 · 함수_03 · 함수_연습문제</p>
+  </section>
+
+  <section class="stage g5">
+    <div class="stage-head">
+      <span class="stage-tag">05 · 클래스</span>
+      <span class="stage-sub">객체 지향·상속·최종 프로젝트</span>
+      <span class="pair">↔ 실습 05_클래스</span>
+    </div>
+    <div class="cards">
+      <a class="pcard" href="05_클래스/01_클래스기초.html"><div class="pn">강의 01</div><div class="pt">클래스 기초</div><div class="pd">속성·메서드·인스턴스</div></a>
+      <a class="pcard" href="05_클래스/02_클래스심화_최종프로젝트.html"><div class="pn">강의 02</div><div class="pt">클래스 심화 + 최종 프로젝트</div><div class="pd">상속 · Product · Cart</div></a>
+    </div>
+    <p class="note">↔ 실습: 클래스01 · 클래스02 · 클래스03</p>
+  </section>
+
+  <section class="stage g6 bonus">
+    <div class="stage-head">
+      <span class="stage-tag">06 · 보강 (캡스톤 · 심화)</span>
+      <span class="stage-sub">대응 실습이 없는 종합·심화 강의</span>
+      <span class="pair">실습 없음 · 맨 뒤 보강</span>
+    </div>
+    <div class="cards">
+      <a class="pcard" href="06_보강_캡스톤_심화/01_자료구조미니프로젝트.html"><div class="pn">보강 01 · 캡스톤</div><div class="pt">자료구조 미니 프로젝트</div><div class="pd">자료구조만으로 상품 관리</div></a>
+      <a class="pcard" href="06_보강_캡스톤_심화/02_흐름함수미니프로젝트.html"><div class="pn">보강 02 · 캡스톤</div><div class="pt">흐름·함수 미니 프로젝트</div><div class="pd">상품 관리 완전 자동화</div></a>
+      <a class="pcard" href="06_보강_캡스톤_심화/03_모듈예외파일.html"><div class="pn">보강 03 · 심화</div><div class="pt">모듈 · 예외 · 파일</div><div class="pd">import · try/except · 파일 입출력</div></a>
+    </div>
+    <p class="note">자료구조 캡스톤은 02 다음, 흐름·함수 캡스톤은 04 다음, 모듈/예외/파일은 05 앞에 끼워 진행해도 좋습니다.</p>
+  </section>
+
+  <div class="principle">
+    <div class="h">⭐ 이 구성의 원칙 — 실습과 보조를 맞춘 강의</div>
+    <p>강의 폴더 번호(01~05)가 실습파일 폴더 번호와 그대로 대응합니다. 한 그룹의 이론을 본 뒤 같은 번호의 실습 폴더를 열어 바로 손으로 익히세요. 캡스톤·모듈처럼 실습 짝이 없는 강의는 흐름을 끊지 않도록 맨 뒤 보강 그룹으로 분리했습니다.</p>
+  </div>
+
+</main>
+
+<footer>
+  파이썬 기초 문법 · 실습 순서 정렬판 · 5개 그룹(19개 강의) + 보강 · 다음 여정 → pandas · numpy · matplotlib
+</footer>
+</body>
+</html>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 8 · 피벗테이블 — pivot_table</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--theme:#b4451f;--themed:#8a3414;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:880px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(180,69,31,.06),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--theme);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:84px 22px 36px;}
+  .eyebrow{color:var(--theme);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:62ch;}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:#f0ddd4;color:#8a3414;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:54px 0 30px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--theme);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 18px;line-height:1.3;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  code{font-family:'Gowun Dodum',monospace;background:#efe7d8;color:#8a3408;padding:1.5px 7px;border-radius:6px;font-size:.92em;}
+  pre{background:#2b2723;color:#f4efe6;border-radius:12px;padding:16px 18px;overflow-x:auto;font-size:13.5px;line-height:1.7;margin:16px 0;white-space:pre;}
+  pre code{background:none;color:inherit;padding:0;}
+  pre .k{color:#e0935f;}pre .s{color:#9ec79a;}pre .c{color:#8b8175;font-style:italic;}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--theme);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15.5px;color:var(--sub);}
+  .note b{color:var(--themed);}.note.warn{border-left-color:var(--accent);}
+  .summary{background:#f3e6df;border-radius:12px;padding:18px 20px;margin:22px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--themed);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--theme);padding:4px 11px;border-radius:999px;margin-bottom:16px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+  .segbtn{border:1.5px solid var(--line);background:#fff;border-radius:9px;padding:8px 13px;cursor:pointer;font-family:var(--sans);font-weight:700;font-size:12.5px;color:var(--sub);transition:.15s;}
+  .segbtn.on{border-color:var(--theme);background:var(--theme);color:#fff;}
+  .stage{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;}
+  .lbl{font-size:12px;color:var(--sub);font-weight:700;}
+
+  .dft{border-collapse:collapse;font-family:monospace;font-size:13px;}
+  .dft.full{width:100%;}
+  .dft th,.dft td{border:1px solid var(--line);padding:6px 10px;text-align:right;}
+  .dft th{background:#efe7d8;color:#8a3408;text-align:center;}
+  .dft td.idx{background:#f3ecdd;color:#a06a2a;font-weight:700;text-align:left;}
+  .dft td{background:#fff;}
+  .dft tr.tot td,.dft td.tot{background:#fbe7da;color:#8a3414;font-weight:700;}
+  .cnt{font-size:13px;color:var(--themed);font-weight:700;margin-top:8px;}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f6ebe5);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;text-decoration:none;color:inherit;display:block;transition:.18s;}
+  .next-card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(80,60,30,.1);}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--theme);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .crumb{display:inline-block;margin-bottom:8px;font-size:13px;color:var(--sub);text-decoration:none;}
+  .crumb:hover{color:var(--accent);}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}.dft{font-size:12px;}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<header class="hero">
+  <a class="crumb" href="../00_데이터분석_판다스_목차.html">← 전체 목차</a>
+  <div class="eyebrow">데이터 분석 · 판다스 · 4단계</div>
+  <h1>피벗테이블<br><span style="font-size:.62em;color:var(--sub);font-weight:400;">pivot_table로 요약하기</span></h1>
+  <p class="lead">엑셀 피벗처럼 데이터를 <strong>기준별로 요약·집계</strong>합니다. 행에 제품, 열에 분기, 값에 판매량을 놓으면 표가 만들어지는 그 기능을, 판다스에서는 <code>pivot_table</code> 한 줄로. <code>index</code>·<code>columns</code>·<code>values</code>·<code>aggfunc</code>·<code>margins</code>를 직접 만져봄.</p>
+  <div class="hero-meta">
+    <span class="chip">🔴 4단계 · 결합과 요약</span>
+    <span class="chip t">pivot_table · aggfunc · margins</span>
+    <span class="chip t">예상 30분</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- S1 기본 -->
+  <section class="reveal">
+    <div class="sec-no">01</div>
+    <h2>pivot_table 기본 — index · values · aggfunc</h2>
+    <p>어떤 기준(<code>index</code>)으로 묶어서 어떤 값(<code>values</code>)을 요약할지 지정하면 요약표가 나옵니다. 같은 <code>index</code> 값을 가진 행을 모아 집계하며, <strong>집계 기본값은 평균(mean)</strong>입니다. <code>aggfunc</code>를 바꿔 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · aggfunc</span>
+      <p class="wdesc">제품 판매 8건(제품·지역·분기·판매량). 제품별로 묶어 판매량을 집계합니다.</p>
+      <div class="seg" id="w1btn">
+        <button class="segbtn on" data-k="mean">mean (기본)</button>
+        <button class="segbtn" data-k="sum">sum</button>
+        <button class="segbtn" data-k="count">count</button>
+        <button class="segbtn" data-k="max">max</button>
+      </div>
+      <div class="stage">
+        <pre style="margin:0 0 10px;"><code id="w1code"></code></pre>
+        <table class="dft" id="w1table"></table>
+      </div>
+    </div>
+
+    <div class="note"><b>📌 기본은 평균</b> &nbsp;<code>aggfunc</code>를 안 주면 <b>평균(mean)</b>이 적용됩니다. 합계를 원하면 <code>aggfunc='sum'</code>. <code>pd.pivot_table(df, ...)</code>와 <code>df.pivot_table(...)</code>는 같은 기능입니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>pivot_table(index=, values=, aggfunc=)</code>로 요약.</li>
+      <li><code>index</code>=묶는 기준, <code>values</code>=집계할 값.</li>
+      <li>기본 집계는 평균, 합계는 <code>'sum'</code>.</li>
+    </ol></div>
+  </section>
+
+  <!-- S2 columns -->
+  <section class="reveal">
+    <div class="sec-no">02</div>
+    <h2>columns — 행을 열로 펼치기 (교차표)</h2>
+    <p><code>columns</code>에 열을 지정하면 그 값들이 <strong>가로 방향 열</strong>이 됩니다. index(세로) × columns(가로)의 <strong>교차표</strong>가 만들어집니다. 엑셀 피벗의 전형적인 모습입니다.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · columns</span>
+      <div class="seg" id="w2btn">
+        <button class="segbtn on" data-k="none">index=제품 만 (1차원)</button>
+        <button class="segbtn" data-k="col">columns=분기 추가 (교차표)</button>
+      </div>
+      <div class="stage">
+        <pre style="margin:0 0 10px;"><code id="w2code"></code></pre>
+        <table class="dft" id="w2table"></table>
+      </div>
+    </div>
+
+    <div class="note"><b>📊 보는 관점</b> &nbsp;<code>index</code>(행)와 <code>columns</code>(열)에 무엇을 두느냐로 관점이 바뀝니다. "제품×분기"는 제품별 분기 추세를, "지역×제품"은 지역별 제품 비중을 드러냅니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>columns=</code>를 주면 값이 가로 열이 됨.</li>
+      <li>index×columns의 2차원 교차표 생성.</li>
+      <li>행·열 배치로 분석 관점이 달라짐.</li>
+    </ol></div>
+  </section>
+
+  <!-- S3 margins -->
+  <section class="reveal">
+    <div class="sec-no">03</div>
+    <h2>margins — 총합 추가</h2>
+    <p><code>margins=True</code>를 주면 행·열의 <strong>총합(All)</strong>이 자동으로 붙습니다. <code>margins_name</code>으로 이름을 바꿉니다. 전체 합계가 한눈에 보입니다.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · margins</span>
+      <div class="seg" id="w3btn">
+        <button class="segbtn on" data-k="off">margins=False</button>
+        <button class="segbtn" data-k="on">margins=True (총합)</button>
+      </div>
+      <div class="stage">
+        <pre style="margin:0 0 10px;"><code id="w3code"></code></pre>
+        <table class="dft" id="w3table"></table>
+        <div class="cnt" id="w3cnt"></div>
+      </div>
+    </div>
+
+    <div class="note"><b>📌 활용</b> &nbsp;맨 아래·오른쪽에 합계가 추가됩니다. 행 총합만 빼려면 <code>.drop('총합', axis=0)</code>으로 제거합니다. 보고서용 요약표에 자주 씁니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>margins=True</code>로 행·열 총합 추가.</li>
+      <li>이름은 <code>margins_name='총합'</code>.</li>
+      <li>전체·부분 합계를 한 표에서.</li>
+    </ol></div>
+  </section>
+
+  <!-- S4 groupby vs pivot -->
+  <section class="reveal">
+    <div class="sec-no">04</div>
+    <h2>groupby vs pivot_table</h2>
+    <p>둘 다 그룹 집계지만 결과 모양이 다릅니다. <code>groupby</code>는 보통 1차원(세로로 쌓임), <code>pivot_table</code>은 <strong>2차원 표(행×열)</strong>에 강합니다. 같은 데이터를 두 방식으로 비교해 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 비교</span>
+      <div class="seg" id="w4btn">
+        <button class="segbtn on" data-k="gb">groupby (1차원)</button>
+        <button class="segbtn" data-k="pv">pivot_table (2차원)</button>
+      </div>
+      <div class="stage">
+        <pre style="margin:0 0 10px;"><code id="w4code"></code></pre>
+        <table class="dft" id="w4table"></table>
+        <div class="cnt" id="w4cnt"></div>
+      </div>
+    </div>
+
+    <div class="note"><b>💡 한 문장</b> &nbsp;"한 기준 요약"이면 <code>groupby</code>, "행×열 교차표 + 총합"이면 <code>pivot_table</code>이 편합니다. 내부 원리는 같습니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>groupby</code>=1차원, <code>pivot_table</code>=2차원 표.</li>
+      <li>교차표·총합은 pivot_table이 간편.</li>
+      <li>원리는 같은 분리-적용-결합.</li>
+    </ol></div>
+  </section>
+
+  <!-- S5 실전 -->
+  <section class="reveal">
+    <div class="sec-no">05</div>
+    <h2>실전 — 연도별 매출과 증감율</h2>
+    <p>피벗 결과에 <strong>새 열을 더해</strong> 분석을 잇습니다. 제품×연도 매출 피벗을 만든 뒤, 전년 대비 증감액·증감율을 계산합니다. 요약표가 그대로 분석으로 이어집니다.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 증감율 파생</span>
+      <button class="segbtn on" id="w5go" style="margin-bottom:12px;">증감액·증감율 열 추가 ▶</button>
+      <div class="stage">
+        <pre style="margin:0 0 10px;"><code id="w5code"></code></pre>
+        <table class="dft full" id="w5table"></table>
+      </div>
+    </div>
+
+    <div class="note"><b>📊 보고로 연결</b> &nbsp;피벗 → 파생열 → 엑셀 저장(<code>to_excel</code>)이 실무 리포트의 전형입니다. <code>df.pivot_table(...).to_excel('연도별매출.xlsx')</code>.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>피벗 결과에 새 열(증감율 등)을 더함.</li>
+      <li>요약표가 곧바로 분석·보고로 이어짐.</li>
+      <li>실무 리포트의 절반 이상이 피벗 형태.</li>
+    </ol></div>
+  </section>
+
+</main>
+
+<footer>
+  <a class="next-card" href="09_데이터구조화_melt_웹강의.html">
+    <div class="nl">NEXT · PART 9</div>
+    <div class="nt">데이터 구조화 — melt</div>
+    <p style="margin-top:8px;">피벗과 반대로, 가로로 넓은(Wide) 데이터를 분석하기 좋은 세로로 긴(Long) 형태로 바꾸는 <strong>melt</strong>를 배우고, 전처리 종합 실습으로 마무리합니다.</p>
+  </a>
+  <p style="margin-top:24px;">데이터 분석 프로세스와 판다스 활용하기 · Part 8 / 9 · 결합과 요약</p>
+</footer>
+
+<script>
+const prog=document.getElementById('progress');
+addEventListener('scroll',()=>{const h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* 제품 판매 데이터 */
+const D=[
+  {제품:'A',지역:'서울',분기:'Q1',판매량:100},
+  {제품:'A',지역:'부산',분기:'Q1',판매량:150},
+  {제품:'A',지역:'서울',분기:'Q2',판매량:110},
+  {제품:'B',지역:'서울',분기:'Q1',판매량:200},
+  {제품:'B',지역:'부산',분기:'Q1',판매량:250},
+  {제품:'B',지역:'서울',분기:'Q2',판매량:170},
+  {제품:'C',지역:'부산',분기:'Q1',판매량:300},
+  {제품:'C',지역:'서울',분기:'Q2',판매량:210}
+];
+const 제품들=['A','B','C'], 분기들=['Q1','Q2'];
+function sum(rows){return rows.reduce((a,b)=>a+b.판매량,0);}
+
+/* ===== W1 aggfunc ===== */
+(function(){
+  const code=document.getElementById('w1code'), t=document.getElementById('w1table');
+  function agg(rows,k){
+    if(k==='sum')return sum(rows);
+    if(k==='count')return rows.length;
+    if(k==='max')return Math.max(...rows.map(r=>r.판매량));
+    return (sum(rows)/rows.length);
+  }
+  function render(k){
+    code.innerHTML='pd.<span class="k">pivot_table</span>(df, index=<span class="s">\x27제품\x27</span>, values=<span class="s">\x27판매량\x27</span>'+(k==='mean'?'':', aggfunc=<span class="s">\x27'+k+'\x27</span>')+')';
+    let h='<tr><th></th><th>판매량 ('+k+')</th></tr>';
+    제품들.forEach(p=>{const v=agg(D.filter(r=>r.제품===p),k);
+      h+='<tr><td class="idx">'+p+'</td><td>'+(k==='mean'?v.toFixed(2):v)+'</td></tr>';});
+    t.innerHTML=h;
+  }
+  document.querySelectorAll('#w1btn .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w1btn .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(b.dataset.k);}));
+  render('mean');
+})();
+
+/* ===== W2 columns ===== */
+(function(){
+  const code=document.getElementById('w2code'), t=document.getElementById('w2table');
+  function render(k){
+    if(k==='none'){
+      code.innerHTML='pd.<span class="k">pivot_table</span>(df, index=<span class="s">\x27제품\x27</span>, values=<span class="s">\x27판매량\x27</span>, aggfunc=<span class="s">\x27sum\x27</span>)';
+      let h='<tr><th></th><th>판매량</th></tr>';
+      제품들.forEach(p=>h+='<tr><td class="idx">'+p+'</td><td>'+sum(D.filter(r=>r.제품===p))+'</td></tr>');
+      t.innerHTML=h;
+    }else{
+      code.innerHTML='pd.<span class="k">pivot_table</span>(df, index=<span class="s">\x27제품\x27</span>, columns=<span class="s">\x27분기\x27</span>, values=<span class="s">\x27판매량\x27</span>, aggfunc=<span class="s">\x27sum\x27</span>)';
+      let h='<tr><th>분기</th>'+분기들.map(q=>'<th>'+q+'</th>').join('')+'</tr>';
+      제품들.forEach(p=>{h+='<tr><td class="idx">'+p+'</td>'+분기들.map(q=>'<td>'+sum(D.filter(r=>r.제품===p&&r.분기===q))+'</td>').join('')+'</tr>';});
+      t.innerHTML=h;
+    }
+  }
+  document.querySelectorAll('#w2btn .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w2btn .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(b.dataset.k);}));
+  render('none');
+})();
+
+/* ===== W3 margins ===== */
+(function(){
+  const code=document.getElementById('w3code'), t=document.getElementById('w3table'), cnt=document.getElementById('w3cnt');
+  function render(k){
+    const M=k==='on';
+    code.innerHTML='pd.<span class="k">pivot_table</span>(df, index=<span class="s">\x27제품\x27</span>, columns=<span class="s">\x27분기\x27</span>, values=<span class="s">\x27판매량\x27</span>, aggfunc=<span class="s">\x27sum\x27</span>'+(M?', margins=<span class="k">True</span>, margins_name=<span class="s">\x27총합\x27</span>':'')+')';
+    let h='<tr><th>분기</th>'+분기들.map(q=>'<th>'+q+'</th>').join('')+(M?'<th class="tot">총합</th>':'')+'</tr>';
+    제품들.forEach(p=>{let row=분기들.map(q=>sum(D.filter(r=>r.제품===p&&r.분기===q)));
+      h+='<tr><td class="idx">'+p+'</td>'+row.map(v=>'<td>'+v+'</td>').join('')+(M?'<td class="tot">'+row.reduce((a,b)=>a+b,0)+'</td>':'')+'</tr>';});
+    if(M){let cs=분기들.map(q=>sum(D.filter(r=>r.분기===q)));
+      h+='<tr class="tot"><td class="idx tot">총합</td>'+cs.map(v=>'<td>'+v+'</td>').join('')+'<td>'+cs.reduce((a,b)=>a+b,0)+'</td></tr>';}
+    t.innerHTML=h;
+    cnt.innerHTML=M?'전체 판매량 총합 = <b>1490</b> (오른쪽 아래 칸)':'';
+  }
+  document.querySelectorAll('#w3btn .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w3btn .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(b.dataset.k);}));
+  render('off');
+})();
+
+/* ===== W4 groupby vs pivot ===== */
+(function(){
+  const code=document.getElementById('w4code'), t=document.getElementById('w4table'), cnt=document.getElementById('w4cnt');
+  function render(k){
+    if(k==='gb'){
+      code.innerHTML='df.<span class="k">groupby</span>(<span class="s">\x27제품\x27</span>)[<span class="s">\x27판매량\x27</span>].sum()';
+      let h='<tr><th></th><th>판매량</th></tr>';
+      제품들.forEach(p=>h+='<tr><td class="idx">'+p+'</td><td>'+sum(D.filter(r=>r.제품===p))+'</td></tr>');
+      t.innerHTML=h;cnt.innerHTML='세로로 쌓인 1차원 결과 (Series)';
+    }else{
+      code.innerHTML='df.<span class="k">pivot_table</span>(index=<span class="s">\x27제품\x27</span>, columns=<span class="s">\x27분기\x27</span>, values=<span class="s">\x27판매량\x27</span>, aggfunc=<span class="s">\x27sum\x27</span>)';
+      let h='<tr><th>분기</th>'+분기들.map(q=>'<th>'+q+'</th>').join('')+'</tr>';
+      제품들.forEach(p=>{h+='<tr><td class="idx">'+p+'</td>'+분기들.map(q=>'<td>'+sum(D.filter(r=>r.제품===p&&r.분기===q))+'</td>').join('')+'</tr>';});
+      t.innerHTML=h;cnt.innerHTML='행×열 2차원 교차표 (DataFrame)';
+    }
+  }
+  document.querySelectorAll('#w4btn .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w4btn .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(b.dataset.k);}));
+  render('gb');
+})();
+
+/* ===== W5 증감율 ===== */
+(function(){
+  const code=document.getElementById('w5code'), t=document.getElementById('w5table'), go=document.getElementById('w5go');
+  const rows=[
+    {제품:'DES-1', y19:2946278610, y20:748837116},
+    {제품:'DES-2', y19:631877970, y20:155779320},
+    {제품:'DES-3A', y19:157162560, y20:39922500}
+  ];
+  let done=false;
+  function fmt(n){return n.toLocaleString();}
+  function render(){
+    code.innerHTML=done
+      ? "df2 = df.pivot_table(index='Product_Type', columns='연도', values='Amount_Month', aggfunc='sum')\ndf2[<span class=\"s\">'증감액'</span>] = df2[2020] - df2[2019]\ndf2[<span class=\"s\">'증감율'</span>] = df2[<span class=\"s\">'증감액'</span>] / df2[2019] * 100"
+      : "df2 = df.<span class=\"k\">pivot_table</span>(index='Product_Type', columns='연도', values='Amount_Month', aggfunc='sum')";
+    let h='<tr><th></th><th>2019</th><th>2020</th>'+(done?'<th>증감액</th><th>증감율(%)</th>':'')+'</tr>';
+    rows.forEach(r=>{const diff=r.y20-r.y19, rate=(diff/r.y19*100);
+      h+='<tr><td class="idx">'+r.제품+'</td><td>'+fmt(r.y19)+'</td><td>'+fmt(r.y20)+'</td>'+
+        (done?'<td style="color:#b4451f;">'+fmt(diff)+'</td><td style="color:#b4451f;font-weight:700;">'+rate.toFixed(2)+'</td>':'')+'</tr>';});
+    t.innerHTML=h;
+  }
+  go.addEventListener('click',()=>{done=!done;go.textContent=done?'원래대로 ◀':'증감액·증감율 열 추가 ▶';render();});
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Part 1 · 변수와 자료형</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&amp;family=Gowun+Dodum&amp;display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:760px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:88px 22px 40px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:62ch;}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:76px 0 46px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 20px;line-height:1.3;}
+  p{margin:0 0 16px;}
+  .sub{color:var(--sub);}
+  strong{color:var(--accent);font-weight:700;}
+  code{font-family:'Gowun Dodum',monospace;background:#efe7d8;color:#8a3408;padding:1.5px 7px;border-radius:6px;font-size:.92em;}
+  pre{background:#2b2723;color:#f4efe6;border-radius:12px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.7;margin:16px 0;}
+  pre code{background:none;color:inherit;padding:0;}
+  pre .k{color:#e0935f;}pre .s{color:#9ec79a;}pre .c{color:#8b8175;font-style:italic;}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15.5px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:22px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:16px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .btn{border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:13.5px;padding:9px 18px;border-radius:9px;cursor:pointer;}
+  .btn.ghost{background:#fdfaf4;border:1px solid var(--line);color:var(--sub);}
+  .term{background:#2b2723;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:13.5px;color:#9ec79a;min-height:42px;white-space:pre-wrap;}
+  .term .prompt{color:#8b8175;}.term .err{color:#e0935f;}
+  .pp-input{border:1.5px solid var(--line);border-radius:8px;padding:8px 12px;font-family:monospace;font-size:14px;background:#fff;color:var(--ink);}
+
+  /* W1: variable box */
+  .vb-stage{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px;text-align:center;}
+  .vb-box{display:inline-block;border:3px solid var(--teal);border-radius:14px;padding:18px 26px;background:#eef5f3;min-width:160px;transition:.3s;}
+  .vb-label{font-size:12px;color:var(--teal);font-weight:700;margin-bottom:6px;}
+  .vb-tag{display:inline-block;background:var(--teal);color:#fff;font-size:11px;font-weight:700;padding:2px 10px;border-radius:999px;margin-bottom:8px;}
+  .vb-val{font-family:monospace;font-size:24px;font-weight:700;color:var(--ink);}
+  .vb-ctl{margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+  .vb-ctl .pp-input{width:120px;text-align:center;}
+  .vb-flash{animation:flash .5s;}
+  @keyframes flash{0%{background:#fff4cf;}100%{background:#eef5f3;}}
+
+  /* W2: number calc */
+  .nc-stage{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;}
+  .nc-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;font-family:monospace;font-size:14px;}
+  .nc-slider{flex:1;min-width:160px;accent-color:var(--accent);}
+  .nc-out{background:#2b2723;color:#9ec79a;border-radius:9px;padding:12px 14px;font-family:monospace;font-size:14px;white-space:pre-wrap;}
+  .nc-out .dim{color:#8b8175;}
+
+  /* W3: string concat */
+  .sc-blocks{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;}
+  .sc-block{border:1.5px solid var(--gold);background:#fbf3e6;border-radius:9px;padding:9px 13px;font-family:monospace;font-size:13px;}
+  .sc-plus{color:var(--sub);font-weight:700;}
+  .sc-eq{text-align:center;font-size:13px;color:var(--sub);margin:8px 0;}
+  .sc-result{background:#2b2723;color:#9ec79a;border-radius:9px;padding:12px 14px;font-family:monospace;font-size:15px;text-align:center;}
+  .sc-toggle{display:flex;gap:8px;margin-bottom:14px;}
+  .scbtn{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:9px;padding:10px;cursor:pointer;font-family:var(--sans);font-weight:700;font-size:12px;color:var(--sub);transition:.15s;}
+  .scbtn.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+
+  /* W4: boolean compare */
+  .bc-stage{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;}
+  .bc-row{display:flex;align-items:center;gap:10px;justify-content:center;font-family:monospace;font-size:16px;margin-bottom:14px;flex-wrap:wrap;}
+  .bc-slider{accent-color:var(--accent);}
+  .bc-seg{display:flex;gap:4px;}
+  .bc-seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:7px;padding:6px 10px;font-size:13px;cursor:pointer;font-family:monospace;transition:.15s;}
+  .bc-seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  .bc-result{text-align:center;font-size:22px;font-weight:700;font-family:monospace;padding:12px;border-radius:10px;transition:.2s;}
+  .bc-result.t{background:#d8e8e3;color:#225349;}
+  .bc-result.f{background:#f3ddd2;color:#9a3a14;}
+
+  /* W5: type / convert */
+  .tc-toggle{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+  .tcbtn{flex:1;min-width:90px;border:1.5px solid var(--line);background:#fff;border-radius:9px;padding:9px 6px;cursor:pointer;font-family:var(--sans);font-weight:700;font-size:12px;color:var(--sub);transition:.15s;text-align:center;}
+  .tcbtn.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  .tc-panel{background:#2b2723;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:13.5px;color:#9ec79a;white-space:pre-wrap;min-height:60px;}
+  .tc-panel .dim{color:#8b8175;}.tc-panel .err{color:#e0935f;}.tc-panel .hl{color:#e0935f;}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}}
+</style>
+<style id="wide16x9">
+/* ===== 16:9 와이드 반응형 오버라이드 ===== */
+:root{--maxw:1320px;}
+header.hero{text-align:center;padding-top:70px;}
+header.hero .lead{margin-left:auto;margin-right:auto;}
+header.hero .hero-meta{justify-content:center;}
+main.wrap section.two-col .col-text>:first-child{margin-top:0;}
+main.wrap section.two-col .col-text .summary{margin-bottom:0;}
+@media(min-width:980px){
+  main.wrap section.two-col{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.06fr);
+    gap:46px;align-items:start;
+  }
+  main.wrap section.two-col .col-widget{position:sticky;top:22px;}
+  main.wrap section.two-col .col-text{padding-top:2px;}
+}
+@media(max-width:979px){
+  main.wrap section.two-col .col-widget{margin-top:6px;}
+}
+</style></head>
+<body>
+<div id="progress"></div>
+<header class="hero">
+<div class="eyebrow">파이썬 기초 문법 · Part 1 · 입문</div>
+<h1>변수와 자료형</h1>
+<p class="lead"><code>print</code>로 값을 띄우는 데서 나아가, 이제 값을 <strong>저장하고 다룸</strong>. 데이터를 담는 상자 <strong>변수</strong>와, 그 안에 담기는 데이터의 종류 <strong>자료형</strong>(숫자·문자열·불리언)을 익힘. 데이터 분석 자동화의 첫 벽돌 — "데이터를 코드로 담는 법"임.</p>
+<div class="hero-meta">
+<span class="chip">🟢 입문 · 1/18</span>
+<span class="chip t">변수 · 자료형 · 형변환</span>
+<span class="chip t">예상 30분</span>
+</div>
+</header>
+<main class="wrap">
+<!-- Section 1: variable box -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">1-1</div><h2>변수 — 데이터를 담는 상자</h2><p>변수는 <strong>데이터를 담는 이름표 붙은 상자</strong>임. <code>=</code>로 값을 담는데, 이건 "같다"가 아니라 <strong>"오른쪽 값을 왼쪽 상자에 담아라"</strong>는 명령임. 상자 내용은 새 값을 담아 언제든 바꿀 수 있음(재할당). 더 정확히는 — 값(89000)은 <strong>메모리에 만들어지고</strong>, 변수 이름이 그 값을 <strong>가리킴(바인딩)</strong>. 그래서 재할당은 이름표를 새 값으로 옮겨 붙이는 것임.</p><div class="note"><b>📌 참고</b>  변수 이름은 의미가 드러나게 지음 — <code>x</code>보다 <code>price</code>, <code>p</code>보다 <code>discount_price</code>. 데이터 분석에선 수많은 값을 다루므로, 이름만 봐도 내용을 알 수 있게 짓는 습관이 코드를 읽기 쉽게 만듦.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>변수는 데이터를 담는 이름표 붙은 상자임.</li>
+<li><code>=</code>는 "같다"가 아니라 "오른쪽을 왼쪽 상자에 담아라"임.</li>
+<li>새 값을 담아 언제든 바꿀 수 있음(재할당).</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 상자에 값 담기</span>
+<p class="wdesc">값을 입력하고 "담기"를 누르면 상자가 채워짐. 새 값을 담으면 이전 값은 사라짐(재할당).</p>
+<div class="vb-stage">
+<div class="vb-box" id="w1box">
+<div class="vb-tag">변수</div>
+<div class="vb-label">가격 =</div>
+<div class="vb-val" id="w1val">89000</div>
+</div>
+<div class="vb-ctl">
+<input class="pp-input" id="w1input" value="79000"/>
+<button class="btn" id="w1set">📥 담기</button>
+</div>
+</div>
+</div></div></section>
+<!-- Section 2: number -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">1-2</div><h2>숫자형 — 정수와 실수</h2><p>소수점 없으면 <strong>정수(int)</strong>, 있으면 <strong>실수(float)</strong>. 숫자형의 핵심은 <strong>계산이 된다</strong>는 것. 단, 정수와 실수를 섞어 계산하면 결과는 실수가 됨.</p><div class="note"><b>📌 참고</b>  수량(재고·개수)은 보통 정수, 비율·평균·무게는 보통 실수임. "실수가 섞이면 결과도 실수"라는 성질을 알아야 계산 결과를 예측할 수 있음. 데이터 분석에서 가장 많이 다루는 자료형이 숫자임.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>숫자형엔 정수(int)와 실수(float)가 있음.</li>
+<li>수량은 보통 정수, 비율·평균은 보통 실수임.</li>
+<li>정수·실수를 섞어 계산하면 결과는 실수가 됨.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 할인가 계산기</span>
+<p class="wdesc">가격(정수)과 할인율(실수)을 바꿔, 할인가가 어떻게 계산되는지 봄. 실수가 섞이면 결과에 소수점이 붙음.</p>
+<div class="nc-stage">
+<div class="nc-row">가격 = <input class="pp-input" id="w2price" style="width:110px;" type="number" value="89000"/> <span class="sub" style="font-size:11px;">(정수)</span></div>
+<div class="nc-row">할인율 = <span id="w2rateval" style="color:var(--accent);font-weight:700;">0.1</span> <input class="nc-slider" id="w2rate" max="0.5" min="0" step="0.05" type="range" value="0.1"/> <span class="sub" style="font-size:11px;">(실수)</span></div>
+<div class="nc-out" id="w2out"></div>
+</div>
+</div></div></section>
+<!-- Section 3: string -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">1-3</div><h2>문자열 — 글자 데이터</h2><p>따옴표로 감싼 글자 묶음. <strong>따옴표가 있으면 문자열, 없으면 숫자</strong> — 같은 89000이라도 종류가 다름. 문자열끼리 <code>+</code>는 덧셈이 아니라 <strong>이어 붙이기(연결)</strong>임.</p><div class="note"><b>📌 참고</b>  입력값이나 파일에서 읽은 데이터는 겉보기엔 숫자라도 <b>문자열인 경우가 많음</b>(예: <code>"89000"</code>). 계산하려면 숫자로 바꿔야 함(형변환, 아래 1-5). "왜 계산이 안 되지?"의 흔한 원인이 바로 숫자처럼 보이는 문자열임.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>문자열은 따옴표로 감싼 글자들의 묶음임.</li>
+<li>따옴표가 있으면 문자열, 없으면 숫자 — 종류가 다름.</li>
+<li>문자열 <code>+</code>는 덧셈이 아니라 이어 붙이기(연결)임.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · + 의 두 얼굴</span>
+<p class="wdesc">같은 <code>+</code>인데 자료형에 따라 동작이 다름. 토글해서 문자열 연결과 숫자 덧셈을 비교해 봄.</p>
+<div class="sc-toggle" id="w3tog">
+<button class="scbtn on" data-k="str">문자열 + 문자열 (연결)</button>
+<button class="scbtn" data-k="num">숫자 + 숫자 (덧셈)</button>
+</div>
+<div class="sc-blocks" id="w3blocks"></div>
+<div class="sc-eq">↓ 결과</div>
+<div class="sc-result" id="w3result"></div>
+</div></div></section>
+<!-- Section 4: boolean -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">1-4</div><h2>불리언 — 참과 거짓</h2><p><code>True</code>(참)·<code>False</code>(거짓) 두 값만 갖는 자료형. 더 중요한 건 <strong>비교의 결과가 불리언</strong>이라는 점 — 이 참/거짓이 나중에 조건문·필터의 핵심 재료가 됨.</p><div class="note"><b>📌 참고</b>  <code>=</code>(담아라)와 <code>==</code>(같은가?)를 구분! <code>재고 = 0</code>은 0을 담는 것, <code>재고 == 0</code>은 0인지 묻는 것(결과 True/False). 입문 단계의 흔한 실수임. 데이터 분석에서 불리언은 "가격 5만 이상인 것만" 같은 <b>필터의 기준</b>이 됨.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>불리언은 참(True)·거짓(False) 두 값만 갖는 자료형임.</li>
+<li>두 값을 비교하면 그 결과가 불리언으로 나옴.</li>
+<li>이 참/거짓이 조건문·필터의 핵심 재료가 됨.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 비교의 결과는 참/거짓</span>
+<p class="wdesc">재고 수와 비교 기호를 바꿔, 그 결과가 <code>True</code>인지 <code>False</code>인지 봄.</p>
+<div class="bc-stage">
+<div class="bc-row">
+          재고(<b id="w4stockval" style="color:var(--accent)">12</b>)
+          <input class="bc-slider" id="w4stock" max="30" min="0" type="range" value="12"/>
+<div class="bc-seg" id="w4op">
+<button class="on" data-op="gt">&gt; 0</button>
+<button data-op="eq">== 0</button>
+<button data-op="ge">&gt;= 10</button>
+</div>
+</div>
+<div class="bc-result t" id="w4result"></div>
+</div>
+</div></div></section>
+<!-- Section 5: type / convert -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">1-5</div><h2>type과 형변환</h2><p>값의 종류를 확인하려면 <code>type()</code>, 종류를 바꾸려면 <code>int()·float()·str()</code>를 씀. 특히 <strong>숫자처럼 보이는 문자열을 숫자로 바꿔</strong> 계산하는 일이 자주 필요함.</p><div class="note"><b>📌 참고</b>  <code>input()</code>(Part 3)이나 파일에서 읽은 데이터는 <b>항상 문자열</b>임. 그래서 "100"을 입력받아 계산하려면 반드시 <code>int("100")</code>으로 바꿔야 함. 데이터 분석에서 "숫자 컬럼인데 계산이 안 돼요"의 단골 원인이 숨은 문자열이며, 형변환으로 해결함.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li><code>type()</code>으로 자료형을 확인함.</li>
+<li><code>int()·float()·str()</code>로 자료형을 서로 바꿈.</li>
+<li>입력·파일 데이터는 문자열이라, 계산하려면 숫자로 바꿔야 함.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 형변환 실험실</span>
+<p class="wdesc">문자열 <code>"100"</code>을 그냥 더할 때와, 숫자로 바꿔 더할 때를 비교해 봄.</p>
+<div class="tc-toggle" id="w5tog">
+<button class="tcbtn on" data-k="type">type() 확인</button>
+<button class="tcbtn" data-k="bad">"100" + 50</button>
+<button class="tcbtn" data-k="good">int("100") + 50</button>
+<button class="tcbtn" data-k="str">str(12) 연결</button>
+</div>
+<div class="tc-panel" id="w5panel"></div>
+</div></div></section>
+</main>
+<footer>
+<div class="next-card">
+<div class="nl">NEXT · PART 2</div>
+<div class="nt">연산자</div>
+<p style="margin-top:8px;">값들로 계산하는 도구 — 사칙연산은 물론, 크기를 비교하고(비교 연산자), 여러 조건을 묶는(논리 연산자) 법. 1-4에서 본 <code>&gt;</code>, <code>==</code>가 데이터를 판단하고 거르는 힘으로 확장됨.</p>
+</div>
+<p style="margin-top:24px;">파이썬 기초 문법 커리큘럼 · Part 1 / 18 · 데이터 분석 자동화를 위한 기초</p>
+</footer>
+<script>
+const prog=document.getElementById('progress');
+addEventListener('scroll',function(){var h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+
+/* ===== W1: variable box ===== */
+(function(){
+  var box=document.getElementById('w1box'), val=document.getElementById('w1val'), inp=document.getElementById('w1input');
+  document.getElementById('w1set').addEventListener('click',function(){
+    var v=inp.value.trim();
+    if(v==='') return;
+    val.textContent=v;
+    box.classList.remove('vb-flash'); void box.offsetWidth; box.classList.add('vb-flash');
+  });
+})();
+
+/* ===== W2: number calc ===== */
+(function(){
+  var price=document.getElementById('w2price'), rate=document.getElementById('w2rate');
+  var rateval=document.getElementById('w2rateval'), out=document.getElementById('w2out');
+  function render(){
+    var p=parseInt(price.value,10); if(isNaN(p)) p=0;
+    var r=parseFloat(rate.value);
+    rateval.textContent=r;
+    var off=p*r;                 // 할인액
+    var fin=p-off;               // 할인가
+    out.innerHTML='<span class="dim">가격 - 가격 * 할인율</span>\n= '+p+' - '+p+' * '+r+'\n= '+p+' - '+off+'\n= <span style="color:#fff;font-weight:700;">'+fin+'</span>   '+(Number.isInteger(off)?'':'<span class="dim">← 실수가 섞여 결과도 실수</span>');
+  }
+  price.addEventListener('input',render); rate.addEventListener('input',render); render();
+})();
+
+/* ===== W3: string concat ===== */
+(function(){
+  var mode='str';
+  var blocks=document.getElementById('w3blocks'), result=document.getElementById('w3result');
+  function render(){
+    if(mode==='str'){
+      blocks.innerHTML='<span class="sc-block">"리리몰"</span><span class="sc-plus">+</span><span class="sc-block">" "</span><span class="sc-plus">+</span><span class="sc-block">"니트"</span>';
+      result.textContent='"리리몰 니트"   (글자가 이어 붙음)';
+    }else{
+      blocks.innerHTML='<span class="sc-block">89000</span><span class="sc-plus">+</span><span class="sc-block">1000</span>';
+      result.textContent='90000   (숫자가 더해짐)';
+    }
+  }
+  document.querySelectorAll('#w3tog .scbtn').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#w3tog .scbtn').forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on'); mode=b.dataset.k; render();
+    });
+  });
+  render();
+})();
+
+/* ===== W4: boolean compare ===== */
+(function(){
+  var stock=document.getElementById('w4stock'), stockval=document.getElementById('w4stockval');
+  var result=document.getElementById('w4result'), op='gt';
+  function render(){
+    var s=parseInt(stock.value,10);
+    stockval.textContent=s;
+    var res, expr;
+    if(op==='gt'){ res=s>0; expr='재고 > 0'; }
+    else if(op==='eq'){ res=s===0; expr='재고 == 0'; }
+    else { res=s>=10; expr='재고 >= 10'; }
+    result.className='bc-result '+(res?'t':'f');
+    result.textContent=expr+'  →  '+(res?'True':'False');
+  }
+  stock.addEventListener('input',render);
+  document.querySelectorAll('#w4op button').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#w4op button').forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on'); op=b.dataset.op; render();
+    });
+  });
+  render();
+})();
+
+/* ===== W5: type / convert ===== */
+(function(){
+  var panels={
+    type:'type(89000)   <span class="dim">→</span> <span class="hl">&lt;class &#39;int&#39;&gt;</span>\ntype("89000") <span class="dim">→</span> <span class="hl">&lt;class &#39;str&#39;&gt;</span>\ntype(0.1)     <span class="dim">→</span> <span class="hl">&lt;class &#39;float&#39;&gt;</span>\ntype(True)    <span class="dim">→</span> <span class="hl">&lt;class &#39;bool&#39;&gt;</span>',
+    bad:'"100" + 50\n<span class="err">❌ TypeError: 문자열 + 숫자는 안 됨</span>\n<span class="dim">→ "100"은 따옴표가 있어 문자열임. 숫자로 바꿔야 함.</span>',
+    good:'int("100") + 50\n<span class="dim">→ int("100")이 100(숫자)으로 바뀜</span>\n= 100 + 50\n= <span style="color:#fff;font-weight:700;">150</span>   <span class="dim">✅ 계산됨!</span>',
+    str:'"재고: " + str(12) + "개"\n<span class="dim">→ str(12)가 "12"(문자열)로 바뀜</span>\n= "재고: " + "12" + "개"\n= <span style="color:#fff;font-weight:700;">"재고: 12개"</span>   <span class="dim">✅ 연결됨!</span>'
+  };
+  var panel=document.getElementById('w5panel');
+  function render(k){ panel.innerHTML=panels[k]; }
+  document.querySelectorAll('#w5tog .tcbtn').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#w5tog .tcbtn').forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on'); render(b.dataset.k);
+    });
+  });
+  render('type');
+})();
+</script>
+</body>
+</html>

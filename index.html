@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>데이터 분석 입문 — 파이썬 · 판다스 통합 과정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:980px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 12% 0%,rgba(47,107,94,.06),transparent 42%),radial-gradient(circle at 92% 100%,rgba(194,65,12,.05),transparent 46%);}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:90px 22px 30px;text-align:center;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.24em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(32px,6.5vw,52px);line-height:1.18;margin:14px 0 16px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:60ch;margin:0 auto;}
+  .flow{margin-top:22px;display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;font-size:13.5px;font-weight:700;color:var(--sub);}
+  .flow .b{background:#d8e8e3;color:#225349;padding:6px 13px;border-radius:999px;}
+  .flow .b.o{background:var(--accent-soft);color:#8a3408;}
+  .flow .arr{color:var(--accent);}
+
+  .courses{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px;margin:46px 0 0;}
+  .course{position:relative;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:28px 26px 26px;text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:.2s;overflow:hidden;}
+  .course::before{content:"";position:absolute;top:0;left:0;right:0;height:5px;}
+  .course.py::before{background:var(--teal);}
+  .course.pd::before{background:var(--accent);}
+  .course:hover{transform:translateY(-5px);box-shadow:0 16px 36px rgba(80,60,30,.13);border-color:var(--accent-soft);}
+  .c-eyebrow{font-size:12px;letter-spacing:.16em;font-weight:700;text-transform:uppercase;}
+  .course.py .c-eyebrow{color:var(--teal);}
+  .course.pd .c-eyebrow{color:var(--accent);}
+  .c-icon{font-size:34px;margin-bottom:8px;}
+  .c-title{font-family:var(--serif);font-weight:700;font-size:clamp(22px,3.4vw,27px);line-height:1.25;margin:6px 0 4px;}
+  .c-sub{font-size:14px;color:var(--sub);font-weight:700;margin-bottom:12px;}
+  .c-desc{font-size:14.5px;color:var(--sub);line-height:1.7;margin-bottom:16px;}
+  .c-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px;}
+  .c-tag{font-size:11.5px;font-family:monospace;font-weight:700;padding:4px 9px;border-radius:6px;background:#efe7d8;color:#6f5a3c;}
+  .course.py .c-tag{background:#e3efea;color:#235048;}
+  .course.pd .c-tag{background:#f4e3d6;color:#8a3408;}
+  .c-foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;}
+  .c-meta{font-size:12.5px;color:var(--sub);}
+  .enter{font-weight:700;font-size:14.5px;padding:11px 20px;border-radius:11px;color:#fff;}
+  .course.py .enter{background:var(--teal);}
+  .course.pd .enter{background:var(--accent);}
+  .course.da::before{background:var(--gold);}
+  .course.da .c-eyebrow{color:var(--gold);}
+  .course.da .c-tag{background:#f3e9d3;color:#7a5e2a;}
+  .course.da .enter{background:var(--gold);}
+
+  .principle{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:12px;padding:18px 22px;margin:42px 0 0;}
+  .principle .h{font-family:var(--serif);font-weight:700;color:var(--gold);font-size:15.5px;margin-bottom:6px;}
+  .principle p{font-size:14.5px;color:var(--sub);margin:0;}
+  footer{text-align:center;padding:48px 22px 72px;color:var(--sub);font-size:13.5px;margin-top:34px;border-top:1px solid var(--line);}
+  @media(max-width:560px){.courses{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="eyebrow">데이터 분석 입문 · 통합 과정</div>
+  <h1>파이썬으로 시작하는<br>데이터 분석</h1>
+  <p class="lead">개념 입문부터 실전 데이터 분석까지. 세 과정 중 하나를 골라 시작하세요. 데이터 분석 개론으로 큰 그림을 잡고 → 파이썬 문법을 다진 뒤 → 판다스로 넘어가는 흐름을 권장함.</p>
+  <div class="flow">
+    <span class="b">① 데이터 분석 개론</span>
+    <span class="arr">→</span>
+    <span class="b">② 파이썬 기초</span>
+    <span class="arr">→</span>
+    <span class="b o">③ 판다스 데이터 분석</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="courses">
+
+    <a class="course da" href="01_데이터분석개론/00_데이터분석개론_전체합본.html">
+      <div class="c-icon">📊</div>
+      <div class="c-eyebrow">Course 01 · 개념 입문</div>
+      <div class="c-title">데이터 분석 개론</div>
+      <div class="c-sub">왜 · 무엇 · 어떻게</div>
+      <div class="c-desc">코드를 배우기 전에 — 데이터 분석이 무엇이고 왜 하는지, 데이터의 종류(측정 척도), 분석 유형과 프로세스, 분석가의 도구·마인드셋까지. 한 페이지로 읽는 개념 입문.</div>
+      <div class="c-tags">
+        <span class="c-tag">분석이란</span><span class="c-tag">데이터 종류</span><span class="c-tag">분석 유형</span><span class="c-tag">프로세스</span><span class="c-tag">마인드셋</span>
+      </div>
+      <div class="c-foot">
+        <span class="c-meta">한 페이지 합본 · 인터랙티브</span>
+        <span class="enter">들어가기 →</span>
+      </div>
+    </a>
+
+    <a class="course py" href="02_파이썬/00_전체목차_index.html">
+      <div class="c-icon">🐍</div>
+      <div class="c-eyebrow">Course 02 · 프로그래밍 기초</div>
+      <div class="c-title">파이썬 기초 문법</div>
+      <div class="c-sub">변수부터 클래스까지</div>
+      <div class="c-desc">변수·자료형, 문자열·리스트·딕셔너리 같은 자료구조, 조건문·반복문, 함수, 그리고 클래스까지. "어떻게 동작하는가"를 비유와 그림으로 익히는 완전 입문 과정. 실습 파일과 1:1로 묶여 있음.</div>
+      <div class="c-tags">
+        <span class="c-tag">변수·자료형</span><span class="c-tag">자료구조</span><span class="c-tag">조건·반복</span><span class="c-tag">함수</span><span class="c-tag">클래스</span>
+      </div>
+      <div class="c-foot">
+        <span class="c-meta">5개 그룹 + 보강 · 실습 연동</span>
+        <span class="enter">들어가기 →</span>
+      </div>
+    </a>
+
+    <a class="course pd" href="03_판다스/00_데이터분석_판다스_목차.html">
+      <div class="c-icon">🐼</div>
+      <div class="c-eyebrow">Course 03 · 실전 데이터 분석</div>
+      <div class="c-title">판다스 데이터 분석</div>
+      <div class="c-sub">NumPy부터 피벗테이블까지</div>
+      <div class="c-desc">엑셀로 하던 작업을 코드 한 번으로 자동화함. 선행(모듈·아나콘다·NumPy)부터 데이터 불러오기 → 살펴보기 → 정제 → 합치기 → 요약까지, 매 단계 함수·메소드를 직접 익히며 따라감. 웹강의 + 실습 노트북 연동.</div>
+      <div class="c-tags">
+        <span class="c-tag">선행 3강</span><span class="c-tag">불러오기</span><span class="c-tag">전처리</span><span class="c-tag">합치기</span><span class="c-tag">pivot_table</span>
+      </div>
+      <div class="c-foot">
+        <span class="c-meta">선행 3강 + 9단계 · 웹강의+실습</span>
+        <span class="enter">들어가기 →</span>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="principle">
+    <div class="h">⭐ 학습 흐름 — 기초 위에 도구를 세움</div>
+    <p>먼저 <b>데이터 분석 개론</b>으로 "왜·무엇·어떻게"의 큰 그림을 잡고, <b>파이썬 기초</b>로 변수·자료구조·함수·클래스를 익힌 뒤, 그 위에서 <b>판다스</b>로 실전 데이터를 다룸. 판다스 과정 안에는 모듈·라이브러리, 아나콘다·가상환경, NumPy 선행 강의가 포함돼 있어 개념부터 분석까지 한 줄기로 이어짐.</p>
+  </div>
+
+</main>
+
+<footer>
+  데이터 분석 입문 통합 과정 · 데이터 분석 개론 → 파이썬 기초 → 판다스 데이터 분석 · 각 과정으로 바로 이동
+</footer>
+
+</body>
+</html>

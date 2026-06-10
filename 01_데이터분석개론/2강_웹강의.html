@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>데이터 분석 개요 · 2강 · 데이터 분석 방법의 진화</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:768px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.9;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:84px 22px 36px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(28px,5.6vw,44px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:50px 0 26px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 18px;line-height:1.3;}
+  h3{font-family:var(--serif);font-weight:700;font-size:19px;margin:26px 0 12px;color:#3a342e;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  .term{background:#eef5f3;border:1px solid #cfe3dd;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;}
+  .term b{color:var(--teal);}
+  .ex{background:#fbf3e6;border:1px solid #ecd9b8;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;color:#6b5526;}
+  .ex b{color:var(--gold);}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:24px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:14px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;color:#9ec79a;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:13.5px;min-height:42px;white-space:pre-wrap;line-height:1.7;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}.out .y{color:#e0b15f;}
+  .btn{border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:13px;padding:9px 15px;border-radius:9px;cursor:pointer;}
+  .btn.ghost{background:#fdfaf4;border:1.5px solid var(--line);color:var(--sub);}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+  .seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:var(--sans);transition:.15s;color:var(--ink);}
+  .seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  /* 진화 5단계 스텝퍼 */
+  .evo{display:flex;gap:4px;margin:14px 0;flex-wrap:wrap;}
+  .evo-step{flex:1;min-width:90px;text-align:center;padding:10px 6px;border:1.5px solid var(--line);border-radius:10px;background:#fdfaf4;cursor:pointer;transition:.15s;font-size:12px;}
+  .evo-step.on{border-color:var(--accent);background:var(--accent);color:#fff;font-weight:700;}
+  .evo-step .n{font-family:monospace;font-size:11px;display:block;opacity:.7;}
+  /* 평균 함정 차트 */
+  .coins{display:flex;gap:6px;align-items:flex-end;justify-content:center;height:120px;margin:14px 0;}
+  .coin{width:42px;background:var(--teal);border-radius:6px 6px 0 0;display:flex;align-items:flex-start;justify-content:center;color:#fff;font-size:10px;font-family:monospace;padding-top:3px;transition:.4s;}
+  .coin.out{background:var(--accent);}
+  .meanline{position:relative;height:0;}
+  /* 정규분포 */
+  .dist{font-family:monospace;font-size:12px;color:var(--teal);white-space:pre;line-height:1.3;text-align:center;background:#eef5f3;border-radius:10px;padding:14px;}
+  /* AI 포함관계 */
+  .venn{text-align:center;padding:10px;}
+  .ai-ring{border:2px solid var(--gold);border-radius:16px;padding:16px;background:rgba(168,118,47,.06);}
+  .ml-ring{border:2px solid var(--accent);border-radius:14px;padding:14px;margin-top:10px;background:rgba(194,65,12,.06);}
+  .dl-ring{border:2px solid var(--teal);border-radius:12px;padding:12px;margin-top:10px;background:rgba(47,107,94,.08);}
+  .ring-t{font-weight:700;font-size:13px;margin-bottom:4px;}
+  .ai-ring>.ring-t{color:var(--gold);}.ml-ring>.ring-t{color:var(--accent);}.dl-ring .ring-t{color:var(--teal);}
+  .ring-d{font-size:11.5px;color:var(--sub);}
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<header class="hero">
+  <div class="eyebrow">데이터 분석 개요 및 기초 이론 · 2강</div>
+  <h1>데이터 분석<br>방법의 진화</h1>
+  <p class="lead">1강이 <em>"누가, 왜"</em> 분석했는가의 역사였다면, 2강은 <em>"어떤 방법으로"</em> 분석했는가의 역사임. 분석의 무기는 단순한 것에서 강력한 것으로 진화해 왔음 — 그리고 핵심은 <strong>"진화는 대체가 아니라 누적"</strong>임.</p>
+  <div class="hero-meta">
+    <span class="chip">📊 개요 · 2/7</span>
+    <span class="chip t">집계→통계→마이닝→ML→AI</span>
+    <span class="chip t">완전 초보용</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- 2-1 큰 그림 -->
+  <section class="reveal">
+    <div class="sec-no">2-1</div>
+    <h2>분석 방법은 왜 진화했는가</h2>
+    <p>분석 방법이 진화한 이유는 한마디로 <strong>사람들이 점점 더 어려운 질문에 답하고 싶어졌기 때문</strong>임. 질문이 어려워질수록 더 강력한 도구가 필요했음. 아래에서 질문의 난이도와 그에 필요한 방법을 짝지어 봄.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 질문이 진화하면 방법도 진화함</span>
+      <p class="wdesc">각 단계를 눌러, "어떤 질문"이 "어떤 방법"을 불렀는지 봄. 이 5단계가 2강의 전체 지도임.</p>
+      <div class="evo" id="evo">
+        <div class="evo-step on" data-k="0"><span class="n">①</span>집계</div>
+        <div class="evo-step" data-k="1"><span class="n">②</span>통계</div>
+        <div class="evo-step" data-k="2"><span class="n">③</span>마이닝</div>
+        <div class="evo-step" data-k="3"><span class="n">④</span>머신러닝</div>
+        <div class="evo-step" data-k="4"><span class="n">⑤</span>딥러닝·AI</div>
+      </div>
+      <div class="out" id="evoout"></div>
+    </div>
+
+    <h3>비유 — 점점 좋아지는 망원경</h3>
+    <p>맨눈으로는 가까운 것만 보임(집계). 망원경을 쓰면 먼 별도 보임(통계). 더 좋은 망원경은 별의 색·구성까지 분석함(마이닝). 천체망원경은 새 은하를 발견함(ML·AI). <strong>도구가 강해질수록 볼 수 있는 게 늘지만, 맨눈으로 보는 일이 사라지진 않음.</strong> 천문학자도 여전히 맨눈으로 밤하늘을 봄 — 이것이 "대체가 아니라 누적"의 뜻임.</p>
+
+    <div class="note"><b>📌 겁먹지 말 것</b><br>통계·마이닝·머신러닝·딥러닝이라는 말에 겁먹지 말 것. 지금은 각각을 깊이 배우는 게 아니라 <b>"이런 단계들이 있고, 각각 이런 질문에 답하려 나왔구나"</b> 하는 전체 지도를 그리는 시간임. 그리고 복잡한 방법이 항상 좋은 게 아님 — 단순한 질문엔 단순한 집계가 가장 빠르고 정확함.</p></div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>분석 방법은 사람들이 점점 더 어려운 질문에 답하려 하면서 진화했음.</li>
+      <li>집계→통계→마이닝→ML→딥러닝·AI 순으로 단순함에서 복잡함으로 발전했음.</li>
+      <li>지금은 각각을 깊이 배우기보다 전체 지도를 머릿속에 그리는 것이 목표임.</li>
+    </ol></div>
+  </section>
+
+  <!-- 2-2 집계 -->
+  <section class="reveal">
+    <div class="sec-no">2-2</div>
+    <h2>① 집계 — 세고 합치는 분석</h2>
+    <p>분석의 첫 단계이자 가장 기본은 <strong>집계(aggregation)</strong>임. 어려운 말이 아님 — <strong>세고(count), 합치고(sum), 평균 내고(average), 정리하는</strong> 것임. 1강 분식집의 "김밥 하루 평균 65인분"이 바로 집계임. 집계가 답하는 질문은 <strong>"무슨 일이 있었나?"</strong>임.</p>
+
+    <div class="term"><b>기술 통계(descriptive statistics)</b><br>집계에 쓰는 요약값들. <b>합계·평균·개수·최댓값·최솟값·중앙값</b> 등. "기술(describe)"은 "데이터를 묘사·서술한다"는 뜻.</div>
+
+    <h3>초보자가 꼭 알아야 할 "평균의 함정"</h3>
+    <p>집계에서 가장 많이 쓰는 <strong>평균</strong>은, 때때로 사실을 왜곡함. 아래 위젯에서 직접 확인해 봄.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 평균의 함정</span>
+      <p class="wdesc">단체 손님(이상치) 한 명을 넣고 빼면서, 평균이 어떻게 출렁이는지 봄. 평균과 중앙값을 비교해 봄.</p>
+      <div class="coins" id="coins"></div>
+      <div class="out" id="meanout"></div>
+      <div style="text-align:center;margin-top:10px;">
+        <button class="btn" id="meanToggle">단체 손님(79,000원) 넣기/빼기</button>
+      </div>
+    </div>
+
+    <div class="term"><b>이상치(outlier)</b><br>다른 값들과 유난히 동떨어진 값. 평균은 이상치에 크게 흔들림. 이럴 땐 크기순 한가운데 값인 <b>중앙값(median)</b>이 "보통"을 더 잘 대표함.</div>
+
+    <div class="note"><b>📌 집계는 단순하지만 가장 많이 쓰임</b><br>실제 회사의 대부분 보고서·대시보드(매출 추이·방문자 수·가입자 수)는 집계로 이루어짐. 화려한 머신러닝보다 정확한 집계 하나가 더 큰 결정을 이끄는 경우가 훨씬 많음. 다만 "가진 데이터만 요약"할 수 있다는 한계가 다음 단계를 부름 — "5천만 명을 다 못 세는데, 일부로 전체를 추정할 순 없을까?"</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>집계는 세고·합치고·평균 내어 요약하는, 가장 기본적이고 많이 쓰는 분석임.</li>
+      <li>평균은 이상치에 흔들리므로 중앙값 등과 함께 봐야 왜곡을 피함.</li>
+      <li>"일부로 전체를 추정하고 싶다"는 한계가 다음 단계인 통계 분석을 부름.</li>
+    </ol></div>
+  </section>
+
+  <!-- 2-3 통계 -->
+  <section class="reveal">
+    <div class="sec-no">2-3</div>
+    <h2>② 통계 분석 — 일부로 전체를 추정</h2>
+    <p>집계는 "가진 데이터"만 요약했음. <strong>통계 분석</strong>은 한 걸음 더 나아가 <strong>"가진 일부(표본)로, 갖지 못한 전체(모집단)를 추정"</strong>함. 이것이 집계와의 결정적 차이임.</p>
+
+    <div class="term"><b>모집단(population)과 표본(sample)</b><br>· <b>모집단</b> = 진짜 알고 싶은 전체 (예: 국민 전체의 키)<br>· <b>표본</b> = 실제로 뽑아 조사한 일부 (예: 무작위 1,000명의 키)<br>→ 발상: <b>전체를 다 못 조사하니, 일부만 잘 조사해 전체를 추정하자.</b></div>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 국 맛보기 비유</span>
+      <p class="wdesc">통계의 핵심 비유. 단계를 눌러, 왜 "잘 저은 한 숟가락"이 솥 전체를 대표하는지 봄.</p>
+      <div class="seg" id="soup">
+        <button class="on" data-k="0">🍲 솥 전체</button>
+        <button data-k="1">🥄 한 숟가락</button>
+        <button data-k="2">🌀 잘 젓기</button>
+      </div>
+      <div class="out" id="soupout"></div>
+    </div>
+
+    <div class="ex"><b>표본을 잘못 뽑은 실패 사례 (1936년)</b><br>한 잡지사가 <b>200만 명</b>에게 설문해 미국 대선을 예측했지만 완전히 틀림. 전화·자동차 명단에서 뽑았는데, 당시 그건 <b>부유층에 치우친</b> 표본이었음(국의 위쪽만 뜬 셈). <b>표본은 크기보다 "전체를 골고루 대표하는가"가 중요함.</b></div>
+
+    <h3>분포 — 데이터가 퍼진 "모양"</h3>
+    <p>통계의 또 다른 핵심은 <strong>분포(distribution)</strong>임. 데이터가 어떤 값 주변에 얼마나 퍼져 있는지의 모양임. 키·점수 등 많은 현상이 <strong>가운데가 높고 양끝이 낮은 종 모양(정규분포)</strong>을 띰.</p>
+
+    <div class="widget">
+      <span class="wlabel">시각화 · 정규분포와 회귀</span>
+      <p class="wdesc">통계의 두 핵심 도구를 그림으로 봄. 버튼으로 전환해 봄.</p>
+      <div class="seg" id="statviz">
+        <button class="on" data-k="dist">분포 (종 모양)</button>
+        <button data-k="reg">회귀 (식 맞추기)</button>
+      </div>
+      <div class="dist" id="statvizout"></div>
+      <div class="out" id="statvizdesc" style="margin-top:10px;"></div>
+    </div>
+
+    <div class="term"><b>신뢰구간 · 회귀</b><br>· <b>신뢰구간</b>: 추정엔 오차가 있으므로 "평균 키는 170cm로 추정, 오차 감안 169~171cm일 가능성이 높음"처럼 <b>범위와 불확실성을 함께</b> 제시함.<br>· <b>회귀(regression)</b>: 데이터에 <b>가장 잘 맞는 식(직선)</b>을 그어, 모르는 값을 추정(예: 넓이로 집값 추정). → <b>머신러닝의 직접적 뿌리!</b></div>
+
+    <div class="note"><b>📌 다음 단계를 부르는 한계</b><br>통계는 보통 사람이 "이런 관계가 있을 것"이라 <b>먼저 가설을 세우고</b> 확인함. 그런데 데이터가 거대해지면 — "사람이 미처 생각 못 한 패턴이 이 안에 있지 않을까? 데이터 스스로 패턴을 드러내게 할 순 없을까?" 이 질문이 데이터 마이닝을 부름.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>통계 분석은 일부(표본)로 전체(모집단)를 추정하는 방법으로, 국 맛보기에 비유됨.</li>
+      <li>분포로 값의 의미를 해석하고, 신뢰구간으로 불확실성을 함께 제시함.</li>
+      <li>회귀는 데이터에 식을 맞춰 모르는 값을 추정하는 것으로, 머신러닝의 뿌리가 됨.</li>
+    </ol></div>
+  </section>
+
+  <!-- 2-4 데이터 마이닝 -->
+  <section class="reveal">
+    <div class="sec-no">2-4</div>
+    <h2>③ 데이터 마이닝 — 패턴 캐기</h2>
+    <p><strong>데이터 마이닝</strong>은 이름 그대로 <strong>"데이터를 캐낸다(mining)"</strong>는 뜻. 광부가 금을 캐듯, 거대한 데이터 더미에서 <strong>숨은 패턴·규칙을 캐냄</strong>. 통계와의 결정적 차이는 <strong>순서</strong>임.</p>
+
+    <div class="term"><b>통계 vs 데이터 마이닝 — 순서가 다름</b><br>· <b>통계</b>: 사람이 <b>먼저 가설</b> → 데이터로 확인 ("넓이가 가격에 영향 줄 것 같다 → 확인")<br>· <b>마이닝</b>: 가설 없이 <b>데이터를 뒤져서</b> → 숨은 패턴 발견 ("뭐가 있는지 일단 캐 보자")</div>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 전설의 "맥주와 기저귀"</span>
+      <p class="wdesc">데이터 마이닝의 가장 유명한 사례. 단계를 눌러, 사람이 가설로 떠올리기 힘든 패턴을 데이터가 어떻게 드러내는지 봄.</p>
+      <div class="out" id="beerout"></div>
+      <div style="text-align:center;margin-top:10px;">
+        <button class="btn" id="beerstep">▶ 다음 단계</button>
+        <button class="btn ghost" id="beerreset">↻</button>
+      </div>
+    </div>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 대표 기법 두 가지</span>
+      <p class="wdesc">데이터 마이닝의 두 대표 기법을 눌러 봄. 오늘날 추천·고객분류의 바탕임.</p>
+      <div class="seg" id="dm">
+        <button class="on" data-k="assoc">연관 규칙</button>
+        <button data-k="cluster">군집화</button>
+      </div>
+      <div class="out" id="dmout"></div>
+    </div>
+
+    <div class="note"><b>📌 다음 단계를 부르는 한계</b><br>마이닝은 주로 "과거에 이런 패턴이 있었다"를 발견함. 사람들은 곧 더 욕심을 냄 — "발견한 패턴으로 <b>미래를 예측</b>할 순 없을까? 이 고객이 떠날지를 <b>자동으로 맞히게</b>, 나아가 컴퓨터가 <b>스스로 규칙을 학습</b>하게 할 순 없을까?" 이 질문이 머신러닝을 부름.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>데이터 마이닝은 거대한 데이터에서 숨은 패턴·규칙을 캐내는 방법임.</li>
+      <li>통계와 달리 가설 없이 데이터를 뒤지며(맥주-기저귀), 연관 규칙·군집화가 대표 기법임.</li>
+      <li>"패턴으로 미래를 예측하고 스스로 배우게 하고 싶다"는 욕구가 머신러닝을 부름.</li>
+    </ol></div>
+  </section>
+
+  <!-- 2-5 머신러닝 -->
+  <section class="reveal">
+    <div class="sec-no">2-5</div>
+    <h2>④ 머신러닝 — 스스로 규칙을 학습</h2>
+    <p><strong>머신러닝(기계 학습)</strong>의 핵심을 한 문장으로 — <strong>사람이 규칙을 일일이 정해 주는 대신, 컴퓨터가 데이터를 보고 스스로 규칙을 "학습"하게 하는 것.</strong> 왜 도약인지, 스팸 필터로 비교해 봄.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 스팸 메일 거르기 — 전통 방식 vs 머신러닝</span>
+      <p class="wdesc">두 방식을 눌러 비교해 봄. 누가 규칙을 만드는지가 핵심 차이임.</p>
+      <div class="seg" id="spam">
+        <button class="on" data-k="rule">전통 — 사람이 규칙</button>
+        <button data-k="ml">머신러닝 — 스스로 학습</button>
+      </div>
+      <div class="out" id="spamout"></div>
+    </div>
+
+    <div class="ex"><b>비유 — 아이에게 고양이 가르치기</b><br>"고양이"를 말로 정의하긴 어려움(귀 뾰족·수염… 강아지도 그런데?). 대신 <b>고양이 사진을 여러 장 보여 주면</b> 아이는 어느 순간 "고양이다움"을 스스로 터득해 처음 본 고양이도 맞힘. 머신러닝이 정확히 이렇게 작동함 — <b>예시(데이터)를 충분히 주면 규칙을 스스로 터득</b>함.</div>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 머신러닝의 두 갈래</span>
+      <p class="wdesc">두 갈래를 눌러 봄. 앞 단계(통계 회귀·마이닝 군집)가 여기로 이어지는 게 핵심!</p>
+      <div class="seg" id="mlk">
+        <button class="on" data-k="sup">지도 학습 (정답 있음)</button>
+        <button data-k="unsup">비지도 학습 (정답 없음)</button>
+      </div>
+      <div class="out" id="mlkout"></div>
+    </div>
+
+    <div class="note"><b>📌 진화는 누적 — 앞 단계가 여기로 흐름</b><br>2-3의 <b>회귀</b>(데이터에 식 맞추기) → 머신러닝의 "지도 학습 - 회귀"로 발전. 2-4의 <b>군집화</b>(비슷한 것끼리) → 머신러닝의 "비지도 학습 - 군집"으로 이어짐. 머신러닝은 하늘에서 떨어진 게 아니라 통계·마이닝의 발상을 이어받은 것임.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>머신러닝은 사람이 규칙을 주는 대신, 데이터로 컴퓨터가 스스로 규칙을 학습하게 함.</li>
+      <li>지도 학습(분류·회귀)과 비지도 학습(군집)으로 나뉘며, 앞 단계의 회귀·군집을 이어받음.</li>
+      <li>"복잡한 데이터에서 무엇을 볼지까지 스스로 알아내게 하고 싶다"가 딥러닝을 부름.</li>
+    </ol></div>
+  </section>
+
+  <!-- 2-6 딥러닝/AI + 누적 -->
+  <section class="reveal">
+    <div class="sec-no">2-6</div>
+    <h2>⑤ 딥러닝·AI, 그리고 "진화는 누적"</h2>
+    <p><strong>딥러닝(deep learning)</strong>은 머신러닝의 한 종류로, 특히 <strong>사진·음성·자연어처럼 아주 복잡한 데이터</strong>를 잘 다룸. "딥(깊은)"은 정보를 처리하는 층(layer)을 여러 겹 깊게 쌓았다는 뜻. 핵심 도약 — <strong>사람이 "무엇을 볼지(특징)"를 골라 주지 않아도, 데이터에서 무엇이 중요한지까지 스스로 알아냄.</strong></p>
+
+    <div class="ex"><b>비유 — 신경망과 두뇌</b><br>두뇌가 빛 신호를 여러 단계로 처리해(선→모양→얼굴) "엄마다!"를 알아보듯, 딥러닝(인공 신경망)도 데이터를 여러 층으로 처리하며 점점 복잡한 특징을 스스로 잡아냄(사진: 선·점 → 눈·코 → 얼굴 전체).</div>
+
+    <h3>AI·머신러닝·딥러닝의 관계 — 헷갈리지 않게</h3>
+    <p>세 단어가 자주 섞여 초보자를 혼란스럽게 함. 이들은 <strong>포함 관계(큰 원 안에 작은 원)</strong>임. 아래 그림으로 정리함.</p>
+
+    <div class="widget">
+      <span class="wlabel">시각화 · 딥러닝 ⊂ 머신러닝 ⊂ AI</span>
+      <p class="wdesc">세 개념의 포함 관계를 한눈에 봄. 각 층을 눌러 설명을 봄.</p>
+      <div class="venn">
+        <div class="ai-ring" data-k="ai" style="cursor:pointer;">
+          <div class="ring-t">인공지능 (AI)</div>
+          <div class="ring-d">사람처럼 똑똑하게 행동하는 모든 기술</div>
+          <div class="ml-ring" data-k="ml">
+            <div class="ring-t">머신러닝 (ML)</div>
+            <div class="ring-d">데이터로 스스로 규칙을 학습</div>
+            <div class="dl-ring" data-k="dl">
+              <div class="ring-t">딥러닝 (DL)</div>
+              <div class="ring-d">신경망을 깊게 쌓아 복잡한 데이터 처리</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="out" id="vennout" style="margin-top:12px;"></div>
+    </div>
+
+    <h3>핵심 메시지 — "진화는 대체가 아니라 누적"</h3>
+    <p>우리는 집계→통계→마이닝→ML→딥러닝·AI를 봤음. 그런데 <strong>뒤의 것이 앞의 것을 없앤 게 아님.</strong> 지금 이 순간에도 다섯 단계가 <strong>모두 함께</strong> 쓰임.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 한 회사에서 동시에 일어나는 일</span>
+      <p class="wdesc">각 항목을 눌러, 다섯 단계가 현실에서 어떻게 함께 쓰이는지 봄. 가장 많이 쓰는 건 여전히 ①②임!</p>
+      <div class="out" id="coexout"></div>
+      <div style="text-align:center;margin-top:10px;">
+        <button class="btn" id="coexstep">▶ 다음 단계 보기</button>
+        <button class="btn ghost" id="coexreset">↻</button>
+      </div>
+    </div>
+
+    <div class="ex"><b>비유 — 연장통</b><br>망치(집계)로 시작해 드라이버(통계)·드릴(마이닝)·정밀공구(ML)·첨단기계(딥러닝)가 차례로 연장통에 추가됨. 하지만 <b>드릴이 생겼다고 망치를 버리지 않음</b> — 못 박을 땐 망치가 최고. 연장이 많아질수록 "어떤 일에 어떤 연장을 쓸지"의 안목이 더 중요해짐.</div>
+
+    <div class="note"><b>📌 도구에 휘둘리지 말 것</b><br>요즘 "AI"가 유행이라 모든 걸 AI로 풀어야 할 듯하지만, 현실의 수많은 문제는 단순 집계·통계로 더 빠르고 정확하게 풀림. "AI를 썼다"가 자랑이 아니라 "문제를 잘 풀었다"가 핵심임. 항상 "이 문제에 가장 적합한 방법이 무엇인가"를 먼저 물을 것.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>딥러닝은 신경망을 깊게 쌓아 복잡한 데이터를 다루는 머신러닝의 한 종류임(딥러닝⊂ML⊂AI).</li>
+      <li>분석 방법의 진화는 대체가 아니라 누적이며, 다섯 단계가 지금도 함께 쓰임.</li>
+      <li>가장 중요한 것은 도구의 개수가 아니라 문제에 맞는 방법을 고르는 안목임.</li>
+    </ol></div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="next-card">
+    <div class="nl">NEXT · 3강</div>
+    <div class="nt">데이터란 무엇인가</div>
+    <p style="margin-top:8px;">1·2강에서 "데이터"라는 말을 수없이 썼지만, 정작 데이터가 정확히 무엇인지는 짚지 않았음. 3강에서 분석의 <strong>재료</strong>를 들여다봄 — 데이터·정보·지식의 차이, 우리 주변의 데이터, 그리고 <strong>정형 vs 비정형</strong>·<strong>정량 vs 정성</strong>의 구분.</p>
+  </div>
+  <p style="margin-top:24px;">데이터 분석 개요 및 기초 이론 · 2강 / 7강 · 데이터 분석 자동화 커리큘럼</p>
+</footer>
+
+<script>
+var prog=document.getElementById('progress');
+addEventListener('scroll',function(){var h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+
+/* evo */
+(function(){
+  var R=[
+    {q:'"지난달 매출은 얼마였나?" (단순 사실)',m:'① 집계 — 세고 합치기',d:'가진 데이터를 요약. 가장 단순·기본.'},
+    {q:'"국민 전체의 평균 키는?" (전체를 다 못 셀 때)',m:'② 통계 분석 — 일부로 전체 추정',d:'표본으로 모집단을 추정. 분포·회귀.'},
+    {q:'"어떤 상품들이 함께 잘 팔리나?" (숨은 패턴)',m:'③ 데이터 마이닝 — 패턴 캐기',d:'가설 없이 데이터를 뒤져 규칙 발견.'},
+    {q:'"이 고객이 다음 달에 떠날까?" (미래 예측)',m:'④ 머신러닝 — 스스로 규칙 학습',d:'데이터로 컴퓨터가 규칙을 학습해 예측.'},
+    {q:'"이 사진 속 동물이 고양이인가?" (복잡한 인식)',m:'⑤ 딥러닝·AI — 복잡한 것까지',d:'신경망을 깊게 쌓아 사진·음성·언어 처리.'}
+  ];
+  var out=document.getElementById('evoout');
+  function sel(i){document.querySelectorAll('#evo .evo-step').forEach(function(x){x.classList.remove('on');});document.querySelector('#evo [data-k="'+i+'"]').classList.add('on');out.innerHTML='<span class="dim">질문:</span> '+R[i].q+'\n<span class="y">필요한 방법 → '+R[i].m+'</span>\n<span class="dim">'+R[i].d+'</span>';}
+  document.querySelectorAll('#evo .evo-step').forEach(function(el){el.addEventListener('click',function(){sel(+el.dataset.k);});});
+  sel(0);
+})();
+
+/* 평균 함정 */
+(function(){
+  var base=[5000,6000,5500,4500];
+  var withOut=false;
+  var coins=document.getElementById('coins'),out=document.getElementById('meanout');
+  function render(){
+    var data=withOut?base.concat([79000]):base.slice();
+    var maxV=Math.max.apply(null,data);
+    coins.innerHTML=data.map(function(v){
+      var h=Math.max(18,Math.round(v/maxV*110));
+      var cls=(v>=79000)?'coin out':'coin';
+      return '<div class="'+cls+'" style="height:'+h+'px">'+(v/1000)+'k</div>';
+    }).join('');
+    var mean=Math.round(data.reduce(function(a,c){return a+c;},0)/data.length);
+    var sorted=data.slice().sort(function(a,b){return a-b;});
+    var mid=sorted[Math.floor(sorted.length/2)];
+    out.innerHTML='데이터: ['+data.map(function(v){return v.toLocaleString();}).join(', ')+']\n'+
+      '<span class="y">평균(mean) = '+mean.toLocaleString()+'원</span>\n'+
+      '<span class="hl">중앙값(median) = '+mid.toLocaleString()+'원</span>\n'+
+      (withOut?'<span class="dim">→ 단체 손님 1명(이상치) 때문에 평균이 확 올라감!\n   하지만 "보통 손님"은 중앙값 5,500원에 가까움</span>':'<span class="dim">→ 평균과 중앙값이 비슷함 (이상치 없음)</span>');
+  }
+  document.getElementById('meanToggle').addEventListener('click',function(){withOut=!withOut;render();});
+  render();
+})();
+
+/* 국 맛보기 */
+(function(){
+  var R=[
+    '<span class="hl">🍲 솥 전체 = 모집단</span>\n진짜 알고 싶은 전체 (예: 국민 전체의 키).\n<span class="dim">전부 조사하긴 불가능 — 5천만 명을 다 잴 순 없음</span>',
+    '<span class="hl">🥄 한 숟가락 = 표본</span>\n실제로 떠서 맛본 일부 (예: 무작위 1,000명).\n<span class="dim">간을 보려고 솥 전체를 마실 필요는 없음</span>',
+    '<span class="hl">🌀 잘 젓기 = 무작위·골고루 뽑기</span>\n안 젓고 위에서만 뜨면 맛을 잘못 앎.\n<span style="color:#9ec79a">잘 저은 한 숟가락이 솥 전체를 대표하듯,\n잘 뽑은 표본이 모집단 전체를 대표함!</span>'
+  ];
+  var out=document.getElementById('soupout');
+  document.querySelectorAll('#soup button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#soup button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[+b.dataset.k];});});
+  out.innerHTML=R[0];
+})();
+
+/* 통계 시각화 */
+(function(){
+  var dist='사람 수\n  |          .-"""-.\n  |       .-\'       \'-.\n  |     .\'             \'.\n  |   .\'                 \'.\n  | .\'                     \'.\n  +\'________________________\'.___ 키\n         평균(170cm) 근처에 가장 많이 몰림\n         아주 크거나 작은 키는 드묾 (양 끝)';
+  var reg='가격\n  |              o\n  |          o /o  o\n  |       o / o\n  |     /o  o      o:실제 데이터(집들)\n  |   / o          /:데이터에 맞춘 추정 식\n  | / o\n  +__________________ 넓이\n   넓이만 알면 직선으로 가격을 추정!';
+  var descD='<span class="hl">분포(distribution)</span> — 데이터가 퍼진 모양.\n키·점수 등 많은 현상이 가운데 높고 양끝 낮은 <span class="y">종 모양(정규분포)</span>.\n→ "이 값이 흔한가 드문가"를 판단 가능 (195cm = 오른쪽 끝 = 매우 큼)';
+  var descR='<span class="hl">회귀(regression)</span> — 데이터에 가장 잘 맞는 식(직선)을 그음.\n→ 새 값(넓이)을 넣으면 모르는 값(가격)을 <span class="y">추정</span>.\n<span style="color:#9ec79a">이 "식 맞추기"가 머신러닝의 직접적 뿌리!</span>';
+  var viz=document.getElementById('statvizout'),desc=document.getElementById('statvizdesc');
+  function sel(k){document.querySelectorAll('#statviz button').forEach(function(x){x.classList.remove('on');});document.querySelector('#statviz [data-k="'+k+'"]').classList.add('on');viz.textContent=(k==='dist')?dist:reg;desc.innerHTML=(k==='dist')?descD:descR;}
+  document.querySelectorAll('#statviz button').forEach(function(b){b.addEventListener('click',function(){sel(b.dataset.k);});});
+  sel('dist');
+})();
+
+/* 맥주 기저귀 */
+(function(){
+  var steps=[
+    '<span class="dim">한 대형 마트가 영수증 데이터를 마이닝함</span>\n"버튼을 눌러 무엇이 발견됐는지 보세요"',
+    '<span class="y">발견된 뜻밖의 패턴</span>\n"금요일 저녁에 <span class="hl">맥주</span>를 사는 사람이\n <span class="hl">기저귀</span>도 함께 사는 경우가 많다"',
+    '<span class="dim">왜? — 나중에 해석해 보니</span>\n"금요일 퇴근길 아빠가 기저귀 심부름을 나왔다가,\n 주말에 마실 맥주도 함께 집어 든다"',
+    '<span class="y">결과</span>\n맥주와 기저귀를 가까이 진열 → 매출 상승\n\n<span style="color:#9ec79a">사람이 가설로 떠올리기 힘든 패턴을\n데이터가 스스로 드러냄 — 이것이 마이닝의 힘!</span>'
+  ];
+  var i=0,out=document.getElementById('beerout');
+  function r(){out.innerHTML=steps[i];}
+  document.getElementById('beerstep').addEventListener('click',function(){if(i<steps.length-1)i++;r();});
+  document.getElementById('beerreset').addEventListener('click',function(){i=0;r();});
+  r();
+})();
+
+/* 마이닝 기법 */
+(function(){
+  var R={
+    assoc:'<span class="hl">연관 규칙 — "함께 일어나는 것 찾기"</span>\n"A를 산 사람이 B도 산다" 같은 패턴.\n맥주-기저귀가 바로 이것.\n<span class="dim">→ 오늘날 쇼핑몰의 "이 상품을 본 사람이\n   함께 본 상품" 추천이 여기서 나옴</span>',
+    cluster:'<span class="hl">군집화 — "비슷한 것끼리 묶기"</span>\n정답(분류 기준)을 안 줘도 비슷한 것끼리 저절로 묶음.\n예: 고객을 "알뜰형·충동형·주말형"으로 자동 분류.\n<span class="dim">→ 운동장에서 "친한 사람끼리 모여"라 하면\n   저절로 무리가 생기는 것과 같음</span>'
+  };
+  var out=document.getElementById('dmout');
+  document.querySelectorAll('#dm button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#dm button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.assoc;
+})();
+
+/* 스팸 */
+(function(){
+  var R={
+    rule:'<span class="y">전통 방식 — 사람이 규칙을 다 정해 줌</span>\n"제목에 \'무료\'가 있으면 스팸"\n"\'당첨\'이 있으면 스팸" …\n<span class="dim">문제: 스팸 발송자가 \'무료\'→\'무∗료\'로 피해 감.\n사람이 규칙을 아무리 추가해도 끝이 없음</span>',
+    ml:'<span class="y">머신러닝 — 컴퓨터가 스스로 학습</span>\n스팸 수만 통 + 정상 수만 통을 <span class="hl">보여 줌(데이터)</span>\n→ 컴퓨터가 "스팸은 이런 특징"을 <span class="hl">스스로 찾음(학습)</span>\n→ 새 메일이 오면 학습한 규칙으로 스스로 판단\n<span style="color:#9ec79a">사람이 규칙을 주는 게 아니라,\n예시를 주면 컴퓨터가 규칙을 만들어 냄!</span>'
+  };
+  var out=document.getElementById('spamout');
+  document.querySelectorAll('#spam button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#spam button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.rule;
+})();
+
+/* ML 갈래 */
+(function(){
+  var R={
+    sup:'<span class="hl">지도 학습 — "정답을 알려 주며 가르치기"</span>\n정답이 붙은 데이터로 학습.\n· <span class="y">분류</span>: 정답이 "종류" (스팸/정상, 고양이/강아지)\n· <span class="y">회귀</span>: 정답이 "숫자" (집값·매출 예측)\n<span style="color:#9ec79a">← 2-3의 통계 회귀가 바로 여기로 이어짐!</span>',
+    unsup:'<span class="hl">비지도 학습 — "정답 없이 스스로 묶기"</span>\n정답 없이 데이터만 주고 구조를 찾게 함.\n· <span class="y">군집</span>: 비슷한 것끼리 자동으로 묶기\n<span style="color:#9ec79a">← 2-4의 데이터 마이닝 군집화가 여기에 해당!</span>'
+  };
+  var out=document.getElementById('mlkout');
+  document.querySelectorAll('#mlk button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#mlk button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.sup;
+})();
+
+/* venn */
+(function(){
+  var R={
+    ai:'<span class="hl">인공지능 (AI) — 가장 큰 우산</span>\n"기계가 사람처럼 똑똑하게 행동하게 하는 모든 기술".\n머신러닝은 AI를 만드는 여러 방법 중 하나임.',
+    ml:'<span class="hl">머신러닝 (ML) — AI의 한 방법</span>\n"데이터로 스스로 규칙을 학습하는" 방법.\nAI라는 우산 안에 있음.',
+    dl:'<span class="hl">딥러닝 (DL) — 머신러닝의 한 종류</span>\n"신경망을 깊게 쌓아 복잡한 데이터를 다루는" 방법.\n<span class="y">딥러닝 ⊂ 머신러닝 ⊂ 인공지능</span>의 포함 관계!'
+  };
+  var out=document.getElementById('vennout');
+  document.querySelectorAll('[data-k="ai"],[data-k="ml"],[data-k="dl"]').forEach(function(el){
+    el.addEventListener('click',function(ev){ev.stopPropagation();out.innerHTML=R[el.dataset.k];});
+  });
+  out.innerHTML=R.dl;
+})();
+
+/* 공존 */
+(function(){
+  var steps=[
+    {t:'한 회사에서 지금 이 순간 동시에 일어나는 일:',d:'"다음 단계 보기"를 눌러 하나씩 확인하세요'},
+    {t:'• 매일 아침 매출·방문자 수를 집계해 봄',d:'<span class="y">① 집계</span> — 가장 많이 씀!'},
+    {t:'• 설문 조사로 고객 만족도를 추정함',d:'<span class="y">② 통계 분석</span>'},
+    {t:'• 함께 잘 팔리는 상품 조합을 발견함',d:'<span class="y">③ 데이터 마이닝</span>'},
+    {t:'• 어떤 고객이 떠날지 예측함',d:'<span class="y">④ 머신러닝</span>'},
+    {t:'• 고객 문의를 AI 챗봇이 자동 응대함',d:'<span class="y">⑤ 딥러닝·AI</span>'},
+    {t:'다섯 단계가 모두 함께 쓰임!',d:'<span style="color:#9ec79a">진화는 대체가 아니라 누적.\n가장 많이 쓰는 건 여전히 ①집계·②통계!</span>'}
+  ];
+  var i=0,out=document.getElementById('coexout'),shown=[];
+  function r(){
+    var html='<span class="dim">'+steps[0].t+'</span>\n';
+    for(var k=1;k<=i;k++){ html+='\n'+steps[k].t+'\n   '+steps[k].d+'\n'; }
+    if(i===0) html=steps[0].t+'\n<span class="dim">'+steps[0].d+'</span>';
+    out.innerHTML=html;
+  }
+  document.getElementById('coexstep').addEventListener('click',function(){if(i<steps.length-1)i++;r();});
+  document.getElementById('coexreset').addEventListener('click',function(){i=0;r();});
+  r();
+})();
+</script>
+</body>
+</html>

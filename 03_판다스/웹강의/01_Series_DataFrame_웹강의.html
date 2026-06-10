@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 1 · Series와 DataFrame — 데이터를 담는 두 그릇</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:880px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(63,125,79,.05),transparent 40%),radial-gradient(circle at 90% 100%,rgba(194,65,12,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:#3f7d4f;z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:84px 22px 36px;}
+  .eyebrow{color:#3f7d4f;font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:62ch;}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:#d8e8d6;color:#2f5f3a;}
+  .chip.o{background:var(--accent-soft);color:#8a3408;}
+  section{padding:54px 0 30px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:#3f7d4f;font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 18px;line-height:1.3;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  .green{color:#3f7d4f;font-weight:700;}
+  code{font-family:'Gowun Dodum',monospace;background:#efe7d8;color:#8a3408;padding:1.5px 7px;border-radius:6px;font-size:.92em;}
+  pre{background:#2b2723;color:#f4efe6;border-radius:12px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.7;margin:16px 0;white-space:pre;}
+  pre code{background:none;color:inherit;padding:0;}
+  pre .k{color:#e0935f;}pre .s{color:#9ec79a;}pre .c{color:#8b8175;font-style:italic;}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid #3f7d4f;border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15.5px;color:var(--sub);}
+  .note b{color:#3f7d4f;}
+  .note.warn{border-left-color:var(--accent);}.note.warn b{color:var(--accent);}
+  .summary{background:#e9efe8;border-radius:12px;padding:18px 20px;margin:22px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:#3f7d4f;font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:#3f7d4f;padding:4px 11px;border-radius:999px;margin-bottom:16px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:14px;color:#9ec79a;min-height:42px;white-space:pre-wrap;line-height:1.7;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}.out .accent{color:#e0935f;font-weight:700;}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+  .segbtn{border:1.5px solid var(--line);background:#fff;border-radius:9px;padding:8px 14px;cursor:pointer;font-family:var(--sans);font-weight:700;font-size:13px;color:var(--sub);transition:.15s;}
+  .segbtn.on{border-color:#3f7d4f;background:#3f7d4f;color:#fff;}
+  .stage{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;}
+
+  /* Series view */
+  .series{display:inline-grid;grid-template-columns:auto auto;gap:0;font-family:monospace;border-radius:8px;overflow:hidden;border:1px solid var(--line);}
+  .series .ix{background:#efe7d8;color:#8a3408;padding:6px 14px;font-weight:700;border-bottom:1px solid #e2d9c9;text-align:right;}
+  .series .vl{background:#fff;color:var(--ink);padding:6px 16px;border-bottom:1px solid #f0eadd;text-align:right;}
+  .series .ix.hl{background:#3f7d4f;color:#fff;}
+  .series-cap{font-size:12px;color:var(--sub);margin-top:8px;}
+
+  /* tables */
+  .dft{border-collapse:collapse;font-family:monospace;font-size:13.5px;margin:4px 0;width:100%;}
+  .dft th,.dft td{border:1px solid var(--line);padding:7px 11px;text-align:center;}
+  .dft th{background:#efe7d8;color:#8a3408;font-weight:700;cursor:pointer;user-select:none;}
+  .dft th.idx,.dft td.idx{background:#f3ecdd;color:#8a6a3a;font-weight:700;}
+  .dft td{background:#fff;}
+  .dft th.sel{background:#3f7d4f;color:#fff;}
+  .dft td.sel{background:#e6f0e4;}
+  .dft tr.sel td{background:#e6f0e4;}
+  .dft tr.sel td.idx{background:#cfe3cb;}
+
+  .btnrow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#eef3ec);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;text-decoration:none;color:inherit;display:block;transition:.18s;}
+  .next-card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(80,60,30,.1);}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:#a8762f;font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .crumb{display:inline-block;margin-bottom:8px;font-size:13px;color:var(--sub);text-decoration:none;}
+  .crumb:hover{color:var(--accent);}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}.dft{font-size:12px;}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<header class="hero">
+  <a class="crumb" href="../00_데이터분석_판다스_목차.html">← 전체 목차</a>
+  <div class="eyebrow">데이터 분석 · 판다스 · 1단계</div>
+  <h1>Series와 DataFrame<br><span style="font-size:.62em;color:var(--sub);font-weight:400;">데이터를 담는 두 그릇</span></h1>
+  <p class="lead">판다스가 데이터를 담는 두 구조를 배움. 엑셀의 <strong>한 개의 열</strong>이 <span class="green">Series</span>(1차원), 여러 열이 모인 <strong>표 전체</strong>가 <span class="green">DataFrame</span>(2차원). 만들고 · 인덱스를 다루고 · 원하는 부분만 골라내는 전 과정을 직접 만져봄.</p>
+  <div class="hero-meta">
+    <span class="chip">🟢 1단계 · 불러오기와 구조</span>
+    <span class="chip o">Series · DataFrame · iloc/loc</span>
+    <span class="chip">예상 35분</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- S1 Series 생성 -->
+  <section class="reveal">
+    <div class="sec-no">01</div>
+    <h2>Series — 1차원 데이터</h2>
+    <p><strong>Series</strong>는 <strong>인덱스(이름표)</strong>와 <strong>값</strong>이 한 쌍씩 묶인 1차원 데이터입니다. 리스트는 위치 번호로만 값을 찾지만, Series는 각 값마다 <strong>고유한 인덱스</strong>를 붙일 수 있어 <code>매출액['3월']</code>처럼 이름으로 바로 조회할 수 있습니다. 생성 방식을 바꿔 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · Series 생성</span>
+      <p class="wdesc">같은 매출 데이터를 세 가지 방법으로 만들어 봅니다. 인덱스가 어떻게 정해지는지 보세요.</p>
+      <div class="seg" id="w1tab">
+        <button class="segbtn on" data-k="list">① 리스트</button>
+        <button class="segbtn" data-k="idx">② 리스트+인덱스</button>
+        <button class="segbtn" data-k="dict">③ 딕셔너리</button>
+      </div>
+      <div class="stage">
+        <pre style="margin:0 0 12px;"><code id="w1code"></code></pre>
+        <div id="w1vis"></div>
+        <div class="series-cap" id="w1cap"></div>
+      </div>
+    </div>
+
+    <div class="note"><b>📌 참고</b> &nbsp;인덱스를 지정하지 않으면 <code>0,1,2…</code>가 자동 부여됩니다. 딕셔너리로 만들면 <b>키가 곧 인덱스</b>가 되어 가장 직관적입니다. 왼쪽이 인덱스, 오른쪽이 값, <code>dtype</code>은 값의 자료형입니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>Series는 인덱스(이름표)+값의 1차원 데이터.</li>
+      <li>리스트·딕셔너리·배열로 생성(<code>pd.Series</code>).</li>
+      <li>인덱스로 이름 조회가 가능한 게 리스트와의 차이.</li>
+    </ol></div>
+  </section>
+
+  <!-- S2 Series 통계 -->
+  <section class="reveal">
+    <div class="sec-no">02</div>
+    <h2>Series 통계 메소드</h2>
+    <p>Series는 그 자체로 통계 메소드를 가집니다. 값을 하나하나 더할 필요 없이 메소드 한 번으로 합계·평균·중앙값을 구합니다. 한 열(매출, 나이 등)의 전체 경향을 요약하는 것이 분석의 첫걸음입니다.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 통계 메소드</span>
+      <div class="stage">
+        <div style="margin-bottom:12px;">매출액 = <code>pd.Series([1500, 2000, 2500, 3000, 3500, 4000])</code></div>
+        <div class="seg" id="w2btn">
+          <button class="segbtn on" data-k="sum">.sum()</button>
+          <button class="segbtn" data-k="mean">.mean()</button>
+          <button class="segbtn" data-k="median">.median()</button>
+          <button class="segbtn" data-k="min">.min()</button>
+          <button class="segbtn" data-k="max">.max()</button>
+        </div>
+        <div class="out" id="w2out"></div>
+      </div>
+    </div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>sum·mean·median·min·max</code>로 한 줄 요약.</li>
+      <li>반복문 없이 메소드 하나로 집계.</li>
+      <li>Part 2 기술 통계로 그대로 이어짐.</li>
+    </ol></div>
+  </section>
+
+  <!-- S3 DataFrame -->
+  <section class="reveal">
+    <div class="sec-no">03</div>
+    <h2>DataFrame — 2차원 데이터(표)</h2>
+    <p><strong>DataFrame</strong>은 여러 Series가 옆으로 나란히 모인 <strong>표</strong>입니다. <strong>index</strong>(행 이름표), <strong>columns</strong>(열 이름), <strong>values</strong>(값)로 구성됩니다. 각 열은 사실 하나의 Series입니다. 열 제목을 눌러 선택해 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 열 선택</span>
+      <p class="wdesc">열 이름을 클릭하면 그 열만 선택됩니다(여러 개 선택 가능). 한 열은 Series, 여러 열은 DataFrame으로 반환됩니다.</p>
+      <div class="stage">
+        <table class="dft" id="w3table"></table>
+        <div class="out" id="w3out" style="margin-top:12px;"></div>
+      </div>
+    </div>
+
+    <div class="note"><b>📌 대괄호 주의</b> &nbsp;열 하나는 <code>df['열']</code>(→ Series), 여러 열은 <b>리스트로 감싸</b> <code>df[['열1','열2']]</code>(→ DataFrame). 대괄호 개수가 다릅니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>DataFrame = 이름표(index)를 공유하는 Series들의 묶음.</li>
+      <li>index·columns·values로 구성된 2차원 표.</li>
+      <li>한 열=Series, 여러 열=DataFrame.</li>
+    </ol></div>
+  </section>
+
+  <!-- S4 인덱스 다루기 -->
+  <section class="reveal">
+    <div class="sec-no">04</div>
+    <h2>인덱스·열 다루기</h2>
+    <p>행을 구분하는 식별자를 바꾸거나(<code>set_index</code>), 되돌리거나(<code>reset_index</code>), 이름을 바꾸거나(<code>rename</code>), 삭제(<code>drop</code>)합니다. 주식 종목 데이터에 각 메소드를 적용해 표가 어떻게 바뀌는지 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 인덱스 메소드</span>
+      <div class="seg" id="w4btn">
+        <button class="segbtn on" data-k="orig">원본 df</button>
+        <button class="segbtn" data-k="set">set_index('종목코드')</button>
+        <button class="segbtn" data-k="rename">rename(현재가→가격)</button>
+        <button class="segbtn" data-k="drop">drop('거래량', axis=1)</button>
+      </div>
+      <div class="stage">
+        <table class="dft" id="w4table"></table>
+        <pre style="margin:12px 0 0;"><code id="w4code"></code></pre>
+      </div>
+    </div>
+
+    <div class="note warn"><b>⚠️ inplace 주의</b> &nbsp;대부분의 변형 메소드는 기본적으로 <b>새 결과를 돌려주고 원본은 그대로</b> 둡니다(<code>inplace=False</code>). 원본을 바꾸려면 <code>inplace=True</code>를 주거나 결과를 변수에 다시 받아야 합니다. <code>drop</code>은 행이 <code>axis=0</code>, 열이 <code>axis=1</code>.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>set_index</code>(열→인덱스), <code>reset_index</code>(되돌리기).</li>
+      <li><code>rename</code>(딕셔너리로 이름 변경), <code>drop</code>(삭제).</li>
+      <li>변형 메소드의 <code>inplace</code> 동작을 항상 의식.</li>
+    </ol></div>
+  </section>
+
+  <!-- S5 iloc vs loc -->
+  <section class="reveal">
+    <div class="sec-no">05</div>
+    <h2>데이터 선택 — iloc vs loc</h2>
+    <p>원하는 행·열을 꺼내는 두 방법입니다. <code>iloc</code>는 <strong>숫자 위치</strong>(0,1,2…)로, <code>loc</code>는 <strong>이름(라벨)</strong>으로 선택합니다. 가장 중요한 차이는 <strong>끝 포함 여부</strong> — <code>iloc</code>은 끝을 제외, <code>loc</code>은 끝을 포함합니다. 예시를 눌러 비교해 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · iloc vs loc</span>
+      <p class="wdesc">종목명을 인덱스로 한 표입니다. 같은 "처음 3개"를 고르는데 표기와 끝 포함이 다릅니다.</p>
+      <div class="seg" id="w5btn">
+        <button class="segbtn on" data-k="iloc">iloc[0:3] · 숫자·끝제외</button>
+        <button class="segbtn" data-k="loc">loc['삼성전자':'NAVER'] · 이름·끝포함</button>
+        <button class="segbtn" data-k="cell">loc['카카오', '현재가']</button>
+      </div>
+      <div class="stage">
+        <table class="dft" id="w5table"></table>
+        <div class="out" id="w5out" style="margin-top:12px;"></div>
+      </div>
+    </div>
+
+    <div class="note warn"><b>⚠️ 초보 최대 실수</b> &nbsp;<code>iloc[0:3]</code>은 0·1·2 (3 제외), <code>loc['A':'C']</code>는 A·B·C (C 포함). 같은 "3개"라도 <b>끝 포함 규칙</b>이 정반대입니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>iloc</code>=숫자 위치(끝 제외), <code>loc</code>=이름(끝 포함).</li>
+      <li><code>[행, 열]</code> 순으로 동시에 선택 가능.</li>
+      <li>의미 있는 이름으로 고를 땐 <code>loc</code>가 편리.</li>
+    </ol></div>
+  </section>
+
+</main>
+
+<footer>
+  <a class="next-card" href="02_기술통계_웹강의.html">
+    <div class="nl">NEXT · PART 2</div>
+    <div class="nt">데이터 구조 파악과 기술 통계</div>
+    <p style="margin-top:8px;">불러온 데이터를 본격적으로 "살펴보는" 단계. <strong>info()</strong>, <strong>describe()</strong>, <strong>value_counts()</strong>로 데이터의 크기·분포·특징을 읽는 법을 배웁니다.</p>
+  </a>
+  <p style="margin-top:24px;">데이터 분석 프로세스와 판다스 활용하기 · Part 1 / 9 · 불러오기와 구조</p>
+</footer>
+
+<script>
+const prog=document.getElementById('progress');
+addEventListener('scroll',()=>{const h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ===== W1: Series 생성 ===== */
+(function(){
+  let k='list';
+  const code=document.getElementById('w1code'), vis=document.getElementById('w1vis'), cap=document.getElementById('w1cap');
+  const vals=[1500,2000,2500,3000,3500,4000];
+  const months=['1월','2월','3월','4월','5월','6월'];
+  function seriesHTML(idx){
+    let h='<div class="series">';
+    idx.forEach((ix,i)=>{h+='<div class="ix'+(ix==='3월'?' hl':'')+'">'+ix+'</div><div class="vl">'+vals[i]+'</div>';});
+    h+='</div>';return h;
+  }
+  function render(){
+    if(k==='list'){
+      code.innerHTML='매출액 = <span class="k">pd</span>.Series([1500, 2000, 2500, 3000, 3500, 4000])';
+      vis.innerHTML=seriesHTML([0,1,2,3,4,5]);
+      cap.innerHTML='인덱스를 생략 → <b>0~5 자동 부여</b>. dtype: int64';
+    }else if(k==='idx'){
+      code.innerHTML='매출액 = <span class="k">pd</span>.Series([1500, ...], index=[<span class="s">\x271월\x27</span>, <span class="s">\x272월\x27</span>, ...])';
+      vis.innerHTML=seriesHTML(months);
+      cap.innerHTML='이제 <code>매출액[\x273월\x27]</code> → <b>2500</b> 처럼 이름으로 조회 (3월 강조)';
+    }else{
+      code.innerHTML='매출액 = <span class="k">pd</span>.Series({<span class="s">\x271월\x27</span>: 1500, <span class="s">\x272월\x27</span>: 2000, ...})';
+      vis.innerHTML=seriesHTML(months);
+      cap.innerHTML='딕셔너리의 <b>키가 곧 인덱스</b>가 됨 — 가장 직관적';
+    }
+  }
+  document.querySelectorAll('#w1tab .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w1tab .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');k=b.dataset.k;render();}));
+  render();
+})();
+
+/* ===== W2: Series 통계 ===== */
+(function(){
+  const v=[1500,2000,2500,3000,3500,4000];
+  const R={
+    sum:{v:v.reduce((a,b)=>a+b,0), d:'전체 합계'},
+    mean:{v:(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1), d:'평균'},
+    median:{v:((v[2]+v[3])/2).toFixed(1), d:'중앙값(가운데 두 값의 평균)'},
+    min:{v:Math.min(...v), d:'최소값'},
+    max:{v:Math.max(...v), d:'최대값'}
+  };
+  const out=document.getElementById('w2out');
+  function render(k){out.innerHTML='<span class="dim">매출액.'+k+'() ▸ </span><span class="hl">'+R[k].v+'</span>  <span class="accent">'+R[k].d+'</span>';}
+  document.querySelectorAll('#w2btn .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w2btn .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(b.dataset.k);}));
+  render('sum');
+})();
+
+/* ===== W3: DataFrame 열 선택 ===== */
+(function(){
+  const cols=['상품명','매출액','판매수량'];
+  const rows=[['A제품',1500,100],['B제품',2000,150],['C제품',2500,200],['D제품',3000,250]];
+  const sel=new Set();
+  const table=document.getElementById('w3table'), out=document.getElementById('w3out');
+  function build(){
+    let h='<tr><th class="idx"></th>';
+    cols.forEach((c,ci)=>h+='<th data-c="'+ci+'" class="'+(sel.has(ci)?'sel':'')+'">'+c+'</th>');
+    h+='</tr>';
+    rows.forEach((r,ri)=>{h+='<tr><td class="idx">'+ri+'</td>';r.forEach((v,ci)=>h+='<td class="'+(sel.has(ci)?'sel':'')+'">'+v+'</td>');h+='</tr>';});
+    table.innerHTML=h;
+    table.querySelectorAll('th[data-c]').forEach(th=>th.addEventListener('click',()=>{
+      const ci=+th.dataset.c; if(sel.has(ci))sel.delete(ci); else sel.add(ci); build();
+    }));
+    render();
+  }
+  function render(){
+    const arr=[...sel];
+    if(arr.length===0){out.innerHTML='<span class="dim">열 제목을 클릭해 선택하세요.</span>';return;}
+    if(arr.length===1){out.innerHTML='<span class="dim">df[<span class="hl">\x27'+cols[arr[0]]+'\x27</span>]  ▸ </span> 한 열 = <span class="accent">Series</span> (대괄호 1개)';}
+    else{const names=arr.map(i=>'\x27'+cols[i]+'\x27').join(', ');out.innerHTML='<span class="dim">df[[<span class="hl">'+names+'</span>]]  ▸ </span> 여러 열 = <span class="accent">DataFrame</span> (대괄호 2개)';}
+  }
+  build();
+})();
+
+/* ===== W4: 인덱스 다루기 ===== */
+(function(){
+  const base={cols:['종목명','종목코드','현재가','거래량'],
+    rows:[['삼성전자','005930',70000,1000000],['SK하이닉스','000660',120000,800000],['NAVER','035420',380000,500000]]};
+  const table=document.getElementById('w4table'), code=document.getElementById('w4code');
+  function draw(cols,rows,idxName){
+    let h='<tr><th class="idx">'+(idxName||'')+'</th>';cols.forEach(c=>h+='<th>'+c+'</th>');h+='</tr>';
+    rows.forEach((r,ri)=>{h+='<tr><td class="idx">'+(idxName?r._ix:ri)+'</td>';cols.forEach(c=>h+='<td>'+r[c]+'</td>');h+='</tr>';});
+    table.innerHTML=h;
+  }
+  function rowsObj(cols,rows){return rows.map(r=>{const o={};cols.forEach((c,i)=>o[c]=r[i]);return o;});}
+  function render(k){
+    if(k==='orig'){
+      draw(base.cols, rowsObj(base.cols,base.rows), '');
+      code.innerHTML='df   <span class="c"># 기본 인덱스 0,1,2</span>';
+    }else if(k==='set'){
+      const cols=['종목명','현재가','거래량'];
+      const rows=base.rows.map(r=>{const o={_ix:r[1],'종목명':r[0],'현재가':r[2],'거래량':r[3]};return o;});
+      draw(cols,rows,'종목코드');
+      code.innerHTML='df.<span class="k">set_index</span>(<span class="s">\x27종목코드\x27</span>)   <span class="c"># 종목코드가 인덱스로(열에서 사라짐)</span>';
+    }else if(k==='rename'){
+      const cols=['종목명','종목코드','가격','거래량'];
+      const rows=base.rows.map(r=>({'종목명':r[0],'종목코드':r[1],'가격':r[2],'거래량':r[3]}));
+      draw(cols,rows,'');
+      code.innerHTML='df.<span class="k">rename</span>(columns={<span class="s">\x27현재가\x27</span>: <span class="s">\x27가격\x27</span>})';
+    }else{
+      const cols=['종목명','종목코드','현재가'];
+      const rows=base.rows.map(r=>({'종목명':r[0],'종목코드':r[1],'현재가':r[2]}));
+      draw(cols,rows,'');
+      code.innerHTML='df.<span class="k">drop</span>(<span class="s">\x27거래량\x27</span>, axis=1)   <span class="c"># 거래량 열 삭제</span>';
+    }
+  }
+  document.querySelectorAll('#w4btn .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w4btn .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(b.dataset.k);}));
+  render('orig');
+})();
+
+/* ===== W5: iloc vs loc ===== */
+(function(){
+  const idx=['삼성전자','SK하이닉스','NAVER','카카오','LG화학'];
+  const cols=['현재가','지역'];
+  const data=[[70000,'서울'],[120000,'서울'],[380000,'성남'],[135000,'성남'],[800000,'서울']];
+  const table=document.getElementById('w5table'), out=document.getElementById('w5out');
+  function draw(selRows, selCell){
+    let h='<tr><th class="idx">종목명</th>';cols.forEach(c=>h+='<th>'+c+'</th>');h+='</tr>';
+    idx.forEach((ix,ri)=>{
+      const on=selRows.includes(ri);
+      h+='<tr class="'+(on?'sel':'')+'"><td class="idx">'+ix+'</td>';
+      data[ri].forEach((v,ci)=>{const cellOn=selCell&&selCell[0]===ri&&selCell[1]===ci;h+='<td class="'+(cellOn?'sel':'')+'" style="'+(cellOn?'outline:2px solid #c2410c;':'')+'">'+v+'</td>';});
+      h+='</tr>';
+    });
+    table.innerHTML=h;
+  }
+  function render(k){
+    if(k==='iloc'){
+      draw([0,1],null);
+      out.innerHTML='<span class="dim">df.iloc[0:3] ▸ </span> 0·1·2번 행 → <span class="hl">삼성전자, SK하이닉스, NAVER</span>\n<span class="accent">※ 표기는 0:3이지만 끝(3)은 제외 → 실제 0·1·2</span>';
+      draw([0,1,2],null);
+    }else if(k==='loc'){
+      draw([0,1,2],null);
+      out.innerHTML='<span class="dim">df.loc[\x27삼성전자\x27:\x27NAVER\x27] ▸ </span> <span class="hl">삼성전자, SK하이닉스, NAVER</span>\n<span class="accent">※ 이름으로 선택, 끝(NAVER)도 포함</span>';
+    }else{
+      draw([],[3,0]);
+      out.innerHTML='<span class="dim">df.loc[\x27카카오\x27, \x27현재가\x27] ▸ </span><span class="hl">135000</span>  <span class="accent">행·열 동시 선택</span>';
+    }
+  }
+  document.querySelectorAll('#w5btn .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w5btn .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(b.dataset.k);}));
+  render('iloc');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Part 8 · 자료구조 미니 프로젝트</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&amp;family=Gowun+Dodum&amp;display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:760px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:88px 22px 40px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:62ch;}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  .chip.g{background:var(--teal);color:#fff;}
+  section{padding:76px 0 46px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 20px;line-height:1.3;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  code{font-family:'Gowun Dodum',monospace;background:#efe7d8;color:#8a3408;padding:1.5px 7px;border-radius:6px;font-size:.92em;}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15.5px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:22px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:16px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;color:#9ec79a;border-radius:10px;padding:13px 16px;font-family:monospace;font-size:14px;min-height:42px;white-space:pre-wrap;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+  .seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:monospace;transition:.15s;color:var(--ink);}
+  .seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+
+  /* product table */
+  .pt{width:100%;border-collapse:collapse;font-size:13px;margin:4px 0;}
+  .pt th,.pt td{border:1px solid var(--line);padding:8px 10px;text-align:center;}
+  .pt th{background:#efe7d8;color:var(--sub);font-family:var(--sans);font-size:11.5px;}
+  .pt td{font-family:monospace;}
+  .pt tr{transition:.25s;}
+  .pt tr.sel td{background:#fdf2ec;}
+  .pt tr.dim2{opacity:.3;}
+  .pt td.name{font-weight:700;color:var(--accent);}
+
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;}
+  .stat{border:1.5px solid var(--line);border-radius:10px;padding:11px;text-align:center;background:#fff;}
+  .stat .lab{font-size:11px;color:var(--sub);}
+  .stat .val{font-family:monospace;font-weight:700;font-size:17px;color:var(--teal);margin-top:3px;}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .grad{text-align:center;padding:24px;background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;margin:18px 0;}
+  .grad .cap{font-size:30px;}
+  .grad .t{font-family:var(--serif);font-weight:700;font-size:18px;margin:8px 0 4px;}
+  .grad .s{font-size:13px;color:var(--sub);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}.pt{font-size:11px;}.stat-grid{grid-template-columns:1fr;}}
+</style>
+<style id="wide16x9">
+/* ===== 16:9 와이드 반응형 오버라이드 ===== */
+:root{--maxw:1320px;}
+header.hero{text-align:center;padding-top:70px;}
+header.hero .lead{margin-left:auto;margin-right:auto;}
+header.hero .hero-meta{justify-content:center;}
+main.wrap section.two-col .col-text>:first-child{margin-top:0;}
+main.wrap section.two-col .col-text .summary{margin-bottom:0;}
+@media(min-width:980px){
+  main.wrap section.two-col{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.06fr);
+    gap:46px;align-items:start;
+  }
+  main.wrap section.two-col .col-widget{position:sticky;top:22px;}
+  main.wrap section.two-col .col-text{padding-top:2px;}
+}
+@media(max-width:979px){
+  main.wrap section.two-col .col-widget{margin-top:6px;}
+}
+</style></head>
+<body>
+<div id="progress"></div>
+<header class="hero">
+<div class="eyebrow">파이썬 기초 문법 · Part 8 · 자료구조 캡스톤</div>
+<h1>자료구조<br/>미니 프로젝트</h1>
+<p class="lead">Part 4~7의 자료구조를 <strong>하나로 묶어</strong> 작은 상품 관리 프로그램을 만듦. "딕셔너리들의 리스트"로 데이터를 설계하고 <strong>조회·집계·정렬·필터</strong>를 구현함 — 데이터 분석 자동화의 축소판.</p>
+<div class="hero-meta">
+<span class="chip g">🟡 캡스톤 · 8/18</span>
+<span class="chip t">조회 · 집계 · 정렬 · 필터</span>
+<span class="chip t">예상 35분</span>
+</div>
+</header>
+<main class="wrap">
+<!-- 1 design -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">8-1</div><h2>설계 — 데이터 담기</h2><p>프로그램의 첫걸음은 <strong>자료구조 설계</strong>. "여러 상품 × 여러 속성"은 <strong>딕셔너리들의 리스트</strong>로 — 바깥은 리스트(순서·추가), 각 상품은 딕셔너리(의미 있는 키).</p><div class="note"><b>📌 참고</b>  설계가 좋으면 그다음 코드가 쉬워짐. "이 데이터의 자연스러운 형태는?"을 먼저 물음. 키 이름은 모든 상품이 같게 — 그래야 조회·집계가 안정적임.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>프로그램의 첫걸음은 자료구조 설계임.</li>
+<li>"여러 건 × 여러 속성"은 딕셔너리들의 리스트로.</li>
+<li>바깥 리스트(순서·추가), 각 건 딕셔너리(의미 있는 키).</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">우리의 데이터 (상품목록)</span>
+<p class="wdesc">이 데이터를 아래 위젯들에서 조회·집계·정렬·필터함. <code>상품목록[번호]["키"]</code> 구조.</p>
+<table class="pt" id="w1tbl"></table>
+<div class="out" id="w1out" style="margin-top:10px;"><span class="dim">상품목록 = [ {…}, {…}, {…}, {…} ]   # 딕셔너리 4개의 리스트, len = 4</span></div>
+</div></div></section>
+<!-- 2 lookup -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">8-2</div><h2>조회 — 원하는 값 꺼내기</h2><p><code>상품목록[번호]["키"]</code>로 바깥(번호) → 안(키) 두 단계로 꺼냄. f-string으로 여러 속성을 한 문장으로 정리함.</p><div class="note"><b>📌 참고</b>  조회 결과를 변수에 담으면(<code>상품 = 상품목록[0]</code>) 그 뒤 코드가 짧아짐. f-string 안에서 키를 쓸 땐 바깥/안 따옴표를 다르게 — <code>f"{상품['이름']}"</code>.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li><code>상품목록[번호]["키"]</code>로 바깥→안 조회.</li>
+<li>조회한 한 건을 변수에 담으면 코드가 짧아짐.</li>
+<li>f-string으로 여러 속성을 보고 문장으로 정리.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · [번호]["키"]</span>
+<p class="wdesc">상품 번호와 속성(키)을 골라, 그 값을 꺼내는 코드와 결과를 봄.</p>
+<div class="seg" id="w2idx"><button class="on" data-i="0">[0] 니트</button><button data-i="1">[1] 코트</button><button data-i="2">[2] 가디건</button><button data-i="3">[3] 패딩</button></div>
+<div class="seg" id="w2key"><button class="on" data-k="이름">"이름"</button><button data-k="가격">"가격"</button><button data-k="재고">"재고"</button><button data-k="카테고리">"카테고리"</button></div>
+<div class="out" id="w2out"></div>
+</div></div></section>
+<!-- 3 aggregate -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">8-3</div><h2>집계 — 요약값 구하기</h2><p>한 속성의 값만 모아 <code>sum</code>·<code>max</code>·<code>min</code>·<code>len</code>에 넣음. 총합·평균·최고·최저가 한눈에. (값 모으기를 자동화하는 게 반복문 — Part 10.)</p><div class="note"><b>📌 참고</b>  "전체에서 한 속성만 뽑아 모은 뒤 집계"가 데이터 분석의 기본 동작(매출 합계·평균 단가). 평균은 <code>sum/len</code>, 개수는 <code>len</code>, 최고/최저는 <code>max/min</code>.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>집계는 한 속성 값만 모아 내장 함수에 넣는 것.</li>
+<li><code>sum·max·min·len</code>으로 합계·최대·최소·개수·평균.</li>
+<li>값 모으기를 자동화하는 것이 반복문임.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 가격/재고 집계</span>
+<p class="wdesc">집계할 속성을 골라, 그 속성의 합계·평균·최대·최소를 봄.</p>
+<div class="seg" id="w3attr"><button class="on" data-a="가격">가격 집계</button><button data-a="재고">재고 집계</button></div>
+<div class="stat-grid" id="w3stats"></div>
+<div class="out" id="w3out" style="margin-top:10px;"></div>
+</div></div></section>
+<!-- 4 sort -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">8-4</div><h2>정렬 — 기준에 따라 줄 세우기</h2><p><code>sorted(상품목록, key=...)</code>로 가격순·재고순 정렬. <code>key=lambda 상품: 상품["가격"]</code>은 "가격을 기준으로"라는 뜻(람다는 Part 13). <code>reverse=True</code>로 내림차순.</p><div class="note"><b>📌 참고</b>  정렬 후 슬라이싱으로 "상위 N개"(<code>비싼순[:2]</code>). <code>sorted()</code>는 새 리스트라 원본은 그대로(Part 5). "비싼 순 TOP 5", "재고 적은 순"이 단골 작업임.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li><code>sorted(리스트, key=...)</code>로 기준을 정해 정렬.</li>
+<li><code>key=lambda 상품: 상품["가격"]</code>은 가격 기준.</li>
+<li><code>reverse=True</code> 내림차순, 슬라이싱으로 상위 N개.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 기준 바꿔 정렬</span>
+<p class="wdesc">정렬 기준을 골라 상품이 다시 줄 서는 걸 봄(표가 재정렬됨).</p>
+<div class="seg" id="w4sort">
+<button class="on" data-k="가격" data-r="0">가격 ↑ 싼 순</button>
+<button data-k="가격" data-r="1">가격 ↓ 비싼 순</button>
+<button data-k="재고" data-r="0">재고 ↑ 적은 순</button>
+</div>
+<table class="pt" id="w4tbl"></table>
+<div class="out" id="w4out"></div>
+</div></div></section>
+<!-- 5 filter -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">8-5</div><h2>필터 — 조건에 맞는 것만</h2><p>조건(Part 2 비교·논리)으로 데이터를 거름 — "재고 5 이하", "10만 이상" 등. 체로 거르듯 조건을 통과하는 것만 남김. (조건에 맞는 것만 한 줄로 모으기는 Part 14 컴프리헨션.)</p><div class="note"><b>📌 참고</b>  상품 4개라 일일이 봤지만, <b>1000개라면?</b> 같은 일을 손으로 못 씀 → <b>반복문(Part 9~)</b>이 "1000개를 한 번에 처리"하는 힘을 줌. 지금의 번거로움이 다음 단계의 이유.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>필터는 조건(비교·논리)으로 데이터를 거르는 핵심 동작.</li>
+<li>자료구조 + 조회·집계·정렬·필터 = 작은 분석 프로그램.</li>
+<li>데이터가 많아지면 반복문·함수가 필요해짐.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 조건 필터</span>
+<p class="wdesc">조건을 골라, 통과하는 상품(강조)과 걸러지는 상품(흐림)을 봄.</p>
+<div class="seg" id="w5cond">
+<button class="on" data-k="cheap">가격 &lt; 100,000</button>
+<button data-k="premium">가격 &gt;= 100,000</button>
+<button data-k="low">재고 &lt;= 5</button>
+<button data-k="top">상의 카테고리</button>
+</div>
+<table class="pt" id="w5tbl"></table>
+<div class="out" id="w5out"></div>
+</div></div></section>
+</main>
+<footer>
+<div class="grad">
+<div class="cap">🎉</div>
+<div class="t">자료구조 단계(Part 4~8) 완료</div>
+<div class="s">문자열·리스트·튜플·세트·딕셔너리 + 조회·집계·정렬·필터<br/>데이터를 표현하고 다루는 기본기를 모두 갖췄음.</div>
+</div>
+<div class="next-card">
+<div class="nl">NEXT · PART 9 · 흐름 제어 시작</div>
+<div class="nt">조건문 (if)</div>
+<p style="margin-top:8px;">"재고 있으면 판매, 없으면 품절"처럼 <strong>상황에 따라 다르게 행동</strong>. Part 2의 참/거짓이 드디어 "판단에 따른 분기"로 이어짐. 그다음 반복문이 더해지면 진짜 자동화가 시작됨.</p>
+</div>
+<p style="margin-top:24px;">파이썬 기초 문법 커리큘럼 · Part 8 / 18 · 데이터 분석 자동화를 위한 기초</p>
+</footer>
+<script>
+var DATA=[
+  {이름:"니트",가격:89000,재고:12,카테고리:"상의"},
+  {이름:"코트",가격:120000,재고:5,카테고리:"아우터"},
+  {이름:"가디건",가격:79000,재고:8,카테고리:"상의"},
+  {이름:"패딩",가격:159000,재고:3,카테고리:"아우터"}
+];
+function won(n){ return n.toLocaleString(); }
+var prog=document.getElementById('progress');
+addEventListener('scroll',function(){var h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+
+function tableHTML(rows, opt){
+  opt=opt||{};
+  var h='<tr><th>[번호]</th><th>이름</th><th>가격</th><th>재고</th><th>카테고리</th></tr>';
+  rows.forEach(function(d){
+    var cls='';
+    if(opt.sel!=null && d._i===opt.sel) cls='sel';
+    if(opt.pass && opt.pass.indexOf(d._i)<0) cls='dim2';
+    h+='<tr class="'+cls+'"><td>['+d._i+']</td><td class="name">'+d.이름+'</td><td>'+won(d.가격)+'</td><td>'+d.재고+'</td><td>'+d.카테고리+'</td></tr>';
+  });
+  return h;
+}
+DATA.forEach(function(d,i){ d._i=i; });
+
+/* W1 */
+document.getElementById('w1tbl').innerHTML=tableHTML(DATA,{});
+
+/* W2 lookup */
+(function(){
+  var idx=0, key='이름';
+  function render(){
+    var d=DATA[idx], v=d[key];
+    document.getElementById('w2out').innerHTML='<span class="dim">상품목록['+idx+']["'+key+'"]</span> → <span class="hl">'+(typeof v==='number'?won(v):'"'+v+'"')+'</span>';
+  }
+  document.querySelectorAll('#w2idx button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#w2idx button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');idx=+b.dataset.i;render();});});
+  document.querySelectorAll('#w2key button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#w2key button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');key=b.dataset.k;render();});});
+  render();
+})();
+
+/* W3 aggregate */
+(function(){
+  var attr='가격';
+  function render(){
+    var vals=DATA.map(function(d){return d[attr];});
+    var sum=vals.reduce(function(a,c){return a+c;},0);
+    var mx=Math.max.apply(null,vals), mn=Math.min.apply(null,vals);
+    var avg=sum/vals.length;
+    var fmt=function(n){ return attr==='가격'? won(Math.round(n))+'원' : (Math.round(n*10)/10)+'개'; };
+    document.getElementById('w3stats').innerHTML=
+      '<div class="stat"><div class="lab">합계 sum()</div><div class="val">'+fmt(sum)+'</div></div>'+
+      '<div class="stat"><div class="lab">평균 sum/len</div><div class="val">'+fmt(avg)+'</div></div>'+
+      '<div class="stat"><div class="lab">최대 max()</div><div class="val">'+fmt(mx)+'</div></div>'+
+      '<div class="stat"><div class="lab">최소 min()</div><div class="val">'+fmt(mn)+'</div></div>';
+    document.getElementById('w3out').innerHTML='<span class="dim">'+attr+'들 = ['+vals.join(', ')+']   (len = '+vals.length+')</span>';
+  }
+  document.querySelectorAll('#w3attr button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#w3attr button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');attr=b.dataset.a;render();});});
+  render();
+})();
+
+/* W4 sort */
+(function(){
+  function render(key,rev){
+    var sorted=DATA.slice().sort(function(a,b){ return rev? b[key]-a[key] : a[key]-b[key]; });
+    document.getElementById('w4tbl').innerHTML=tableHTML(sorted,{});
+    var first=sorted[0];
+    document.getElementById('w4out').innerHTML='<span class="dim">sorted(상품목록, key=lambda s: s["'+key+'"]'+(rev?', reverse=True':'')+')</span>\n→ 맨 앞: <span class="hl">'+first.이름+'</span> ('+key+' '+(key==='가격'?won(first[key])+'원':first[key]+'개')+')';
+  }
+  document.querySelectorAll('#w4sort button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#w4sort button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');render(b.dataset.k, b.dataset.r==='1');});});
+  render('가격',false);
+})();
+
+/* W5 filter */
+(function(){
+  var conds={
+    cheap:{f:function(d){return d.가격<100000;}, label:'상품["가격"] < 100000'},
+    premium:{f:function(d){return d.가격>=100000;}, label:'상품["가격"] >= 100000'},
+    low:{f:function(d){return d.재고<=5;}, label:'상품["재고"] <= 5'},
+    top:{f:function(d){return d.카테고리==='상의';}, label:'상품["카테고리"] == "상의"'}
+  };
+  function render(k){
+    var c=conds[k];
+    var pass=DATA.filter(c.f).map(function(d){return d._i;});
+    document.getElementById('w5tbl').innerHTML=tableHTML(DATA,{pass:pass});
+    var names=DATA.filter(c.f).map(function(d){return d.이름;});
+    document.getElementById('w5out').innerHTML='<span class="dim">조건: '+c.label+'</span>\n통과: <span class="hl">'+(names.length?names.join(', '):'(없음)')+'</span>   ('+names.length+'개)';
+  }
+  document.querySelectorAll('#w5cond button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#w5cond button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');render(b.dataset.k);});});
+  render('cheap');
+})();
+</script>
+</body>
+</html>

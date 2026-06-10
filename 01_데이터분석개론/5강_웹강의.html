@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>데이터 분석 개요 · 5강 · 분석의 4단계 유형</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;--accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;--serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:768px;color-scheme:light only;}
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.9;font-size:17px;-webkit-text-size-adjust:100%;background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:84px 22px 36px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(27px,5.4vw,42px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:50px 0 26px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 18px;line-height:1.3;}
+  h3{font-family:var(--serif);font-weight:700;font-size:19px;margin:26px 0 12px;color:#3a342e;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  .term{background:#eef5f3;border:1px solid #cfe3dd;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;}
+  .term b{color:var(--teal);}
+  .ex{background:#fbf3e6;border:1px solid #ecd9b8;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;color:#6b5526;}
+  .ex b{color:var(--gold);}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:24px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:14px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;color:#9ec79a;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:13.5px;min-height:42px;white-space:pre-wrap;line-height:1.7;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}.out .y{color:#e0b15f;}
+  .btn{border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:13px;padding:9px 15px;border-radius:9px;cursor:pointer;}
+  .btn.ghost{background:#fdfaf4;border:1.5px solid var(--line);color:var(--sub);}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+  .seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:var(--sans);transition:.15s;color:var(--ink);}
+  .seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  /* 가치 사다리 */
+  .ladder{display:flex;flex-direction:column;gap:6px;margin:14px 0;}
+  .rung{border-radius:10px;padding:13px 16px;color:#fff;cursor:pointer;transition:.2s;display:flex;justify-content:space-between;align-items:center;}
+  .rung.dim{opacity:.4;}
+  .rung .q{font-size:13px;opacity:.9;font-style:italic;}
+  .rung .nm{font-weight:700;font-size:14px;}
+  .axis{display:flex;justify-content:space-between;font-size:11px;color:var(--sub);margin-top:4px;font-family:monospace;}
+  /* 같은 데이터 4질문 */
+  .q4{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+  .q4 div{border:1px solid var(--line);border-radius:9px;padding:10px;font-size:12.5px;background:#fdfaf4;}
+  .q4 .h{font-weight:700;font-size:13px;margin-bottom:4px;}
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}.q4{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<header class="hero">
+  <div class="eyebrow">데이터 분석 개요 및 기초 이론 · 5강</div>
+  <h1>분석의 4단계 유형<br>— 묘·진·예·처</h1>
+  <p class="lead">3·4강에서 "데이터 자체"를 배웠으니, 이제 그 데이터로 <strong>"실제로 어떤 분석을 하는가"</strong>로 넘어감. 분석은 목적에 따라 네 단계로 나뉨 — <strong>묘사(무슨 일?)·진단(왜?)·예측(어떻게 될까?)·처방(무엇을 할까?)</strong>. 점점 어렵고 점점 가치 있는 "가치 사다리"임.</p>
+  <div class="hero-meta">
+    <span class="chip">📊 개요 · 5/7</span>
+    <span class="chip t">Descriptive·Diagnostic·Predictive·Prescriptive</span>
+    <span class="chip t">완전 초보용</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- 5-1 -->
+  <section class="reveal">
+    <div class="sec-no">5-1</div>
+    <h2>분석에는 "목적"에 따른 단계가 있다</h2>
+    <p>같은 데이터라도 "무엇을 알고 싶은가(목적)"에 따라 분석의 종류가 달라짐. 그 목적을 네 가지 질문으로 정리한 것이 <strong>분석의 4유형</strong>임. 영어 머리글자가 모두 다른데, 한국어로는 <strong>"묘·진·예·처"</strong>로 외우기 좋음.</p>
+
+    <div class="term"><b>분석의 4유형 (질문으로 기억)</b><br>① <b>묘사</b>(Descriptive): "무슨 일이 있었나?"<br>② <b>진단</b>(Diagnostic): "왜 그랬나?"<br>③ <b>예측</b>(Predictive): "앞으로 어떻게 될까?"<br>④ <b>처방</b>(Prescriptive): "그래서 무엇을 해야 하나?"</div>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 같은 데이터, 네 가지 질문</span>
+      <p class="wdesc">"카페 매출이 줄었다"는 같은 상황에 네 유형이 각각 어떤 질문을 던지는지 봄.</p>
+      <div class="q4">
+        <div data-k="0" style="cursor:pointer;"><div class="h" style="color:var(--teal);">① 묘사</div>무슨 일이?</div>
+        <div data-k="1" style="cursor:pointer;"><div class="h" style="color:var(--gold);">② 진단</div>왜?</div>
+        <div data-k="2" style="cursor:pointer;"><div class="h" style="color:#b4622a;">③ 예측</div>어떻게 될까?</div>
+        <div data-k="3" style="cursor:pointer;"><div class="h" style="color:var(--accent);">④ 처방</div>무엇을 할까?</div>
+      </div>
+      <div class="out" id="q4out" style="margin-top:10px;"></div>
+    </div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>분석은 목적(질문)에 따라 묘사·진단·예측·처방의 네 유형으로 나뉨.</li>
+      <li>각각 "무슨 일?·왜?·어떻게 될까?·무엇을 할까?"라는 질문에 답함.</li>
+      <li>같은 데이터도 어떤 질문을 던지느냐에 따라 분석의 종류가 달라짐.</li>
+    </ol></div>
+  </section>
+
+  <!-- 5-2~5-5: 가치 사다리 -->
+  <section class="reveal">
+    <div class="sec-no">5-2 ~ 5-5</div>
+    <h2>네 단계 — 가치 사다리</h2>
+    <p>네 유형은 아래에서 위로 <strong>점점 어렵고, 점점 가치 있는</strong> 사다리를 이룸. 각 계단을 눌러 정의·예시·필요한 도구를 자세히 봄.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 분석의 가치 사다리</span>
+      <p class="wdesc">각 단을 눌러 보세요. 위로 갈수록 어려워지지만, 그만큼 더 큰 가치를 만듦.</p>
+      <div class="ladder" id="ladder">
+        <div class="rung" data-k="3" style="background:var(--accent);margin-left:30px;"><span class="nm">④ 처방</span><span class="q">"무엇을 해야 하나?"</span></div>
+        <div class="rung" data-k="2" style="background:#b4622a;margin-left:20px;"><span class="nm">③ 예측</span><span class="q">"어떻게 될까?"</span></div>
+        <div class="rung" data-k="1" style="background:var(--gold);margin-left:10px;"><span class="nm">② 진단</span><span class="q">"왜 그랬나?"</span></div>
+        <div class="rung" data-k="0" style="background:var(--teal);"><span class="nm">① 묘사</span><span class="q">"무슨 일이?"</span></div>
+      </div>
+      <div class="axis"><span>↑ 어려움·가치 큼</span><span>↓ 쉬움·기본</span></div>
+      <div class="out" id="ladderout" style="margin-top:12px;"></div>
+    </div>
+
+    <div class="ex"><b>한 줄 사례 — 우산 가게로 비교</b><br>· <b>묘사</b>: "지난주 우산 200개 팔림" (사실 요약)<br>· <b>진단</b>: "비가 많이 와서 팔렸음" (원인 파악)<br>· <b>예측</b>: "다음 주 비 예보 → 250개 팔릴 듯" (미래 추정)<br>· <b>처방</b>: "그러니 300개를 미리 들여놓자" (행동 결정)</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>묘사→진단→예측→처방으로 갈수록 어렵지만 더 큰 가치를 만듦(가치 사다리).</li>
+      <li>묘사·진단은 과거를, 예측·처방은 미래·행동을 다룸.</li>
+      <li>위 단계는 아래 단계를 토대로 쌓임(묘사 없이 진단·예측 불가).</li>
+    </ol></div>
+  </section>
+
+  <!-- 5-6 총정리 -->
+  <section class="reveal">
+    <div class="sec-no">5-6</div>
+    <h2>총정리 — 현실에선 묘사·진단이 대부분</h2>
+    <p>예측·처방이 화려해 보이지만, <strong>현실의 분석 대부분은 묘사와 진단</strong>임. 그리고 윗단계는 반드시 아랫단계를 토대로 함 — 무슨 일이 있었는지(묘사)도 모르면서 왜 그런지(진단)나 미래(예측)를 논할 수 없음.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 어디에 시간을 쓰는가</span>
+      <p class="wdesc">각 단계를 눌러, 현실에서 얼마나 자주 쓰이고 무엇을 토대로 하는지 봄.</p>
+      <div class="seg" id="real">
+        <button class="on" data-k="0">묘사·진단</button>
+        <button data-k="1">예측</button>
+        <button data-k="2">처방</button>
+      </div>
+      <div class="out" id="realout"></div>
+    </div>
+
+    <div class="note"><b>📌 초보자를 위한 조언</b><br>"멋진 예측·처방부터 하고 싶다"는 마음이 들지만, <b>탄탄한 묘사·진단이 먼저</b>임. 데이터가 어떤 모습인지(묘사), 왜 그런지(진단)를 제대로 보는 힘이 모든 고급 분석의 바탕임. 우리가 앞으로 배울 판다스도 주로 이 묘사·진단을 강력하게 해 주는 도구임.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>예측·처방이 화려하지만, 현실 분석의 대부분은 묘사·진단임.</li>
+      <li>윗단계는 아랫단계를 토대로 하므로 묘사·진단이 모든 분석의 바탕임.</li>
+      <li>판다스 같은 도구도 주로 묘사·진단을 강력하게 해 주는 도구임.</li>
+    </ol></div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="next-card">
+    <div class="nl">NEXT · 6강</div>
+    <div class="nt">데이터 분석 프로세스</div>
+    <p style="margin-top:8px;">"어떤 유형의 분석을 하는가"를 봤으니, 6강에서는 <strong>"실제로 어떤 순서로 진행하는가"</strong>를 배움 — 문제 정의 → 수집 → 정제 → 분석 → 시각화 → 의사결정. 특히 "가장 중요한데 자주 생략되는 문제 정의"와 "분석 시간의 70~80%를 차지하는 정제"를 다룸.</p>
+  </div>
+  <p style="margin-top:24px;">데이터 분석 개요 및 기초 이론 · 5강 / 7강 · 데이터 분석 자동화 커리큘럼</p>
+</footer>
+
+<script>
+var prog=document.getElementById('progress');
+addEventListener('scroll',function(){var h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+
+/* 같은 데이터 4질문 */
+(function(){
+  var R=[
+    {t:'① 묘사 — "무슨 일이?"',d:'"이번 달 카페 매출이 지난달보다 <span class="hl">20% 줄었다</span>"\n<span class="dim">→ 일어난 사실을 요약</span>'},
+    {t:'② 진단 — "왜?"',d:'"근처에 <span class="hl">경쟁 카페가 생겼고</span>, 비 오는 날이 적었다"\n<span class="dim">→ 줄어든 원인을 파헤침</span>'},
+    {t:'③ 예측 — "어떻게 될까?"',d:'"이 추세면 다음 달엔 <span class="hl">추가로 10% 더 줄 것</span>으로 보인다"\n<span class="dim">→ 과거로 미래를 추정</span>'},
+    {t:'④ 처방 — "무엇을 할까?"',d:'"<span class="hl">신메뉴와 멤버십을 도입</span>해 이탈을 막자"\n<span class="dim">→ 구체적 행동을 추천</span>'}
+  ];
+  var out=document.getElementById('q4out');
+  document.querySelectorAll('#q4out');
+  document.querySelectorAll('.q4 div').forEach(function(el){el.addEventListener('click',function(){var i=+el.dataset.k;out.innerHTML='<span class="y">'+R[i].t+'</span>\n'+R[i].d;});});
+  out.innerHTML='<span class="dim">위 네 칸을 눌러, 같은 상황에 각 유형이 던지는 질문을 보세요</span>';
+})();
+
+/* 가치 사다리 */
+(function(){
+  var R=[
+    {t:'① 묘사 분석 (Descriptive) — "무슨 일이 있었나?"',d:'과거·현재의 사실을 요약. 가장 기본이며 가장 많이 씀.\n예: 매출 집계, 방문자 수 대시보드, 월간 리포트\n<span class="dim">필요 도구: 집계(2강 ①) — 엑셀·판다스로 충분</span>'},
+    {t:'② 진단 분석 (Diagnostic) — "왜 그랬나?"',d:'원인을 파헤침. 데이터를 쪼개 보고(드릴다운) 관계를 살핌.\n예: "왜 매출이 줄었나?" → 요일별·상품별로 쪼개 원인 탐색\n<span class="dim">필요 도구: 집계 + 상관관계 분석. 호기심이 핵심(7강)</span>'},
+    {t:'③ 예측 분석 (Predictive) — "앞으로 어떻게 될까?"',d:'과거 데이터로 미래를 추정.\n예: 다음 달 수요 예측, 고객 이탈 예측\n<span class="dim">필요 도구: 통계·머신러닝(2강 ②④) — 회귀 등</span>'},
+    {t:'④ 처방 분석 (Prescriptive) — "무엇을 해야 하나?"',d:'예측을 넘어 "최선의 행동"을 추천. 가장 어렵고 가치 큼.\n예: 최적 가격 추천, 재고 최적화, 추천 시스템\n<span style="color:#9ec79a">필요 도구: 최적화·고급 ML — 분석의 최고 단계</span>'}
+  ];
+  var out=document.getElementById('ladderout');
+  function sel(i){
+    document.querySelectorAll('#ladder .rung').forEach(function(x){x.classList.add('dim');});
+    document.querySelector('#ladder [data-k="'+i+'"]').classList.remove('dim');
+    out.innerHTML='<span class="hl">'+R[i].t+'</span>\n'+R[i].d;
+  }
+  document.querySelectorAll('#ladder .rung').forEach(function(el){el.addEventListener('click',function(){sel(+el.dataset.k);});});
+  document.querySelectorAll('#ladder .rung').forEach(function(x){x.classList.remove('dim');});
+  out.innerHTML='<span class="dim">각 단을 눌러 보세요 (아래 묘사 → 위 처방)</span>';
+})();
+
+/* 현실 비중 */
+(function(){
+  var R={
+    '0':'<span class="hl">묘사·진단 — 현실 분석의 대부분</span>\n실제 회사 분석의 대부분이 여기 속함.\n"무슨 일이 있었고(묘사), 왜 그런가(진단)"\n<span style="color:#9ec79a">→ 이것을 잘하는 것이 분석가의 기본기.\n   판다스가 바로 이 단계를 강력하게 해 줌</span>',
+    '1':'<span class="hl">예측 — 일부 영역에서</span>\n수요·이탈·매출 예측 등 특정 문제에서 씀.\n반드시 탄탄한 묘사·진단을 토대로 해야 함.\n<span class="dim">"무슨 일이 있었는지"도 모르면서\n미래를 예측할 순 없음</span>',
+    '2':'<span class="hl">처방 — 가장 적지만 가치 큼</span>\n최적화·추천 등 고급 영역. 비중은 작지만 가치가 큼.\n예측의 결과 위에서만 가능함.\n<span class="dim">가치 사다리의 꼭대기 — 아래 단계가 모두 받쳐 줘야 함</span>'
+  };
+  var out=document.getElementById('realout');
+  document.querySelectorAll('#real button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#real button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R['0'];
+})();
+</script>
+</body>
+</html>

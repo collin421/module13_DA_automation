@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 2 · 데이터 구조 파악과 기술 통계</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--theme:#a8762f;--themed:#8a6020;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:880px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(168,118,47,.06),transparent 40%),radial-gradient(circle at 90% 100%,rgba(194,65,12,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--theme);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:84px 22px 36px;}
+  .eyebrow{color:var(--theme);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:62ch;}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:#eee0c6;color:#7a5618;}
+  .chip.o{background:var(--accent-soft);color:#8a3408;}
+  section{padding:54px 0 30px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--theme);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 18px;line-height:1.3;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  .th{color:var(--themed);font-weight:700;}
+  code{font-family:'Gowun Dodum',monospace;background:#efe7d8;color:#8a3408;padding:1.5px 7px;border-radius:6px;font-size:.92em;}
+  pre{background:#2b2723;color:#f4efe6;border-radius:12px;padding:16px 18px;overflow-x:auto;font-size:13.5px;line-height:1.7;margin:16px 0;white-space:pre;}
+  pre code{background:none;color:inherit;padding:0;}
+  pre .k{color:#e0935f;}pre .s{color:#9ec79a;}pre .c{color:#8b8175;font-style:italic;}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--theme);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15.5px;color:var(--sub);}
+  .note b{color:var(--themed);}
+  .note.warn{border-left-color:var(--accent);}.note.warn b{color:var(--accent);}
+  .summary{background:#f1e9d8;border-radius:12px;padding:18px 20px;margin:22px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--themed);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--theme);padding:4px 11px;border-radius:999px;margin-bottom:16px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:14px;color:#9ec79a;min-height:42px;white-space:pre-wrap;line-height:1.7;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}.out .accent{color:#e0935f;font-weight:700;}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+  .segbtn{border:1.5px solid var(--line);background:#fff;border-radius:9px;padding:8px 14px;cursor:pointer;font-family:var(--sans);font-weight:700;font-size:13px;color:var(--sub);transition:.15s;}
+  .segbtn.on{border-color:var(--theme);background:var(--theme);color:#fff;}
+  .stage{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;}
+
+  .dft{border-collapse:collapse;font-family:monospace;font-size:13px;margin:4px 0;width:100%;}
+  .dft th,.dft td{border:1px solid var(--line);padding:6px 9px;text-align:right;}
+  .dft th{background:#efe7d8;color:#8a3408;font-weight:700;text-align:center;}
+  .dft td.lbl{background:#f3ecdd;color:#8a6a3a;font-weight:700;text-align:left;}
+  .dft tr.hl td{background:#fbf1dd;}
+  .dft td .miss{color:var(--accent);font-weight:700;}
+
+  /* bars */
+  .bars{display:flex;flex-direction:column;gap:7px;margin-top:6px;}
+  .bar{display:flex;align-items:center;gap:10px;}
+  .bar .bn{width:96px;font-size:12.5px;font-weight:700;text-align:right;color:#5a4630;flex:0 0 auto;}
+  .bar .bt{flex:1;height:20px;background:#efe7d8;border-radius:10px;overflow:hidden;}
+  .bar .bf{height:100%;border-radius:10px;background:linear-gradient(90deg,#e9d5c4,#a8762f);transition:width .6s;}
+  .bar .bv{width:74px;font-size:12px;color:var(--sub);flex:0 0 auto;}
+
+  /* type chips */
+  .colrow{display:flex;gap:6px;flex-wrap:wrap;}
+  .coltag{border:1.5px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer;font-family:monospace;font-size:12.5px;font-weight:700;background:#fff;transition:.15s;}
+  .coltag.on{border-color:var(--theme);background:#fbf1dd;}
+  .coltag.numt{color:#225349;}.coltag.catt{color:#8a3408;}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f6efe1);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;text-decoration:none;color:inherit;display:block;transition:.18s;}
+  .next-card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(80,60,30,.1);}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:#c2410c;font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .crumb{display:inline-block;margin-bottom:8px;font-size:13px;color:var(--sub);text-decoration:none;}
+  .crumb:hover{color:var(--accent);}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}.dft{font-size:11.5px;}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<header class="hero">
+  <a class="crumb" href="../00_데이터분석_판다스_목차.html">← 전체 목차</a>
+  <div class="eyebrow">데이터 분석 · 판다스 · 2단계</div>
+  <h1>데이터 구조 파악과 기술 통계<br><span style="font-size:.6em;color:var(--sub);font-weight:400;">데이터를 "살펴보는" 첫 단계</span></h1>
+  <p class="lead">데이터를 받자마자 분석부터 하면 사고가 납니다. 의사가 키·몸무게·체온을 먼저 재듯, 분석가도 데이터의 <strong>크기·타입·결측·분포</strong>를 먼저 확인합니다(DDA). <code>info</code>·<code>describe</code>·<code>value_counts</code>로 데이터의 첫인상을 읽는 법을 익힘.</p>
+  <div class="hero-meta">
+    <span class="chip">🟡 2단계 · 데이터 탐색</span>
+    <span class="chip o">info · describe · value_counts</span>
+    <span class="chip">예상 30분</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- S1 데이터 타입 -->
+  <section class="reveal">
+    <div class="sec-no">01</div>
+    <h2>먼저 알아둘 것 — 데이터 타입 2종류</h2>
+    <p>이 파트의 뼈대입니다. 데이터는 <strong>연속형(숫자)</strong>과 <strong>범주형(문자)</strong>으로 나뉘고, <strong>타입에 따라 보는 통계가 완전히 다릅니다.</strong> 숫자형은 평균·표준편차를, 범주형은 빈도수를 봅니다. 열을 눌러 어떤 타입인지, 무엇을 보는지 확인해 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 타입 판별</span>
+      <p class="wdesc">렌탈 계약 데이터의 열들입니다. 클릭하면 타입과 적합한 분석이 표시됩니다.</p>
+      <div class="colrow" id="w1cols"></div>
+      <div class="out" id="w1out" style="margin-top:14px;"></div>
+    </div>
+
+    <div class="note"><b>📌 핵심</b> &nbsp;연속형(<code>int64</code>·<code>float64</code>)은 평균·분포를, 범주형(<code>object</code>)은 고유값·빈도를 봅니다. 숫자처럼 보여도 의미가 범주(예: 우편번호)면 범주형으로 다뤄야 합니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>데이터는 연속형(숫자)·범주형(문자)으로 나뉨.</li>
+      <li>타입에 따라 적용 가능한 통계가 다름.</li>
+      <li>이 구분이 탐색 전체의 뼈대.</li>
+    </ol></div>
+  </section>
+
+  <!-- S2 구조 파악 info -->
+  <section class="reveal">
+    <div class="sec-no">02</div>
+    <h2>구조 파악 — shape · info</h2>
+    <p>데이터를 불러오면 가장 먼저 크기와 결측을 봅니다. <code>shape</code>는 (행, 열)을, <code>info()</code>는 각 열의 타입과 <strong>결측이 아닌 값의 개수</strong>를 보여줍니다. 전체 행 수와 비교하면 <strong>결측치</strong>가 보입니다.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · info() 읽기</span>
+      <p class="wdesc">아래는 5만여 건 계약 데이터의 <code>info()</code> 일부입니다. "결측 강조"를 켜면 전체 행보다 적은 열이 드러납니다.</p>
+      <div class="seg" id="w2btn">
+        <button class="segbtn on" data-k="plain">그대로 보기</button>
+        <button class="segbtn" data-k="hl">결측 강조</button>
+      </div>
+      <div class="stage">
+        <div class="out" id="w2out"></div>
+      </div>
+    </div>
+
+    <div class="note warn"><b>⚠️ 결측 발견</b> &nbsp;전체 51,301행인데 <code>Age</code>는 44,329개, <code>Bank</code>는 48,542개만 값이 있습니다. 차이만큼이 결측치 — 이 발견이 Part 5(전처리)로 이어집니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>shape</code>=(행,열), <code>info()</code>=타입·결측·메모리.</li>
+      <li>Non-Null 개수를 전체 행과 비교해 결측 확인.</li>
+      <li>불러온 직후 <code>info</code>→<code>head</code>가 기본 루틴.</li>
+    </ol></div>
+  </section>
+
+  <!-- S3 숫자형 기술통계 -->
+  <section class="reveal">
+    <div class="sec-no">03</div>
+    <h2>숫자형 기술 통계 — 대표값과 산포도</h2>
+    <p>숫자 열(월 납입액 <code>Amount_Month</code>)의 특징을 통계로 요약합니다. <strong>대표값</strong>(가운데)은 평균·중앙값·최빈값, <strong>산포도</strong>(흩어짐)는 분산·표준편차입니다. 메소드를 눌러 결과와 의미를 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 통계 메소드</span>
+      <p class="wdesc">대상: 월 납입액 <code>Amount_Month</code> (약 5만 건)</p>
+      <div class="seg" id="w3btn">
+        <button class="segbtn on" data-k="mean">mean</button>
+        <button class="segbtn" data-k="median">median</button>
+        <button class="segbtn" data-k="mode">mode</button>
+        <button class="segbtn" data-k="std">std</button>
+        <button class="segbtn" data-k="minmax">min·max</button>
+        <button class="segbtn" data-k="quantile">quantile·IQR</button>
+      </div>
+      <div class="out" id="w3out"></div>
+    </div>
+
+    <div class="note"><b>📌 평균 vs 중앙값</b> &nbsp;여기선 평균(93,995)이 중앙값(96,900)보다 낮습니다. 평균이 더 낮다는 건 <b>유난히 작은 값들이 평균을 끌어내렸다</b>는 신호 — 분포가 한쪽으로 치우쳤다는 뜻입니다. 평균은 이상치에 약하므로 중앙값과 함께 봅니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>대표값: <code>mean·median·mode</code>(중심).</li>
+      <li>산포도: <code>var·std</code>(흩어짐), 분포: <code>min·max·quantile</code>.</li>
+      <li>평균은 이상치에 약해 중앙값과 함께 해석.</li>
+    </ol></div>
+  </section>
+
+  <!-- S4 describe -->
+  <section class="reveal">
+    <div class="sec-no">04</div>
+    <h2>describe() — 한 번에 요약</h2>
+    <p>위에서 따로 구한 통계(개수·평균·표준편차·최소·분위수·최대)를 <strong>한 표로</strong> 요약합니다. 숫자형 탐색의 핵심 메소드입니다. 기본은 숫자형만, <code>include='object'</code>를 주면 범주형도 요약합니다.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · describe()</span>
+      <div class="seg" id="w4btn">
+        <button class="segbtn on" data-k="num">df.describe() · 숫자형</button>
+        <button class="segbtn" data-k="obj">describe(include='object') · 범주형</button>
+      </div>
+      <div class="stage">
+        <table class="dft" id="w4table"></table>
+        <div class="wdesc" id="w4cap" style="margin:10px 0 0;"></div>
+      </div>
+    </div>
+
+    <div class="note warn"><b>⚠️ 이상치 후보</b> &nbsp;숫자형 describe에서 <code>Age</code>의 <code>max</code>가 <b>102세</b>입니다. 현실적으로 의심스러운 값 — <code>describe()</code> 한 번으로 이상치 후보도 발견됩니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>describe()</code>로 숫자 통계를 한 표로.</li>
+      <li>범주형은 <code>include='object'</code>(count·unique·top·freq).</li>
+      <li>max/min으로 이상치 후보도 함께 포착.</li>
+    </ol></div>
+  </section>
+
+  <!-- S5 범주형 -->
+  <section class="reveal">
+    <div class="sec-no">05</div>
+    <h2>범주형 탐색 — value_counts · unique</h2>
+    <p>문자(object) 열은 평균을 낼 수 없습니다. 대신 <strong>어떤 항목이 있고(고유값), 각각 몇 개인지(빈도)</strong>를 봅니다. <code>value_counts()</code>는 범주형 분석에서 가장 자주 쓰는 메소드입니다. 열과 모드를 바꿔 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · value_counts()</span>
+      <div class="seg" id="w5col">
+        <button class="segbtn on" data-c="bank">Bank (결제수단)</button>
+        <button class="segbtn" data-c="sales">Sales_Type (판매유형)</button>
+      </div>
+      <div class="seg" id="w5mode">
+        <button class="segbtn on" data-m="count">개수</button>
+        <button class="segbtn" data-m="ratio">비율 (normalize=True)</button>
+      </div>
+      <div class="stage">
+        <div class="bars" id="w5bars"></div>
+        <div class="wdesc" id="w5cap" style="margin:12px 0 0;"></div>
+      </div>
+    </div>
+
+    <div class="note"><b>📌 참고</b> &nbsp;<code>unique()</code>는 고유 항목 목록, <code>nunique()</code>는 그 개수입니다. Bank는 <b>47종</b>(<code>nunique()</code>=47), 최빈값(<code>mode()</code>)은 롯데카드입니다. "어느 결제수단/채널 비중이 큰가"를 한 줄로 답합니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>value_counts()</code>=빈도(많은 순), <code>normalize=True</code>=비율.</li>
+      <li><code>unique·nunique</code>=고유값·고유값 개수.</li>
+      <li>범주형은 빈도·비중으로 특성을 파악.</li>
+    </ol></div>
+  </section>
+
+</main>
+
+<footer>
+  <a class="next-card" href="03_정렬과_필터링_웹강의.html">
+    <div class="nl">NEXT · PART 3</div>
+    <div class="nt">정렬과 필터링</div>
+    <p style="margin-top:8px;">데이터를 파악했으니 이제 원하는 행만 골라냅니다. <strong>sort_values</strong>로 줄 세우고, 조건(불리언 인덱싱)·<strong>loc</strong>·<strong>isin</strong>·<strong>between</strong>으로 필터링하는 법을 배웁니다.</p>
+  </a>
+  <p style="margin-top:24px;">데이터 분석 프로세스와 판다스 활용하기 · Part 2 / 9 · 데이터 탐색</p>
+</footer>
+
+<script>
+const prog=document.getElementById('progress');
+addEventListener('scroll',()=>{const h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ===== W1: 타입 판별 ===== */
+(function(){
+  const cols=[
+    {n:'Amount_Month', t:'num', dt:'int64', d:'월 납입액 — 연속형'},
+    {n:'Term', t:'num', dt:'int64', d:'계약 기간(개월) — 연속형'},
+    {n:'Age', t:'num', dt:'float64', d:'나이 — 연속형'},
+    {n:'Sales_Type', t:'cat', dt:'object', d:'판매유형(렌탈/멤버십) — 범주형'},
+    {n:'Bank', t:'cat', dt:'object', d:'결제수단 — 범주형'},
+    {n:'Gender', t:'cat', dt:'object', d:'성별 — 범주형'}
+  ];
+  const wrap=document.getElementById('w1cols'), out=document.getElementById('w1out');
+  cols.forEach((c,i)=>{const el=document.createElement('div');el.className='coltag '+(c.t==='num'?'numt':'catt')+(i===0?' on':'');el.textContent=c.n;el.dataset.i=i;wrap.appendChild(el);});
+  function render(i){
+    wrap.querySelectorAll('.coltag').forEach(e=>e.classList.toggle('on',+e.dataset.i===i));
+    const c=cols[i];
+    if(c.t==='num'){
+      out.innerHTML='<span class="hl">'+c.n+'</span> <span class="dim">('+c.dt+')</span>\n▸ <span class="accent">연속형(숫자)</span> — '+c.d.split('—')[0]+'\n▸ 보는 통계: <span class="hl">평균·중앙값·표준편차·분포(describe)</span>';
+    }else{
+      out.innerHTML='<span class="hl">'+c.n+'</span> <span class="dim">('+c.dt+')</span>\n▸ <span class="accent">범주형(문자)</span> — '+c.d.split('—')[0]+'\n▸ 보는 통계: <span class="hl">고유값·빈도(value_counts)·최빈값</span>';
+    }
+  }
+  wrap.querySelectorAll('.coltag').forEach(e=>e.addEventListener('click',()=>render(+e.dataset.i)));
+  render(0);
+})();
+
+/* ===== W2: info ===== */
+(function(){
+  let k='plain';
+  const out=document.getElementById('w2out');
+  function render(){
+    const hl=k==='hl';
+    const M=(name,n,dt)=>{
+      const miss=n<51301;
+      const cnt=(hl&&miss)?'<span class="accent">'+n.toLocaleString()+' non-null</span>':n.toLocaleString()+' non-null';
+      const tail=(hl&&miss)?'  <span class="accent">← 결측 '+(51301-n).toLocaleString()+'개</span>':'';
+      return ' '+name.padEnd(14)+cnt+'  '+dt+tail;
+    };
+    out.innerHTML=
+      '<span class="dim">&lt;class \x27DataFrame\x27&gt;\nRangeIndex: 51301 entries, 0 to 51300\nData columns (total 20 columns):</span>\n'+
+      ' #   Column        Non-Null Count   Dtype\n'+
+      '---  ------        --------------   -----\n'+
+      M('Term',51301,'int64')+'\n'+
+      M('Amount_Month',51301,'int64')+'\n'+
+      M('Age',44329,'float64')+'\n'+
+      M('Bank',48542,'object')+'\n'+
+      '<span class="dim">dtypes: float64(2), int64(5), object(13)</span>';
+  }
+  document.querySelectorAll('#w2btn .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w2btn .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');k=b.dataset.k;render();}));
+  render();
+})();
+
+/* ===== W3: 숫자 통계 ===== */
+(function(){
+  const R={
+    mean:'<span class="dim">df[\x27Amount_Month\x27].mean() ▸ </span><span class="hl">93994.97</span>  <span class="accent">평균 약 9.4만 원</span>',
+    median:'<span class="dim">.median() ▸ </span><span class="hl">96900.0</span>  <span class="accent">크기순 가운데 값</span>',
+    mode:'<span class="dim">.mode() ▸ </span><span class="hl">96900</span>  <span class="accent">가장 흔한 납입액(최빈값)</span>',
+    std:'<span class="dim">.std() ▸ </span><span class="hl">15304.26</span>  <span class="accent">평균에서 평균 ±1.5만 원 흩어짐</span>\n<span class="dim">.var() ▸ </span><span class="hl">234220496.23</span>  <span class="dim">(분산 = 표준편차²)</span>',
+    minmax:'<span class="dim">.min() ▸ </span><span class="hl">54603</span>\n<span class="dim">.max() ▸ </span><span class="hl">215700</span>\n<span class="dim">범위 ▸ </span>161097',
+    quantile:'<span class="dim">.quantile(0.25) ▸ </span><span class="hl">81900.0</span>  <span class="dim">(Q1)</span>\n<span class="dim">.quantile(0.50) ▸ </span><span class="hl">96900.0</span>  <span class="dim">(중앙값)</span>\n<span class="dim">.quantile(0.75) ▸ </span><span class="hl">98400.0</span>  <span class="dim">(Q3)</span>\n<span class="dim">IQR = Q3 - Q1 ▸ </span><span class="accent">16500.0</span>'
+  };
+  const out=document.getElementById('w3out');
+  function render(k){out.innerHTML=R[k];}
+  document.querySelectorAll('#w3btn .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w3btn .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(b.dataset.k);}));
+  render('mean');
+})();
+
+/* ===== W4: describe ===== */
+(function(){
+  const num={cols:['Term','Amount_Month','Age'],
+    rows:[['count','51301','51301','44329'],['mean','55.64','93994.97','50.02'],['std','12.01','15304.26','10.98'],
+      ['min','12','54603','25'],['25%','60','81900','42'],['50%','60','96900','49'],['75%','60','98400','57'],['max','60','215700','102']]};
+  const obj={cols:['Sales_Type','Bank','Gender'],
+    rows:[['count','51301','48542','51301'],['unique','2','47','2'],['top','렌탈','롯데카드','여자'],['freq','46483','9516','35602']]};
+  const table=document.getElementById('w4table'), cap=document.getElementById('w4cap');
+  function draw(o, capt){
+    let h='<tr><th></th>';o.cols.forEach(c=>h+='<th>'+c+'</th>');h+='</tr>';
+    o.rows.forEach(r=>{h+='<tr'+((r[0]==='max'||r[0]==='top')?' class="hl"':'')+'><td class="lbl">'+r[0]+'</td>';
+      for(let i=1;i<r.length;i++)h+='<td>'+r[i]+'</td>';h+='</tr>';});
+    table.innerHTML=h;cap.innerHTML=capt;
+  }
+  function render(k){
+    if(k==='num')draw(num,'숫자형 열의 개수·평균·표준편차·분위수·최소/최대를 한 번에. <b>Age max=102</b> 주목.');
+    else draw(obj,'범주형은 항목이 다름: <b>count</b>(개수)·<b>unique</b>(고유값)·<b>top</b>(최빈)·<b>freq</b>(최빈 빈도).');
+  }
+  document.querySelectorAll('#w4btn .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w4btn .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(b.dataset.k);}));
+  render('num');
+})();
+
+/* ===== W5: value_counts ===== */
+(function(){
+  const bank=[['롯데카드',9516],['농협회원조합',6277],['국민은행',6002],['농협중앙회',3899],['신한은행',3522],['우리은행',3386]];
+  const sales=[['렌탈',46483],['멤버십',4818]];
+  const total={bank:48542, sales:51301};
+  let col='bank', mode='count';
+  const bars=document.getElementById('w5bars'), cap=document.getElementById('w5cap');
+  function render(){
+    const data=col==='bank'?bank:sales, tot=total[col];
+    const max=data[0][1];
+    bars.innerHTML=data.map(([n,v])=>{
+      const w=(v/max*100).toFixed(1);
+      const val=mode==='count'?v.toLocaleString():(v/tot).toFixed(4);
+      return '<div class="bar"><span class="bn">'+n+'</span><div class="bt"><div class="bf" style="width:'+w+'%"></div></div><span class="bv">'+val+'</span></div>';
+    }).join('');
+    cap.innerHTML=col==='bank'
+      ? (mode==='count'?'결제수단별 건수 (상위 6종 / 전체 47종). 롯데카드가 최다.':'전체 대비 비율 — 롯데카드 약 <b>19.6%</b>로 1위.')
+      : (mode==='count'?'판매유형: 렌탈이 압도적(46,483건).':'비율 — 렌탈 약 <b>90.6%</b>.');
+  }
+  document.querySelectorAll('#w5col .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w5col .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');col=b.dataset.c;render();}));
+  document.querySelectorAll('#w5mode .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w5mode .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');mode=b.dataset.m;render();}));
+  render();
+})();
+</script>
+</body>
+</html>

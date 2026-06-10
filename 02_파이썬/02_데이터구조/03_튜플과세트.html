@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Part 6 · 튜플과 세트</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&amp;family=Gowun+Dodum&amp;display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:760px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:88px 22px 40px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:62ch;}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:76px 0 46px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 20px;line-height:1.3;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  code{font-family:'Gowun Dodum',monospace;background:#efe7d8;color:#8a3408;padding:1.5px 7px;border-radius:6px;font-size:.92em;}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15.5px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:22px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:16px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;color:#9ec79a;border-radius:10px;padding:13px 16px;font-family:monospace;font-size:15px;min-height:42px;white-space:pre-wrap;}
+  .out .dim{color:#8b8175;}.out .err{color:#e0935f;}.out .hl{color:#fff;font-weight:700;}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+  .seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:monospace;transition:.15s;color:var(--ink);}
+  .seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  .btn{border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:13px;padding:9px 14px;border-radius:9px;cursor:pointer;}
+  .btn.ghost{background:#fdfaf4;border:1.5px solid var(--line);color:var(--sub);}
+  .pp-input{border:1.5px solid var(--line);border-radius:8px;padding:8px 12px;font-family:monospace;font-size:14px;background:#fff;color:var(--ink);}
+
+  /* W1 lock */
+  .lk-tuple{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:12px 0;}
+  .lk-item{border:1.5px solid var(--gold);background:#fbf3e6;border-radius:9px;padding:10px 14px;font-family:monospace;font-size:14px;position:relative;}
+  .lk-lock{position:absolute;top:-8px;right:-6px;font-size:13px;}
+
+  /* W2 unpack */
+  .up-flow{display:flex;flex-direction:column;gap:10px;align-items:center;margin:12px 0;}
+  .up-tuple{border:2px solid var(--gold);background:#fbf3e6;border-radius:10px;padding:10px 16px;font-family:monospace;font-size:15px;}
+  .up-vars{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+  .up-var{border:1.5px solid var(--teal);background:#d8e8e3;border-radius:9px;padding:8px 12px;font-family:monospace;font-size:13px;color:#225349;text-align:center;}
+  .up-var .vn{font-weight:700;}.up-var .vv{font-size:12px;}
+
+  /* W3 set dedup */
+  .sd-items{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin:8px 0;}
+  .sd-chip{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:6px 13px;font-family:monospace;font-size:13px;transition:.3s;}
+  .sd-chip.dup{opacity:.3;text-decoration:line-through;border-color:var(--accent);}
+
+  /* W4 venn */
+  .vn-stage{position:relative;height:180px;margin:10px 0;}
+  .vn-circle{position:absolute;top:20px;width:150px;height:150px;border-radius:50%;display:flex;align-items:center;font-size:12px;font-family:monospace;}
+  .vn-a{left:50%;margin-left:-145px;background:rgba(194,65,12,.18);border:2px solid var(--accent);justify-content:flex-start;padding-left:18px;}
+  .vn-b{left:50%;margin-left:-5px;background:rgba(47,107,94,.18);border:2px solid var(--teal);justify-content:flex-end;padding-right:18px;}
+  .vn-result{text-align:center;font-family:monospace;font-size:15px;color:var(--ink);margin-top:4px;}
+
+  /* W5 table */
+  .ct{border-collapse:collapse;width:100%;font-size:12.5px;margin-top:6px;}
+  .ct th,.ct td{border:1px solid var(--line);padding:7px 8px;text-align:center;}
+  .ct th{background:#efe7d8;color:var(--sub);font-family:var(--sans);}
+  .ct td:first-child{font-weight:700;color:var(--accent);font-family:monospace;}
+  .ct tr.on td{background:#fdf2ec;}
+  .ct .yes{color:var(--teal);font-weight:700;}.ct .no{color:#b4451f;}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}.vn-circle{width:120px;height:120px;}.vn-a{margin-left:-115px;}.ct{font-size:11px;}}
+</style>
+<style id="wide16x9">
+/* ===== 16:9 와이드 반응형 오버라이드 ===== */
+:root{--maxw:1320px;}
+header.hero{text-align:center;padding-top:70px;}
+header.hero .lead{margin-left:auto;margin-right:auto;}
+header.hero .hero-meta{justify-content:center;}
+main.wrap section.two-col .col-text>:first-child{margin-top:0;}
+main.wrap section.two-col .col-text .summary{margin-bottom:0;}
+@media(min-width:980px){
+  main.wrap section.two-col{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.06fr);
+    gap:46px;align-items:start;
+  }
+  main.wrap section.two-col .col-widget{position:sticky;top:22px;}
+  main.wrap section.two-col .col-text{padding-top:2px;}
+}
+@media(max-width:979px){
+  main.wrap section.two-col .col-widget{margin-top:6px;}
+}
+</style></head>
+<body>
+<div id="progress"></div>
+<header class="hero">
+<div class="eyebrow">파이썬 기초 문법 · Part 6 · 자료구조</div>
+<h1>튜플과 세트</h1>
+<p class="lead">리스트의 사촌 둘 — <strong>튜플</strong>(못 바꾸는 리스트, 불변)과 <strong>세트</strong>(중복 없는 묶음, 집합). 리스트와 닮았지만 성질이 달라, "왜 굳이 이런 게 필요한지"를 동작 원리와 함께 이해함.</p>
+<div class="hero-meta">
+<span class="chip">🟡 자료구조 · 6/18</span>
+<span class="chip t">튜플 · 세트 · 집합연산</span>
+<span class="chip t">예상 30분</span>
+</div>
+</header>
+<main class="wrap">
+<!-- 1 tuple -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">6-1</div><h2>튜플 — 못 바꾸는 리스트</h2><p>소괄호 <code>( )</code>로 만드는 <strong>불변</strong> 묶음. 읽기(인덱싱·슬라이싱·<code>in</code>)는 리스트와 완전히 같고, <strong>값 변경·추가·삭제만 안 됨</strong>(가변 메서드가 아예 없음).</p><div class="note"><b>📌 참고</b>  "리스트 = 가변(<code>[ ]</code>), 튜플 = 불변(<code>( )</code>)"이 핵심 대비. 값 1개 튜플은 쉼표 필수 — <code>(5,)</code>. <code>(5)</code>는 그냥 숫자 5(괄호가 계산용으로도 쓰여서 구분 필요).</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>튜플은 소괄호 <code>( )</code>로 만드는 <strong>불변</strong> 묶음.</li>
+<li>읽기는 리스트와 완전히 같음.</li>
+<li>값 변경·추가·삭제만 안 됨.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 봉인된 튜플</span>
+<p class="wdesc">읽기 버튼은 동작하지만, 바꾸기 버튼은 오류가 남(불변).</p>
+<div class="lk-tuple" id="w1tuple"></div>
+<div class="seg" style="justify-content:center;">
+<button class="btn" data-act="read">색상[0] 읽기</button>
+<button class="btn ghost" data-act="write">색상[0] = "노랑" (바꾸기)</button>
+</div>
+<div class="out" id="w1out" style="margin-top:12px;"></div>
+</div></div></section>
+<!-- 2 unpack -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">6-2</div><h2>왜 튜플인가 — 언패킹</h2><p>불변이라 "바뀌면 안 되는 값"을 안전하게 보장함. 그리고 여러 값을 묶고 <strong>한 줄로 풀어 담는</strong> 언패킹이 매우 편리함 — 실무에서 가장 자주 만나는 튜플의 모습.</p><div class="note"><b>📌 참고</b>  변수 교환 <code>a, b = b, a</code>도 튜플 덕에 한 줄(다른 언어는 임시 변수 필요). 함수가 여러 값을 한꺼번에 돌려줄 때도 튜플이 쓰임(Part 12).</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>튜플은 "바뀌면 안 되는 값"을 안전하게 보장함.</li>
+<li>여러 값을 묶고 푸는 <strong>언패킹</strong>이 편리함.</li>
+<li>변수 교환·함수의 여러 값 반환에 자연스럽게 쓰임.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 묶고 풀기(언패킹)</span>
+<p class="wdesc">"언패킹 실행"을 누르면, 튜플의 값들이 각 변수로 나뉘어 담기는 걸 봄.</p>
+<div class="up-flow">
+<div class="up-tuple">상품 = ("니트", 89000, 12)</div>
+<div id="w2arrow" style="font-size:18px;color:var(--sub);">↓ 이름, 가격, 재고 = 상품</div>
+<div class="up-vars" id="w2vars"></div>
+</div>
+<div style="text-align:center;">
+<button class="btn" id="w2run">언패킹 실행</button>
+<button class="btn ghost" id="w2reset">↻</button>
+</div>
+</div></div></section>
+<!-- 3 set dedup -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">6-3</div><h2>세트 — 중복 없는 묶음</h2><p>중괄호 <code>{ }</code>, <strong>중복 불허·순서 없음</strong>. 가장 큰 쓸모는 <code>set(리스트)</code>로 한 번에 <strong>중복 제거</strong>. 해시 방식이라 포함 확인(<code>in</code>)도 매우 빠름.</p><div class="note"><b>📌 참고</b>  세트는 순서가 없어 인덱싱(<code>세트[0]</code>) 불가 — 순서가 필요하면 리스트. "고유한 값만", "포함 여부 빠르게"면 세트가 답. 해시 덕에 큰 데이터에서도 <code>in</code>이 거의 즉시임.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>세트는 중괄호 <code>{ }</code>, 중복 불허·순서 없음.</li>
+<li><code>set(리스트)</code>로 중복을 한 번에 제거함.</li>
+<li>해시 방식이라 포함 확인(<code>in</code>)이 매우 빠름.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 중복 제거</span>
+<p class="wdesc">"set() 적용"을 누르면 중복된 값이 사라지고 고유 종류만 남음.</p>
+<div style="font-family:monospace;font-size:13px;text-align:center;margin-bottom:6px;color:var(--sub);">구매상품 (리스트)</div>
+<div class="sd-items" id="w3items"></div>
+<div style="text-align:center;margin:10px 0;">
+<button class="btn" id="w3run">set() 적용 → 중복 제거</button>
+<button class="btn ghost" id="w3reset">↻</button>
+</div>
+<div class="out" id="w3out"></div>
+</div></div></section>
+<!-- 4 set ops -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">6-4</div><h2>집합 연산</h2><p>두 묶음을 비교해 <strong>교집합 <code>&amp;</code></strong>(공통)·<strong>합집합 <code>|</code></strong>(전체)·<strong>차집합 <code>-</code></strong>(차이)을 한 줄로 구함. 신규/이탈/유지 분석에 강력함.</p><div class="note"><b>📌 참고</b>  지난달=<code>{니트,코트,가디건}</code>, 이번달=<code>{코트,가디건,패딩}</code>. 같은 일을 리스트로 하려면 반복문이 필요하지만(Part 10), 세트는 <code>&amp;</code>·<code>|</code>·<code>-</code> 한 번이면 됨.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>세트는 교집합 <code>&amp;</code>·합집합 <code>|</code>·차집합 <code>-</code>을 지원.</li>
+<li>두 묶음의 공통·전체·차이를 한 줄로 구함.</li>
+<li>신규/이탈/유지 분석에 특히 강력함.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 두 기간 비교</span>
+<p class="wdesc">연산을 골라, 지난달·이번달 판매 상품의 공통·전체·차이를 봄.</p>
+<div class="vn-stage">
+<div class="vn-circle vn-a">지난달</div>
+<div class="vn-circle vn-b">이번달</div>
+</div>
+<div class="seg" id="w4ops" style="justify-content:center;">
+<button class="on" data-k="and">&amp; 교집합(유지)</button>
+<button data-k="or">| 합집합(전체)</button>
+<button data-k="sub1">지난달 - 이번달(이탈)</button>
+<button data-k="sub2">이번달 - 지난달(신규)</button>
+</div>
+<div class="vn-result out" id="w4out"></div>
+</div></div></section>
+<!-- 5 compare -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">6-5</div><h2>네 자료구조 비교</h2><p>문자열·리스트·튜플·세트 — 순서·가변·중복 성질이 다름. <strong>기본은 리스트</strong>, "바뀌면 안 되네"(튜플), "중복 없애야 하네"(세트)처럼 특별한 이유가 생길 때 고름.</p><div class="note"><b>📌 참고</b>  대부분 리스트로 충분함 — 튜플·세트는 분명한 이유가 있을 때 선택. 다음 파트의 딕셔너리까지 더하면 데이터 표현 도구를 모두 갖추게 됨.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>네 자료구조는 순서·가변·중복 성질이 다름.</li>
+<li>기본은 리스트, 고정이면 튜플, 고유/집합이면 세트.</li>
+<li>자료구조 선택은 데이터의 성격을 코드로 표현하는 일.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 언제 무엇을</span>
+<p class="wdesc">행을 클릭하면 그 자료구조의 선택 기준이 강조됨.</p>
+<table class="ct" id="w5tbl">
+<tr><th>자료구조</th><th>표기</th><th>순서</th><th>변경</th><th>중복</th><th>주 용도</th></tr>
+<tr data-k="str"><td>문자열</td><td>" "</td><td class="yes">O</td><td class="no">불변</td><td class="yes">O</td><td>글자</td></tr>
+<tr data-k="list"><td>리스트</td><td>[ ]</td><td class="yes">O</td><td class="yes">가변</td><td class="yes">O</td><td>여러 값(기본)</td></tr>
+<tr data-k="tuple"><td>튜플</td><td>( )</td><td class="yes">O</td><td class="no">불변</td><td class="yes">O</td><td>고정 묶음</td></tr>
+<tr data-k="set"><td>세트</td><td>{ }</td><td class="no">X</td><td class="yes">가변</td><td class="no">X</td><td>고유값·집합</td></tr>
+</table>
+<div class="out" id="w5out" style="margin-top:12px;"></div>
+</div></div></section>
+</main>
+<footer>
+<div class="next-card">
+<div class="nl">NEXT · PART 7</div>
+<div class="nt">딕셔너리</div>
+<p style="margin-top:8px;">번호(인덱스) 대신 <strong>이름(키)으로 값을 찾는</strong> 자료구조. <code>{"가격": 89000, "재고": 12}</code>처럼 의미 있는 이름표로 데이터를 담아 사람이 읽기 좋은 구조를 만듦. 세트의 해시 원리가 다시 등장!</p>
+</div>
+<p style="margin-top:24px;">파이썬 기초 문법 커리큘럼 · Part 6 / 18 · 데이터 분석 자동화를 위한 기초</p>
+</footer>
+<script>
+var prog=document.getElementById('progress');
+addEventListener('scroll',function(){var h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+
+/* W1 tuple */
+(function(){
+  var t=["빨강","초록","파랑"];
+  document.getElementById('w1tuple').innerHTML=t.map(function(v,i){
+    return '<div class="lk-item"><span class="lk-lock">🔒</span>['+i+'] "'+v+'"</div>';
+  }).join('');
+  var out=document.getElementById('w1out');
+  document.querySelectorAll('[data-act]').forEach(function(b){
+    b.addEventListener('click',function(){
+      if(b.dataset.act==='read') out.innerHTML='<span class="dim">색상[0]</span> → <span class="hl">"빨강"</span>   <span style="color:#9ec79a">(읽기 OK)</span>';
+      else out.innerHTML='<span class="dim">색상[0] = "노랑"</span>\n<span class="err">❌ TypeError: 튜플은 불변 — 바꿀 수 없음</span>';
+    });
+  });
+})();
+
+/* W2 unpack */
+(function(){
+  var vars=document.getElementById('w2vars'), arrow=document.getElementById('w2arrow');
+  function reset(){ vars.innerHTML=''; arrow.style.color='var(--sub)'; }
+  document.getElementById('w2run').addEventListener('click',function(){
+    arrow.style.color='var(--accent)';
+    var d=[["이름","니트"],["가격","89000"],["재고","12"]];
+    vars.innerHTML=d.map(function(x){return '<div class="up-var"><div class="vn">'+x[0]+'</div><div class="vv">= '+x[1]+'</div></div>';}).join('');
+  });
+  document.getElementById('w2reset').addEventListener('click',reset);
+  reset();
+})();
+
+/* W3 set dedup */
+(function(){
+  var items=["니트","코트","니트","가디건","코트"];
+  var box=document.getElementById('w3items'), out=document.getElementById('w3out');
+  function reset(){
+    box.innerHTML=items.map(function(v){return '<span class="sd-chip">"'+v+'"</span>';}).join('');
+    out.innerHTML='<span class="dim">구매상품 = ['+items.map(function(v){return "'"+v+"'";}).join(', ')+']  (5개, 중복 있음)</span>';
+  }
+  document.getElementById('w3run').addEventListener('click',function(){
+    var seen={}; var chips=box.querySelectorAll('.sd-chip');
+    items.forEach(function(v,i){ if(seen[v]) chips[i].classList.add('dup'); else seen[v]=1; });
+    var uniq=Object.keys(seen);
+    out.innerHTML='<span class="dim">set(구매상품)</span> → <span class="hl">{'+uniq.map(function(v){return "'"+v+"'";}).join(', ')+'}</span>\n<span class="dim">몇 종류:</span> <span class="hl">'+uniq.length+'</span>';
+  });
+  document.getElementById('w3reset').addEventListener('click',reset);
+  reset();
+})();
+
+/* W4 set ops */
+(function(){
+  var A=["니트","코트","가디건"], B=["코트","가디건","패딩"];
+  function calc(k){
+    if(k==='and') return A.filter(function(x){return B.indexOf(x)>=0;});
+    if(k==='or'){ var u=A.slice(); B.forEach(function(x){if(u.indexOf(x)<0)u.push(x);}); return u; }
+    if(k==='sub1') return A.filter(function(x){return B.indexOf(x)<0;});
+    return B.filter(function(x){return A.indexOf(x)<0;});
+  }
+  var label={and:'지난달 & 이번달  (유지)',or:'지난달 | 이번달  (전체)',sub1:'지난달 - 이번달  (이탈)',sub2:'이번달 - 지난달  (신규)'};
+  function render(k){
+    var r=calc(k);
+    document.getElementById('w4out').innerHTML='<span class="dim">'+label[k]+'</span>\n→ <span class="hl">{'+r.map(function(v){return "'"+v+"'";}).join(', ')+'}</span>';
+  }
+  document.querySelectorAll('#w4ops button').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#w4ops button').forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on'); render(b.dataset.k);
+    });
+  });
+  render('and');
+})();
+
+/* W5 compare */
+(function(){
+  var info={
+    str:'<b>문자열</b> — 글자를 다룰 때. 순서 O, 불변, 중복 O.',
+    list:'<b>리스트</b> — 여러 값의 기본 선택. 추가·수정·정렬 자유(가변).',
+    tuple:'<b>튜플</b> — 바뀌면 안 되는 고정 묶음(좌표·설정). 불변 + 언패킹.',
+    set:'<b>세트</b> — 중복 제거·집합 연산. 순서 없음, 중복 불허.'
+  };
+  var out=document.getElementById('w5out');
+  document.querySelectorAll('#w5tbl tr[data-k]').forEach(function(tr){
+    tr.addEventListener('click',function(){
+      document.querySelectorAll('#w5tbl tr[data-k]').forEach(function(x){x.classList.remove('on');});
+      tr.classList.add('on'); out.innerHTML=info[tr.dataset.k];
+    });
+  });
+  out.innerHTML='<span class="dim">행을 클릭해 선택 기준을 보세요</span>';
+})();
+</script>
+</body>
+</html>

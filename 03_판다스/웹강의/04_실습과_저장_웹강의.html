@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 4 · 종합 실습과 파일 저장</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--theme:#c2410c;--themed:#8a3408;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:880px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.06),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--theme);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:84px 22px 36px;}
+  .eyebrow{color:var(--theme);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:62ch;}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:54px 0 30px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--theme);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 18px;line-height:1.3;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  code{font-family:'Gowun Dodum',monospace;background:#efe7d8;color:#8a3408;padding:1.5px 7px;border-radius:6px;font-size:.92em;}
+  pre{background:#2b2723;color:#f4efe6;border-radius:12px;padding:16px 18px;overflow-x:auto;font-size:13.5px;line-height:1.7;margin:16px 0;white-space:pre;}
+  pre code{background:none;color:inherit;padding:0;}
+  pre .k{color:#e0935f;}pre .s{color:#9ec79a;}pre .c{color:#8b8175;font-style:italic;}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--theme);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15.5px;color:var(--sub);}
+  .note b{color:var(--themed);}
+  .summary{background:#f3e7df;border-radius:12px;padding:18px 20px;margin:22px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--themed);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--theme);padding:4px 11px;border-radius:999px;margin-bottom:16px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;border-radius:10px;padding:12px 15px;font-family:monospace;font-size:13.5px;color:#9ec79a;min-height:38px;white-space:pre-wrap;line-height:1.65;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}.out .accent{color:#e0935f;font-weight:700;}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+  .segbtn{border:1.5px solid var(--line);background:#fff;border-radius:9px;padding:8px 13px;cursor:pointer;font-family:var(--sans);font-weight:700;font-size:12.5px;color:var(--sub);transition:.15s;}
+  .segbtn.on{border-color:var(--theme);background:var(--theme);color:#fff;}
+  .stage{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;}
+  .lbl{font-size:12px;color:var(--sub);font-weight:700;}
+  input[type=text],input[type=number],select{border:1.5px solid var(--line);border-radius:8px;padding:7px 10px;font-family:monospace;font-size:13px;background:#fff;color:var(--ink);}
+
+  /* pipeline */
+  .pipe{display:flex;flex-wrap:wrap;gap:6px;align-items:stretch;}
+  .pstep{flex:1;min-width:96px;border:1.5px solid var(--line);border-radius:10px;padding:10px 8px;text-align:center;cursor:pointer;background:#fff;transition:.15s;}
+  .pstep.on{border-color:var(--theme);background:#fbe7da;}
+  .pstep .pi{font-size:18px;}
+  .pstep .pt{font-size:12px;font-weight:700;margin-top:3px;}
+  .pstep .pc{font-size:11px;color:var(--sub);font-family:monospace;margin-top:2px;}
+
+  /* funnel bars */
+  .funnel{display:flex;flex-direction:column;gap:8px;}
+  .frow{display:flex;align-items:center;gap:10px;}
+  .fn{width:130px;font-size:12.5px;font-weight:700;color:#5a4630;text-align:right;flex:0 0 auto;}
+  .ft{flex:1;height:26px;background:#efe7d8;border-radius:8px;overflow:hidden;}
+  .ff{height:100%;border-radius:8px;background:linear-gradient(90deg,#e9d5c4,#c2410c);display:flex;align-items:center;justify-content:flex-end;padding-right:8px;color:#fff;font-size:11px;font-weight:700;transition:width .5s;white-space:nowrap;}
+
+  .dft{border-collapse:collapse;font-family:monospace;font-size:12.5px;width:100%;}
+  .dft th,.dft td{border:1px solid var(--line);padding:5px 8px;text-align:right;}
+  .dft th{background:#efe7d8;color:#8a3408;text-align:center;}
+  .dft td.idxc{background:#f3ecdd;color:#a06a2a;font-weight:700;}
+  .dft td{background:#fff;}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f7ece4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;text-decoration:none;color:inherit;display:block;transition:.18s;}
+  .next-card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(80,60,30,.1);}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--theme);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .crumb{display:inline-block;margin-bottom:8px;font-size:13px;color:var(--sub);text-decoration:none;}
+  .crumb:hover{color:var(--accent);}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}.fn{width:96px;}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<header class="hero">
+  <a class="crumb" href="../00_데이터분석_판다스_목차.html">← 전체 목차</a>
+  <div class="eyebrow">데이터 분석 · 판다스 · 3단계</div>
+  <h1>종합 실습과 파일 저장<br><span style="font-size:.6em;color:var(--sub);font-weight:400;">분석 결과를 내보내기</span></h1>
+  <p class="lead">지금까지 배운 <strong>불러오기 → 파악 → 필터 → 정렬</strong>을 하나의 실전 과제로 꿰고, 결과를 <strong>파일로 저장</strong>합니다. 분석은 결과를 다른 사람이 쓸 수 있게 내보내야 비로소 끝납니다. 시나리오: <strong>VIP 중 알람 신청 고객</strong>에게 사은품 명단을 엑셀로.</p>
+  <div class="hero-meta">
+    <span class="chip">🟠 3단계 · 미니 프로젝트</span>
+    <span class="chip t">to_csv · to_excel · input</span>
+    <span class="chip t">예상 30분</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- S1 파이프라인 -->
+  <section class="reveal">
+    <div class="sec-no">01</div>
+    <h2>분석 파이프라인 — 흩어진 도구를 하나로</h2>
+    <p>지금까지 배운 것은 개별 도구였습니다. 이 파트에서는 그것을 <strong>하나의 실무 흐름</strong>으로 꿰어 봅니다. 한 문장의 과제가 곧 파이프라인입니다. 각 단계를 눌러 코드와 데이터 크기 변화를 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 분석 5단계</span>
+      <p class="wdesc">멤버십 회원 6,519명 → 사은품 대상 70명으로 좁혀가는 과정.</p>
+      <div class="pipe" id="w1pipe"></div>
+      <div class="stage" style="margin-top:12px;">
+        <pre style="margin:0;"><code id="w1code"></code></pre>
+        <div class="out" id="w1out" style="margin-top:10px;"></div>
+      </div>
+    </div>
+
+    <div class="note"><b>📌 한 사이클</b> &nbsp;<b>불러오기 → 구조 파악 → 필터 → 정렬 → 저장</b>. 이 다섯 단계가 가장 기본적인 분석 1사이클이며, 앞으로 배울 전처리·집계도 이 골격 위에 얹힙니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>과제 한 문장이 곧 분석 파이프라인.</li>
+      <li>불러오기→파악→필터→정렬→저장의 5단계.</li>
+      <li>마지막 "저장"까지 해야 분석이 완결.</li>
+    </ol></div>
+  </section>
+
+  <!-- S2 대상 추출 -->
+  <section class="reveal">
+    <div class="sec-no">02</div>
+    <h2>대상 추출 — 조건으로 좁히기</h2>
+    <p>조건을 <strong>변수로 만들어</strong> 조립하면 읽기 쉽습니다(Part 3). 6,519명에서 사은품 대상만 추립니다. 조건을 켜고 끄며 남는 인원을 확인해 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 조건 조합</span>
+      <div class="seg" id="w2btn">
+        <button class="segbtn on" data-k="vip">VIP회원 == 'VIP'</button>
+        <button class="segbtn" data-k="alert">모바일알람 == '수신'</button>
+        <button class="segbtn" data-k="both">VIP &amp; 수신</button>
+      </div>
+      <div class="stage">
+        <div class="funnel" id="w2funnel"></div>
+        <div class="out" id="w2out" style="margin-top:12px;"></div>
+      </div>
+    </div>
+
+    <div class="note"><b>💡 팁</b> &nbsp;필터 조건의 값은 <code>value_counts()</code>로 <b>먼저 확인</b>해야 합니다. 알람 신청 값이 <code>'수신'</code>인지 <code>'신청'</code>인지 눈으로 봐야 조건을 정확히 쓸 수 있습니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>조건은 변수로 조립(<code>조건1 &amp; 조건2</code>).</li>
+      <li>6,519명 → VIP 96명 → 알람까지 70명.</li>
+      <li>조건 값은 미리 <code>value_counts</code>로 확인.</li>
+    </ol></div>
+  </section>
+
+  <!-- S3 저장 -->
+  <section class="reveal">
+    <div class="sec-no">03</div>
+    <h2>데이터 저장 — to_csv · to_excel</h2>
+    <p>분석 결과(DataFrame)를 파일로 내보냅니다. 메모리 속 표를 디스크의 csv·xlsx로 "저장"합니다. <code>index</code>와 <code>encoding</code> 옵션이 단골입니다. 옵션을 바꿔 저장 결과가 어떻게 달라지는지 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 저장 옵션</span>
+      <div class="rowflex" style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:12px;">
+        <div><div class="lbl">index</div><div class="seg" id="w3idx" style="margin:4px 0 0;">
+          <button class="segbtn" data-v="true">index=True (기본)</button>
+          <button class="segbtn on" data-v="false">index=False</button>
+        </div></div>
+        <div><div class="lbl">encoding</div><div class="seg" id="w3enc" style="margin:4px 0 0;">
+          <button class="segbtn on" data-v="utf-8-sig">utf-8-sig</button>
+          <button class="segbtn" data-v="cp949">cp949</button>
+        </div></div>
+      </div>
+      <div class="stage">
+        <pre style="margin:0 0 10px;"><code id="w3code"></code></pre>
+        <div class="lbl" style="margin-bottom:5px;">생성된 CSV 파일 미리보기 ↓</div>
+        <div class="out" id="w3out"></div>
+      </div>
+    </div>
+
+    <div class="note"><b>⚠️ 꼭 기억</b> &nbsp;① 기본값 <code>index=True</code>면 의미 없는 인덱스 열(0,1,2…)이 파일에 같이 저장됩니다 → 보통 <b><code>index=False</code></b>. ② 엑셀에서 한글이 깨지면 <b><code>encoding='utf-8-sig'</code></b>(또는 <code>'cp949'</code>). <code>to_excel</code>은 <code>openpyxl</code> 설치가 필요합니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>to_csv</code>(가볍고 호환성↑), <code>to_excel</code>(서식·시트).</li>
+      <li>거의 항상 <code>index=False</code>.</li>
+      <li>한글은 <code>encoding='utf-8-sig'</code>/<code>'cp949'</code>.</li>
+    </ol></div>
+  </section>
+
+  <!-- S4 정렬 Top-N -->
+  <section class="reveal">
+    <div class="sec-no">04</div>
+    <h2>정렬 후 Top-N 저장</h2>
+    <p>"VIP 중 총구매금액이 <strong>낮은</strong> 상위 N명"을 뽑는 과제. <strong>필터 → 정렬 → 상위 → 저장</strong>의 조합입니다. N을 조절해 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · Top-N</span>
+      <div class="rowflex" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+        <span class="lbl">상위 N명:</span>
+        <input type="range" min="3" max="10" value="5" id="w4sld" style="flex:1;min-width:160px;accent-color:var(--theme);">
+        <span style="font-weight:700;color:var(--theme);">N = <span id="w4n">5</span></span>
+      </div>
+      <pre style="margin:0 0 10px;"><code id="w4code"></code></pre>
+      <table class="dft" id="w4table"></table>
+    </div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>df[cond].sort_values('금액').head(N)</code>.</li>
+      <li>필터·정렬·상위·저장을 한 줄로 조합.</li>
+      <li>결과를 그대로 <code>to_csv</code>로 내보냄.</li>
+    </ol></div>
+  </section>
+
+  <!-- S5 input 자동화 -->
+  <section class="reveal">
+    <div class="sec-no">05</div>
+    <h2>입력값으로 자동화 — input + f-string</h2>
+    <p><code>input()</code>으로 받은 값을 조건에 넣고, <strong>f-string</strong>으로 파일 이름까지 동적으로 만듭니다. 코드를 고치지 않고 <strong>입력만 바꿔</strong> 지역별·연령별 명단을 반복 생산할 수 있습니다.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 지역별 자동 저장</span>
+      <p class="wdesc">지역을 고르면 조건과 파일 이름이 자동으로 만들어집니다.</p>
+      <div class="rowflex" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px;">
+        <span class="lbl">지역 입력:</span>
+        <select id="w5sel"><option>수지구</option><option>분당구</option><option>기타</option></select>
+      </div>
+      <div class="stage">
+        <pre style="margin:0 0 10px;"><code id="w5code"></code></pre>
+        <div class="out" id="w5out"></div>
+      </div>
+    </div>
+
+    <div class="note warn"><b>⚠️ input은 문자열</b> &nbsp;<code>input()</code>은 항상 문자열을 돌려줍니다. 나이처럼 숫자로 비교하려면 <code>int()</code>로 변환해야 합니다 — 예: <code>나이 = int(input(...))</code> 후 <code>df['Age'].between(최소, 최대)</code>.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>input</code>+f-string으로 조건·파일명을 동적으로.</li>
+      <li>입력만 바꿔 반복 생산(자동화).</li>
+      <li><code>input</code>은 문자열 → 숫자는 <code>int()</code> 변환.</li>
+    </ol></div>
+  </section>
+
+</main>
+
+<footer>
+  <a class="next-card" href="05_전처리_웹강의.html">
+    <div class="nl">NEXT · PART 5</div>
+    <div class="nt">데이터 전처리 — 결측치·이상치</div>
+    <p style="margin-top:8px;">실제 데이터에는 빈 값(결측치)과 튀는 값(이상치)이 섞여 있습니다. 이를 찾아 삭제·대체하는 <strong>isnull·dropna·fillna</strong>와 IQR 기반 이상치 처리를 배웁니다.</p>
+  </a>
+  <p style="margin-top:24px;">데이터 분석 프로세스와 판다스 활용하기 · Part 4 / 9 · 가공·정제</p>
+</footer>
+
+<script>
+const prog=document.getElementById('progress');
+addEventListener('scroll',()=>{const h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ===== W1 파이프라인 ===== */
+(function(){
+  const steps=[
+    {i:'📥',t:'불러오기',c:'read_csv',code:"df = pd.read_csv('02_VIP_member_Data.csv')",out:'<span class="dim">6,519행 × 11열 로드</span>'},
+    {i:'🔍',t:'구조 파악',c:'info',code:"df.info()\ndf['VIP회원'].value_counts()",out:'<span class="dim">VIP </span><span class="hl">96명</span><span class="dim">, 모바일알람 수신 </span><span class="hl">503명</span><span class="dim"> 확인</span>'},
+    {i:'🧮',t:'필터',c:'loc[조건]',code:"조건1 = df['VIP회원']=='VIP'\n조건2 = df['모바일알람여부']=='수신'\ndf_vip = df.loc[조건1 & 조건2]",out:'<span class="dim">6,519 → </span><span class="accent">70명</span><span class="dim"> 으로 좁혀짐</span>'},
+    {i:'↕️',t:'정렬',c:'sort_values',code:"df_vip = df_vip.sort_values('총구매금액', ascending=False)",out:'<span class="dim">구매금액 높은 순으로 정렬(선택)</span>'},
+    {i:'💾',t:'저장',c:'to_excel',code:"df_vip.to_excel('vip_alert_member.xlsx', index=False)",out:'<span class="hl">vip_alert_member.xlsx</span> <span class="dim">생성 — 마케팅팀 전달!</span>'}
+  ];
+  const pipe=document.getElementById('w1pipe'), code=document.getElementById('w1code'), out=document.getElementById('w1out');
+  steps.forEach((s,i)=>{const el=document.createElement('div');el.className='pstep'+(i===0?' on':'');el.dataset.i=i;
+    el.innerHTML='<div class="pi">'+s.i+'</div><div class="pt">'+s.t+'</div><div class="pc">'+s.c+'</div>';pipe.appendChild(el);});
+  function render(i){
+    pipe.querySelectorAll('.pstep').forEach(e=>e.classList.toggle('on',+e.dataset.i<=i));
+    code.innerHTML=steps[i].code;out.innerHTML=steps[i].out;
+  }
+  pipe.querySelectorAll('.pstep').forEach(e=>e.addEventListener('click',()=>render(+e.dataset.i)));
+  render(0);
+})();
+
+/* ===== W2 조건 ===== */
+(function(){
+  const total=6519, vip=96, alert=503, both=70;
+  const funnel=document.getElementById('w2funnel'), out=document.getElementById('w2out');
+  function bars(rows){
+    funnel.innerHTML=rows.map(([n,v,hl])=>{
+      const w=Math.max(v/total*100,1.4);
+      return '<div class="frow"><span class="fn">'+n+'</span><div class="ft"><div class="ff" style="width:'+w+'%;'+(hl?'background:linear-gradient(90deg,#e09b6e,#c2410c);':'')+'">'+v.toLocaleString()+'</div></div></div>';
+    }).join('');
+  }
+  function render(k){
+    if(k==='vip'){bars([['전체 회원',total],['VIP회원',vip,true]]);out.innerHTML='<span class="dim">df[df[\x27VIP회원\x27]==\x27VIP\x27] ▸ </span><span class="hl">96명</span>';}
+    else if(k==='alert'){bars([['전체 회원',total],['알람 수신',alert,true]]);out.innerHTML='<span class="dim">df[df[\x27모바일알람여부\x27]==\x27수신\x27] ▸ </span><span class="hl">503명</span>';}
+    else{bars([['전체 회원',total],['VIP회원',vip],['VIP & 수신',both,true]]);out.innerHTML='<span class="dim">df.loc[조건1 & 조건2] ▸ </span><span class="accent">70명</span> <span class="dim">← 사은품 대상</span>';}
+  }
+  document.querySelectorAll('#w2btn .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w2btn .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(b.dataset.k);}));
+  render('vip');
+})();
+
+/* ===== W3 저장 옵션 ===== */
+(function(){
+  let idx='false', enc='utf-8-sig';
+  const code=document.getElementById('w3code'), out=document.getElementById('w3out');
+  const sample=[['272369856','수지구','5733884','VIP'],['1506656256','수지구','673414','normal']];
+  function render(){
+    code.innerHTML='df_vip.<span class="k">to_csv</span>(<span class="s">\x27vip_명단.csv\x27</span>, index=<span class="k">'+(idx==='true'?'True':'False')+'</span>, encoding=<span class="s">\x27'+enc+'\x27</span>)';
+    let header=(idx==='true'?',':'')+'ID,Address,총구매금액,VIP회원';
+    let lines=sample.map((r,i)=>(idx==='true'?(i+','):'')+r.join(','));
+    const encNote=enc==='utf-8-sig'?'엑셀에서 한글 정상':'윈도우 엑셀 호환(euc-kr)';
+    out.innerHTML='<span class="dim"># vip_명단.csv</span>\n'+header+'\n'+lines.join('\n')+
+      (idx==='true'?'\n\n<span class="accent">← 맨 앞 0,1,2… 는 불필요한 인덱스 열! index=False로 끄세요</span>':'\n\n<span class="hl">← 깔끔: 인덱스 열 없음</span>')+
+      '\n<span class="dim">('+encNote+')</span>';
+  }
+  document.querySelectorAll('#w3idx .segbtn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#w3idx .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');idx=b.dataset.v;render();}));
+  document.querySelectorAll('#w3enc .segbtn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#w3enc .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');enc=b.dataset.v;render();}));
+  render();
+})();
+
+/* ===== W4 Top-N ===== */
+(function(){
+  const tops=[ // VIP 총구매금액 낮은 순 상위 10 (ID, 금액, 지역)
+    ['116573504',2497794,'수지구'],['1238555200',2741376,'분당구'],['1059544000',2939392,'수지구'],
+    ['1340139648',3386088,'수지구'],['797296768',3429622,'수지구'],['896089792',3504908,'수지구'],
+    ['768526912',3637990,'수지구'],['59759488',3997355,'수지구'],['282238208',4205036,'수지구'],['918586368',4336244,'수지구']];
+  const sld=document.getElementById('w4sld'), nlab=document.getElementById('w4n'), code=document.getElementById('w4code'), t=document.getElementById('w4table');
+  function render(){
+    const n=+sld.value;nlab.textContent=n;
+    code.innerHTML='cond = df[<span class="s">\x27VIP회원\x27</span>]==<span class="s">\x27VIP\x27</span>\ndf[cond].<span class="k">sort_values</span>(<span class="s">\x27총구매금액\x27</span>).<span class="k">head</span>('+n+').to_csv(<span class="s">\x27vip_저구매_top'+n+'.csv\x27</span>, index=False)';
+    let h='<tr><th>순위</th><th>ID</th><th>총구매금액</th><th>Address</th></tr>';
+    tops.slice(0,n).forEach((r,i)=>{h+='<tr><td class="idxc">'+(i+1)+'</td><td>'+r[0]+'</td><td>'+r[1].toLocaleString()+'</td><td>'+r[2]+'</td></tr>';});
+    t.innerHTML=h;
+  }
+  sld.addEventListener('input',render);render();
+})();
+
+/* ===== W5 input 자동화 ===== */
+(function(){
+  const counts={'수지구':92,'분당구':2,'기타':2};
+  const sel=document.getElementById('w5sel'), code=document.getElementById('w5code'), out=document.getElementById('w5out');
+  function render(){
+    const 지역=sel.value;
+    code.innerHTML='지역 = input(<span class="s">\x27지역을 입력하세요 : \x27</span>)   <span class="c"># → '+지역+'</span>\ncond1 = df[<span class="s">\x27VIP회원\x27</span>]==<span class="s">\x27VIP\x27</span>\ncond2 = df[<span class="s">\x27Address\x27</span>]==지역\ndf.loc[cond1 & cond2].to_csv(<span class="k">f</span><span class="s">\x27{지역}_vip.csv\x27</span>, index=False)';
+    out.innerHTML='<span class="hl">'+지역+'_vip.csv</span> <span class="dim">생성</span>\n▸ '+지역+' 지역 VIP <span class="accent">'+counts[지역]+'명</span> 저장됨';
+  }
+  sel.addEventListener('change',render);render();
+})();
+</script>
+</body>
+</html>

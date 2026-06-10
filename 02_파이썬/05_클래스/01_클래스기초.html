@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Part 17 · 클래스 기초</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&amp;family=Gowun+Dodum&amp;display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:760px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:88px 22px 40px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:62ch;}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:76px 0 46px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 20px;line-height:1.3;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  code{font-family:'Gowun Dodum',monospace;background:#efe7d8;color:#8a3408;padding:1.5px 7px;border-radius:6px;font-size:.92em;}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15.5px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:22px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:16px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;color:#9ec79a;border-radius:10px;padding:13px 16px;font-family:monospace;font-size:13.5px;min-height:42px;white-space:pre-wrap;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}
+  .btn{border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:13px;padding:9px 15px;border-radius:9px;cursor:pointer;}
+  .btn.ghost{background:#fdfaf4;border:1.5px solid var(--line);color:var(--sub);}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+  .seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:monospace;transition:.15s;color:var(--ink);}
+  .seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  .pp-input{border:1.5px solid var(--line);border-radius:8px;padding:7px 10px;font-family:monospace;font-size:14px;background:#fff;color:var(--ink);}
+
+  /* mold -> instances */
+  .mold-stage{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center;}
+  .mold{border:2px dashed var(--accent);border-radius:12px;padding:14px 18px;text-align:center;background:#fdf2ec;}
+  .mold .t{font-family:monospace;font-weight:700;color:var(--accent);font-size:14px;}
+  .mold .s{font-size:11px;color:var(--sub);}
+  .mold-arrow{font-size:22px;color:var(--gold);}
+  .insts{display:flex;gap:8px;flex-wrap:wrap;}
+  .inst{border:2px solid var(--teal);border-radius:10px;padding:8px 12px;background:#eef5f3;font-family:monospace;font-size:12px;color:#225349;text-align:center;}
+
+  /* object card */
+  .obj-card{border:2px solid var(--teal);border-radius:12px;padding:14px;background:#eef5f3;font-family:monospace;font-size:13px;max-width:280px;margin:8px auto;}
+  .obj-card .oh{font-weight:700;color:var(--teal);border-bottom:1px solid #c5ddd6;padding-bottom:5px;margin-bottom:7px;}
+  .obj-card .attr{display:flex;justify-content:space-between;padding:2px 0;}
+  .obj-card .attr .k{color:var(--sub);}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}}
+</style>
+<style id="wide16x9">
+/* ===== 16:9 와이드 반응형 오버라이드 ===== */
+:root{--maxw:1320px;}
+header.hero{text-align:center;padding-top:70px;}
+header.hero .lead{margin-left:auto;margin-right:auto;}
+header.hero .hero-meta{justify-content:center;}
+main.wrap section.two-col .col-text>:first-child{margin-top:0;}
+main.wrap section.two-col .col-text .summary{margin-bottom:0;}
+@media(min-width:980px){
+  main.wrap section.two-col{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.06fr);
+    gap:46px;align-items:start;
+  }
+  main.wrap section.two-col .col-widget{position:sticky;top:22px;}
+  main.wrap section.two-col .col-text{padding-top:2px;}
+}
+@media(max-width:979px){
+  main.wrap section.two-col .col-widget{margin-top:6px;}
+}
+</style></head>
+<body>
+<div id="progress"></div>
+<header class="hero">
+<div class="eyebrow">파이썬 기초 문법 · Part 17 · 실전과 클래스</div>
+<h1>클래스 기초</h1>
+<p class="lead">데이터(속성)와 그것을 다루는 함수(메서드)를 <strong>하나의 틀로 묶는</strong> 객체 지향의 기초. "상품 딕셔너리 + 할인가 함수"가 따로 놀던 것을, <code>상품</code>이라는 하나의 설계도로 묶어 "상품이 스스로 할인가를 계산"하게 만듦.</p>
+<div class="hero-meta">
+<span class="chip">🔴 클래스 · 17/18</span>
+<span class="chip t">class · __init__ · self · method</span>
+<span class="chip t">예상 40분</span>
+</div>
+</header>
+<main class="wrap">
+<!-- 1 -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">17-1</div><h2>클래스와 인스턴스 — 설계도와 실물</h2><p><strong>클래스</strong>는 설계도, <strong>인스턴스</strong>는 그 설계도로 찍어 낸 실물(객체). <code>class</code>로 정의, <code>클래스명()</code>으로 인스턴스 생성. 붕어빵 틀 하나로 붕어빵 여러 개를 굽는 것.</p><div class="note"><b>📌 참고</b>  인스턴스는 <b>메모리에 생성된 객체</b>, 변수는 그것을 가리킴(Part 1). 지금까지 다룬 값(숫자·리스트·딕셔너리)이 다 객체였고, 클래스는 <b>내가 직접 새 종류의 객체를 정의</b>하는 것. 클래스 이름은 대문자 시작 관례.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>클래스는 설계도, 인스턴스는 그 설계도로 찍은 실물.</li>
+<li><code>class 이름:</code>으로 정의, <code>이름()</code>으로 생성.</li>
+<li>인스턴스는 메모리에 생성된 객체, 변수는 그것을 가리킴.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 틀로 실물 찍어 내기</span>
+<p class="wdesc">"인스턴스 생성"을 누를 때마다 같은 클래스로 별개의 객체가 메모리에 생기는 걸 봄.</p>
+<div class="mold-stage">
+<div class="mold"><div class="t">class 상품</div><div class="s">설계도</div></div>
+<div class="mold-arrow">→</div>
+<div class="insts" id="w1insts"><span class="dim" style="font-size:12px;color:var(--sub)">(아직 없음)</span></div>
+</div>
+<div style="text-align:center;margin-top:12px;">
+<button class="btn" id="w1add">상품() 인스턴스 생성</button>
+<button class="btn ghost" id="w1reset">↻</button>
+</div>
+<div class="out" id="w1out" style="margin-top:10px;"></div>
+</div></div></section>
+<!-- 2 -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">17-2</div><h2>__init__과 속성 — 데이터 담기</h2><p><code>__init__</code>는 인스턴스 생성 시 <strong>자동 실행</strong>되어 속성을 붙임. <code>self</code>는 <strong>지금 만들어지는 그 인스턴스 자신</strong>. <code>self.이름 = 이름</code>은 "이 객체의 이름 속성에 값을 담아라".</p><div class="note"><b>📌 참고</b>  <code>__init__</code>의 첫 매개변수는 항상 <code>self</code>. 호출 시 self는 직접 안 넘김 — <code>상품("니트", 89000, 12)</code>처럼 나머지만 넘기면 파이썬이 새 객체를 self로 자동으로 채워 줌. 속성은 <code>객체.속성</code>으로 접근(딕셔너리의 <code>["키"]</code>와 비슷).</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li><code>__init__</code>는 생성 시 자동 실행되어 속성을 붙임.</li>
+<li><code>self</code>는 지금 다뤄지는 그 인스턴스 자신.</li>
+<li>속성은 <code>self.속성 = 값</code>으로 담고 <code>객체.속성</code>으로 꺼냄.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 객체 만들기</span>
+<p class="wdesc">값을 넣고 "생성"하면, __init__가 그 값들을 객체의 속성으로 담는 걸 봄.</p>
+<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:10px;font-family:monospace;font-size:13px;">
+        상품( <input class="pp-input" id="w2name" style="width:70px;" value="니트"/> , <input class="pp-input" id="w2price" style="width:90px;" type="number" value="89000"/> , <input class="pp-input" id="w2stock" style="width:55px;" type="number" value="12"/> )
+      </div>
+<div style="text-align:center;"><button class="btn" id="w2make">생성 → __init__ 실행</button></div>
+<div class="obj-card" id="w2card" style="display:none;"></div>
+<div class="out" id="w2out" style="margin-top:10px;"></div>
+</div></div></section>
+<!-- 3 -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">17-3</div><h2>메서드 — 객체가 하는 일</h2><p>메서드는 클래스 안의 <strong>함수</strong>로, <code>self</code>로 자기 속성을 이용해 동작함. "상품이 자기 할인가를 계산", "재고를 줄임" — <strong>데이터(속성)와 동작(메서드)이 한 몸</strong>이 됨.</p><div class="note"><b>📌 참고</b>  <code>니트.할인가()</code>는 <code>할인가(self=니트)</code>로 실행 — 점 앞의 객체가 자동으로 self. 메서드 안에서 자기 속성은 <b>반드시 <code>self.</code></b>(<code>self.가격</code>) — 빼먹으면 지역 변수를 찾아 오류남. Part 12 함수는 데이터를 인자로 받았지만, 메서드는 데이터를 자기 안에 가짐.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>메서드는 클래스 안 함수, 객체의 속성을 이용해 동작.</li>
+<li>첫 매개변수 <code>self</code>로 자기 속성에 접근·변경.</li>
+<li>데이터(속성)와 동작(메서드)이 한 몸이 되는 게 핵심.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 객체가 스스로 동작</span>
+<p class="wdesc">메서드를 호출해, 객체가 자기 속성(self.가격·self.재고)으로 동작하는 걸 봄.</p>
+<div class="obj-card" id="w3card"></div>
+<div class="seg" style="justify-content:center;">
+<button class="btn" data-act="discount">니트.할인가()</button>
+<button class="btn" data-act="sell">니트.판매(3)</button>
+<button class="btn ghost" data-act="reset">↻</button>
+</div>
+<div class="out" id="w3out"></div>
+</div></div></section>
+<!-- 4 -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">17-4</div><h2>딕셔너리 vs 클래스</h2><p>"상품 하나"를 딕셔너리로도 클래스로도 표현 가능. 단순하면 딕셔너리, <strong>동작이 많고 여러 개 다루면</strong> 클래스. 포스트잇 메모 vs 정식 서식 양식.</p><div class="note"><b>📌 참고</b>  "딕셔너리로 충분하면 딕셔너리, 동작이 많아지면 클래스". 데이터 분석 중간 데이터는 딕셔너리·리스트, 클래스는 "장바구니 시스템"·"게임 캐릭터"처럼 상태와 동작이 많은 걸 모델링할 때 빛남. 둘 다 도구.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>딕셔너리는 데이터+따로 함수, 클래스는 데이터+동작 한 몸.</li>
+<li>접근이 <code>["키"]</code>(딕트) vs <code>.속성</code>(클래스).</li>
+<li>단순하면 딕셔너리, 동작 많고 여러 개면 클래스.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 같은 데이터, 다른 표현</span>
+<p class="wdesc">표현 방식을 골라, 데이터 접근과 동작이 어떻게 다른지 비교.</p>
+<div class="seg" id="w4tog">
+<button class="on" data-k="dict">딕셔너리</button>
+<button data-k="class">클래스</button>
+</div>
+<div class="out" id="w4out"></div>
+</div></div></section>
+<!-- 5 -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">17-5</div><h2>여러 인스턴스 — 독립된 객체들</h2><p>같은 클래스로 인스턴스를 여러 개 만들면 각자 <strong>독립된 속성</strong>을 가짐 — 하나를 바꿔도 다른 것엔 영향 없음. 인스턴스들을 리스트에 담아 반복하면 자료구조·반복·메서드가 모두 결합됨.</p><div class="note"><b>📌 참고</b>  "딕셔너리들의 리스트"(Part 7)가 "<b>객체들의 리스트</b>"로 발전한 셈 — 각 원소가 자기 동작(메서드)을 가진 객체. <code>for s in 상품들: s.할인가()</code>처럼 반복하며 메서드를 호출하는 게 객체 지향의 흔한 패턴.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>같은 클래스로 만든 인스턴스들은 각자 독립된 속성.</li>
+<li>한 객체의 속성을 바꿔도 다른 객체엔 영향 없음.</li>
+<li>인스턴스들을 리스트에 담아 반복하며 메서드를 호출.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 독립성 확인</span>
+<p class="wdesc">"니트만 판매"를 눌러, 니트 재고만 줄고 코트는 그대로인 독립성을 봄.</p>
+<div id="w5cards" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;"></div>
+<div style="text-align:center;margin-top:12px;">
+<button class="btn" id="w5sell">니트.판매(3)</button>
+<button class="btn ghost" id="w5reset">↻</button>
+</div>
+<div class="out" id="w5out" style="margin-top:10px;"></div>
+</div></div></section>
+</main>
+<footer>
+<div class="next-card">
+<div class="nl">NEXT · PART 18 · 최종 프로젝트</div>
+<div class="nt">클래스 심화 + 최종 프로젝트</div>
+<p style="margin-top:8px;">상속, 특별 메서드 등 클래스 심화 + 이 모든 것을 종합한 <strong>클래스 기반 상품·장바구니 관리 시스템</strong>(<code>Product</code>·<code>Cart</code>). Part 0부터 배운 모든 것을 하나의 완성된 프로그램으로 묶는 대단원!</p>
+</div>
+<p style="margin-top:24px;">파이썬 기초 문법 커리큘럼 · Part 17 / 18 · 데이터 분석 자동화를 위한 기초</p>
+</footer>
+<script>
+var prog=document.getElementById('progress');
+addEventListener('scroll',function(){var h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+function won(n){return n.toLocaleString();}
+
+/* W1 */
+(function(){
+  var names=["니트","코트","가디건","패딩"], n=0;
+  var box=document.getElementById('w1insts'), out=document.getElementById('w1out');
+  function render(){
+    if(n===0){ box.innerHTML='<span class="dim" style="font-size:12px;color:var(--sub)">(아직 없음)</span>'; out.innerHTML='<span class="dim">"인스턴스 생성"을 눌러 보세요</span>'; return; }
+    var html='';
+    for(var i=0;i<n;i++){ html+='<div class="inst">상품 객체 #'+(i+1)+'<br><span style="font-size:10px">'+names[i]+'</span></div>'; }
+    box.innerHTML=html;
+    out.innerHTML='<span class="dim">'+names.slice(0,n).map(function(x){return x+' = 상품()';}).join('\n')+'</span>\n→ 메모리에 별개의 객체 <span class="hl">'+n+'개</span> 생성됨';
+  }
+  document.getElementById('w1add').addEventListener('click',function(){ if(n<names.length){n++;render();} });
+  document.getElementById('w1reset').addEventListener('click',function(){ n=0; render(); });
+  render();
+})();
+
+/* W2 __init__ */
+(function(){
+  function make(){
+    var nm=document.getElementById('w2name').value||'상품';
+    var pr=parseInt(document.getElementById('w2price').value,10)||0;
+    var st=parseInt(document.getElementById('w2stock').value,10)||0;
+    var card=document.getElementById('w2card');
+    card.style.display='block';
+    card.innerHTML='<div class="oh">상품 객체 ('+nm+')</div>'+
+      '<div class="attr"><span class="k">self.이름</span><span>"'+nm+'"</span></div>'+
+      '<div class="attr"><span class="k">self.가격</span><span>'+pr+'</span></div>'+
+      '<div class="attr"><span class="k">self.재고</span><span>'+st+'</span></div>';
+    document.getElementById('w2out').innerHTML='<span class="dim">'+nm+' = 상품("'+nm+'", '+pr+', '+st+')</span>\n→ __init__(self='+nm+', ...) 자동 실행\n→ self.이름="'+nm+'" 등 속성이 객체에 붙음\n'+nm+'.가격 ▸ <span class="hl">'+pr+'</span>';
+  }
+  document.getElementById('w2make').addEventListener('click',make);
+  make();
+})();
+
+/* W3 메서드 */
+(function(){
+  var ORIG={이름:"니트",가격:89000,재고:12}, obj;
+  function reset(){ obj={이름:ORIG.이름,가격:ORIG.가격,재고:ORIG.재고}; render('<span class="dim">메서드 버튼을 눌러 보세요</span>'); }
+  function render(msg){
+    document.getElementById('w3card').innerHTML='<div class="oh">니트 (상품 객체)</div>'+
+      '<div class="attr"><span class="k">self.가격</span><span>'+won(obj.가격)+'</span></div>'+
+      '<div class="attr"><span class="k">self.재고</span><span>'+obj.재고+'</span></div>';
+    document.getElementById('w3out').innerHTML=msg;
+  }
+  document.querySelectorAll('[data-act]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var a=b.dataset.act;
+      if(a==='reset'){ reset(); return; }
+      if(a==='discount'){
+        render('<span class="dim">니트.할인가() = 할인가(self=니트)</span>\n→ return self.가격 * 0.9 = '+won(obj.가격)+' * 0.9\n▸ <span class="hl">'+won(Math.round(obj.가격*0.9))+'</span>  <span class="dim">(속성은 안 변함)</span>');
+      } else if(a==='sell'){
+        if(obj.재고>=3){ obj.재고-=3; render('<span class="dim">니트.판매(3) → self.재고 -= 3</span>\n▸ <span class="hl">3개 판매, 남은 재고 '+obj.재고+'</span>  <span class="dim">(self.재고가 바뀜!)</span>'); }
+        else render('<span class="hl">재고 부족</span>');
+      }
+    });
+  });
+  reset();
+})();
+
+/* W4 dict vs class */
+(function(){
+  var R={
+    dict:'<span class="dim"># 딕셔너리 — 데이터만, 함수는 따로</span>\n니트 = {"이름":"니트", "가격":89000}\ndef 할인가(상품): return 상품["가격"]*0.9\n할인가(니트) ▸ <span class="hl">80100.0</span>\n<span class="dim"># 데이터(["가격"])와 동작(함수)이 분리됨</span>',
+    class:'<span class="dim"># 클래스 — 데이터 + 동작 한 몸</span>\nclass 상품:\n    def 할인가(self): return self.가격*0.9\n니트 = 상품("니트", 89000)\n니트.할인가() ▸ <span class="hl">80100.0</span>\n<span class="dim"># 상품이 스스로 계산 (.가격, .할인가())</span>'
+  };
+  var out=document.getElementById('w4out');
+  document.querySelectorAll('#w4tog button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#w4tog button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.dict;
+})();
+
+/* W5 독립 */
+(function(){
+  var ORIG=[{이름:"니트",재고:12},{이름:"코트",재고:5}], objs;
+  function reset(){ objs=ORIG.map(function(o){return {이름:o.이름,재고:o.재고};}); render('<span class="dim">"니트.판매(3)"을 눌러 보세요</span>'); }
+  function render(msg){
+    document.getElementById('w5cards').innerHTML=objs.map(function(o){
+      return '<div class="obj-card" style="max-width:150px;margin:0;"><div class="oh">'+o.이름+'</div><div class="attr"><span class="k">self.재고</span><span class="hl" style="color:var(--teal)">'+o.재고+'</span></div></div>';
+    }).join('');
+    document.getElementById('w5out').innerHTML=msg;
+  }
+  document.getElementById('w5sell').addEventListener('click',function(){
+    objs[0].재고-=3;
+    render('<span class="dim">니트.판매(3) → 니트.재고만 감소</span>\n니트.재고 ▸ <span class="hl">'+objs[0].재고+'</span>\n코트.재고 ▸ <span class="hl">'+objs[1].재고+'</span>  <span style="color:#9ec79a">(영향 없음 — 독립!)</span>');
+  });
+  document.getElementById('w5reset').addEventListener('click',reset);
+  reset();
+})();
+</script>
+</body>
+</html>

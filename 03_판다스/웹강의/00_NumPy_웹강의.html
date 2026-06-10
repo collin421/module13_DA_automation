@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>선행 · NumPy 기초 — 판다스의 엔진</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:880px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(47,107,94,.05),transparent 40%),radial-gradient(circle at 90% 100%,rgba(194,65,12,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--teal);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:84px 22px 36px;}
+  .eyebrow{color:var(--teal);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:62ch;}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:#d8e8e3;color:#225349;}
+  .chip.o{background:var(--accent-soft);color:#8a3408;}
+  section{padding:54px 0 30px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--teal);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 18px;line-height:1.3;}
+  h3{font-family:var(--serif);font-weight:700;font-size:18px;margin:24px 0 10px;color:var(--ink);}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  .teal{color:var(--teal);font-weight:700;}
+  code{font-family:'Gowun Dodum',monospace;background:#efe7d8;color:#8a3408;padding:1.5px 7px;border-radius:6px;font-size:.92em;}
+  pre{background:#2b2723;color:#f4efe6;border-radius:12px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.7;margin:16px 0;white-space:pre;}
+  pre code{background:none;color:inherit;padding:0;}
+  pre .k{color:#e0935f;}pre .s{color:#9ec79a;}pre .c{color:#8b8175;font-style:italic;}pre .n{color:#9ec7d8;}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15.5px;color:var(--sub);}
+  .note b{color:var(--teal);}
+  .note.warn{border-left-color:var(--accent);}.note.warn b{color:var(--accent);}
+  .summary{background:#eaf0ec;border-radius:12px;padding:18px 20px;margin:22px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--teal);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--teal);padding:4px 11px;border-radius:999px;margin-bottom:16px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .btn{border:none;background:var(--teal);color:#fff;font-family:var(--sans);font-weight:700;font-size:13.5px;padding:9px 16px;border-radius:9px;cursor:pointer;}
+  .out{background:#2b2723;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:14px;color:#9ec79a;min-height:42px;white-space:pre-wrap;line-height:1.7;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}.out .accent{color:#e0935f;font-weight:700;}
+
+  /* segmented controls */
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+  .segbtn{border:1.5px solid var(--line);background:#fff;border-radius:9px;padding:8px 14px;cursor:pointer;font-family:var(--sans);font-weight:700;font-size:13px;color:var(--sub);transition:.15s;}
+  .segbtn.on{border-color:var(--teal);background:var(--teal);color:#fff;}
+  .stage{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;}
+
+  /* arrays as chips */
+  .arr{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:6px 0;}
+  .arr .lbl{font-size:12.5px;color:var(--sub);font-weight:700;width:74px;flex:0 0 auto;}
+  .cell{min-width:42px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:8px;
+    background:#efe7d8;color:#5a4630;font-weight:700;font-family:monospace;font-size:14px;border:2px solid transparent;transition:.18s;padding:0 8px;}
+  .cell.a{background:#e9d5c4;color:#8a3408;}
+  .cell.b{background:#d8e8e3;color:#225349;}
+  .cell.res{background:#2b2723;color:#9ec79a;}
+  .cell.sel{border-color:var(--accent);background:#fbe3d2;color:#8a3408;}
+  .cell.dim{opacity:.3;}
+  .op{font-size:20px;font-weight:700;color:var(--accent);font-family:monospace;}
+
+  /* 2D grid */
+  .grid2d{display:inline-grid;gap:6px;margin:8px 0;}
+  .grid2d .cell{cursor:default;}
+  .axis-hint{font-size:12.5px;color:var(--sub);margin-top:8px;}
+
+  /* slider */
+  .sld{width:100%;accent-color:var(--teal);margin:8px 0;}
+  .rowflex{display:flex;gap:14px;flex-wrap:wrap;align-items:center;}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#eef5f3);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;text-decoration:none;color:inherit;display:block;transition:.18s;}
+  .next-card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(80,60,30,.1);}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .crumb{display:inline-block;margin-bottom:8px;font-size:13px;color:var(--sub);text-decoration:none;}
+  .crumb:hover{color:var(--accent);}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+
+  /* 속도 비교 막대 */
+  .bcmp{display:flex;flex-direction:column;gap:12px;margin:6px 0 12px;}
+  .bcmp-row{display:flex;align-items:center;gap:12px;}
+  .bcmp-lbl{width:118px;flex:0 0 auto;font-size:13px;font-weight:700;color:var(--ink);line-height:1.3;}
+  .bcmp-lbl .dim2{font-weight:400;color:var(--sub);font-size:12px;}
+  .bcmp-bar{flex:1;background:#efe7d8;border-radius:8px;overflow:hidden;height:34px;min-width:120px;}
+  .bcmp-fill{height:100%;display:flex;align-items:center;padding:0 12px;color:#fff;font-weight:700;font-size:13px;font-family:monospace;border-radius:8px;white-space:nowrap;}
+  .bcmp-fill.slow{background:var(--accent);}
+  .bcmp-fill.fast{background:var(--teal);min-width:46px;}
+  /* 브로드캐스팅 패턴 레이아웃 */
+  .bcast{display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
+  .bcast .cap{text-align:center;}
+  .bcast .cap .axis-hint{margin:0 0 6px;}
+  @media(max-width:480px){body{font-size:16px;}.arr .lbl{width:100%;}.bcmp-lbl{width:96px;}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<header class="hero">
+  <a class="crumb" href="../00_데이터분석_판다스_목차.html">← 전체 목차</a>
+  <div class="eyebrow">데이터 분석 · 판다스 · 선행 학습</div>
+  <h1>NumPy 기초<br><span style="font-size:.62em;color:var(--sub);font-weight:400;">판다스의 엔진, 배열과 연산</span></h1>
+  <p class="lead">판다스의 Series·DataFrame은 <strong>NumPy 배열 위에 세워져</strong> 있음. 판다스가 대량의 숫자를 빠르게 다루는 비결인 NumPy의 핵심 — <span class="teal">벡터 연산</span>, 배열 구조, 브로드캐스팅, 축(axis) 집계 — 을 직접 만져보며 익힘. 이 개념들이 그대로 판다스로 이어짐.</p>
+  <div class="hero-meta">
+    <span class="chip">🧮 선행 학습</span>
+    <span class="chip o">배열 · 벡터연산 · axis</span>
+    <span class="chip">예상 30분</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- S1 리스트 vs 배열 -->
+  <section class="reveal">
+    <div class="sec-no">01</div>
+    <h2>리스트 vs 배열 — 벡터 연산의 힘</h2>
+    <p>NumPy를 배우는 가장 강력한 이유입니다. 두 묶음의 숫자를 더해 봅시다. 파이썬 리스트에서 <code>+</code>는 더하기가 아니라 <strong>이어붙이기</strong>입니다. 반면 NumPy 배열은 <strong>같은 위치 요소끼리 한 번에</strong> 계산합니다(벡터 연산).</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 리스트 vs 배열</span>
+      <p class="wdesc">연산을 바꿔 보며, 같은 입력에 대해 <b>리스트</b>와 <b>배열</b>이 어떻게 다르게 동작하는지 비교해 보세요.</p>
+      <div class="seg" id="w1op">
+        <button class="segbtn on" data-op="+">＋ 더하기</button>
+        <button class="segbtn" data-op="-">－ 빼기</button>
+        <button class="segbtn" data-op="*">× 곱하기</button>
+      </div>
+      <div class="stage">
+        <div class="arr"><span class="lbl">list1</span><span class="cell a">1</span><span class="cell a">2</span><span class="cell a">3</span><span class="op" id="w1op1">+</span></div>
+        <div class="arr"><span class="lbl">list2</span><span class="cell b">4</span><span class="cell b">5</span><span class="cell b">6</span></div>
+        <div class="out" id="w1listout" style="margin:10px 0 14px;"></div>
+        <div class="arr"><span class="lbl">array1</span><span class="cell a">1</span><span class="cell a">2</span><span class="cell a">3</span><span class="op" id="w1op2">+</span></div>
+        <div class="arr"><span class="lbl">array2</span><span class="cell b">4</span><span class="cell b">5</span><span class="cell b">6</span></div>
+        <div class="out" id="w1arrout"></div>
+      </div>
+    </div>
+
+    <div class="note"><b>📌 핵심</b> &nbsp;NumPy는 반복문 없이 <b>배열 전체를 한 번에</b> 계산합니다(벡터화). 수만 개의 숫자도 순식간에 처리하는 비결이며, 판다스의 <code>df['가격'] * 0.9</code> 같은 연산이 모두 이 원리입니다.</div>
+
+    <h3>왜 리스트보다 빠를까 — 그리고 판다스의 엔진</h3>
+    <p>같은 계산이라도 <strong>NumPy 배열이 파이썬 리스트보다 훨씬 빠릅니다</strong>. 리스트는 요소를 하나씩 파이썬 반복문으로 처리하지만, NumPy는 <strong>연속된 메모리</strong>에 같은 자료형을 모아 두고 <strong>C로 구현된 코드가 한 번에</strong> 계산하기 때문입니다(벡터화). 데이터가 클수록 차이는 <strong>수십~수백 배</strong>로 벌어집니다.</p>
+
+    <div class="widget">
+      <span class="wlabel">속도 비교 · 100만 개 요소 연산</span>
+      <div class="stage">
+        <div class="bcmp">
+          <div class="bcmp-row">
+            <span class="bcmp-lbl">파이썬 리스트<br><span class="dim2">for 반복문</span></span>
+            <div class="bcmp-bar"><div class="bcmp-fill slow" style="width:100%;">≈ 100 &nbsp;(느림)</div></div>
+          </div>
+          <div class="bcmp-row">
+            <span class="bcmp-lbl">NumPy 배열<br><span class="dim2">벡터화 · C 엔진</span></span>
+            <div class="bcmp-bar"><div class="bcmp-fill fast" style="width:7%;">≈ 1</div></div>
+          </div>
+        </div>
+        <div class="axis-hint">* 상대 처리 시간(작을수록 빠름). 환경마다 다르지만 대규모 연산일수록 <b>수십~수백 배</b> 차이가 납니다.</div>
+      </div>
+    </div>
+
+    <div class="note"><b>🧱 판다스의 기초</b> &nbsp;판다스는 <b>NumPy 위에 세워진 라이브러리</b>입니다. <code>Series</code>·<code>DataFrame</code>의 값은 내부적으로 <b>NumPy 배열(ndarray)</b>로 저장되고, <code>df['가격'] * 0.9</code>·<code>.sum()</code>·<code>.mean()</code> 같은 빠른 연산이 모두 NumPy 엔진에서 나옵니다. 그래서 <b>NumPy를 알면 판다스가 쉬워집니다.</b></div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>리스트의 <code>+</code>는 연결, 배열의 <code>+</code>는 요소별 덧셈.</li>
+      <li>배열은 반복문 없이 C 엔진으로 한 번에 계산 → <b>리스트보다 수십~수백 배 빠름</b>.</li>
+      <li>이 벡터 연산이 <b>판다스(Series·DataFrame)의 기초</b>이자 고속 계산의 토대.</li>
+    </ol></div>
+  </section>
+
+  <!-- S2 배열 생성 -->
+  <section class="reveal">
+    <div class="sec-no">02</div>
+    <h2>배열 만들기와 데이터 유형</h2>
+    <p><code>np.array()</code>로 리스트를 배열로 바꿉니다. 배열의 <strong>모든 요소는 같은 자료형(dtype)</strong>을 가집니다. 그 밖에 0·1·일정 간격으로 채우는 생성 함수가 있습니다. 각 함수를 눌러 결과와 <code>dtype</code>을 확인해 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 배열 생성 함수</span>
+      <div class="seg" id="w2tab">
+        <button class="segbtn on" data-k="array">np.array</button>
+        <button class="segbtn" data-k="zeros">np.zeros</button>
+        <button class="segbtn" data-k="ones">np.ones</button>
+        <button class="segbtn" data-k="arange">np.arange</button>
+      </div>
+      <div class="stage">
+        <div id="w2ctrl" style="margin-bottom:12px;"></div>
+        <pre style="margin:0 0 10px;"><code id="w2code"></code></pre>
+        <div class="arr" id="w2vis"></div>
+        <div class="axis-hint" id="w2dtype"></div>
+      </div>
+    </div>
+
+    <div class="note"><b>📌 참고</b> &nbsp;<code>np.arange(start, stop, step)</code>는 파이썬 <code>range</code>의 배열 버전으로, <b>stop은 포함하지 않습니다</b>. <code>dtype</code>은 자동 추론되며 <code>dtype=float</code>처럼 직접 지정할 수도 있습니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>np.array</code>·<code>zeros</code>·<code>ones</code>·<code>arange</code>로 배열 생성.</li>
+      <li>배열의 모든 요소는 같은 <code>dtype</code>(int·float·bool).</li>
+      <li><code>arange</code>의 stop은 미포함(range와 동일).</li>
+    </ol></div>
+  </section>
+
+  <!-- S3 구조 -->
+  <section class="reveal">
+    <div class="sec-no">03</div>
+    <h2>ndarray의 구조 — ndim · shape · size</h2>
+    <p>ndarray(다차원 배열)의 모양은 세 가지 속성으로 파악합니다(속성이라 <strong>괄호 없음</strong>). <code>ndim</code>(차원), <code>shape</code>(행·열), <code>size</code>(전체 개수). 차원을 바꿔 보며 값이 어떻게 달라지는지 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 배열의 차원</span>
+      <div class="seg" id="w3tab">
+        <button class="segbtn on" data-k="d1">1차원</button>
+        <button class="segbtn" data-k="d2">2차원</button>
+        <button class="segbtn" data-k="d3">3차원</button>
+      </div>
+      <div class="stage">
+        <div id="w3vis" style="margin-bottom:12px;"></div>
+        <div class="out" id="w3out"></div>
+      </div>
+    </div>
+
+    <div class="note"><b>📌 판다스로 직결</b> &nbsp;DataFrame의 <code>.shape</code>, <code>.ndim</code>이 바로 이 NumPy 속성에서 왔습니다. "2행 3열" 같은 모양 읽기는 분석의 기본기입니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>ndim</code>=차원, <code>shape</code>=(행,열), <code>size</code>=전체 개수.</li>
+      <li>1차원=한 줄, 2차원=행렬(표), 3차원=표 여러 장.</li>
+      <li>속성이라 괄호 없이 <code>arr.shape</code>로 접근.</li>
+    </ol></div>
+  </section>
+
+  <!-- S4 인덱싱 슬라이싱 -->
+  <section class="reveal">
+    <div class="sec-no">04</div>
+    <h2>인덱싱과 슬라이싱</h2>
+    <p>원하는 요소·구간을 꺼냅니다. 인덱스는 <strong>0부터</strong> 시작하고, 2차원은 <code>[행, 열]</code>로 접근합니다. 슬라이싱은 <code>start:stop:step</code>이며 <strong>stop은 제외</strong>됩니다. 아래 3×3 배열에서 식을 골라 선택 영역과 결과를 확인해 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 2차원 인덱싱·슬라이싱</span>
+      <div class="seg" id="w4tab">
+        <button class="segbtn on" data-k="e0">[1, 2]</button>
+        <button class="segbtn" data-k="e1">[:2, 1:]</button>
+        <button class="segbtn" data-k="e2">[0]</button>
+        <button class="segbtn" data-k="e3">[::2, ::2]</button>
+        <button class="segbtn" data-k="e4">[1:, :2]</button>
+      </div>
+      <div class="stage">
+        <div class="rowflex" style="align-items:flex-start;">
+          <div>
+            <div class="axis-hint" style="margin:0 0 6px;">arr2 (3×3)</div>
+            <div class="grid2d" id="w4grid" style="grid-template-columns:repeat(3,42px);"></div>
+          </div>
+          <div style="flex:1;min-width:180px;">
+            <pre style="margin:0 0 8px;"><code id="w4code"></code></pre>
+            <div class="out" id="w4out"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note"><b>📌 판다스로 직결</b> &nbsp;2차원 슬라이싱 <code>[행범위, 열범위]</code>는 판다스의 <code>iloc[행, 열]</code>과 똑같은 원리입니다. NumPy에서 먼저 익히면 판다스가 쉬워집니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>인덱스는 0부터, 2차원은 <code>[행, 열]</code>.</li>
+      <li>슬라이싱 <code>start:stop:step</code>, stop은 미포함.</li>
+      <li>음수 인덱스는 뒤에서부터(-1=마지막).</li>
+    </ol></div>
+  </section>
+
+  <!-- S5 브로드캐스팅 -->
+  <section class="reveal">
+    <div class="sec-no">05</div>
+    <h2>배열 연산과 브로드캐스팅</h2>
+    <p>배열끼리는 같은 위치 요소끼리 자동 계산됩니다. 또한 배열과 <strong>숫자 하나(스칼라)</strong>를 연산하면 그 숫자가 <strong>모든 요소에 자동 적용</strong>됩니다 — 이것이 <span class="teal">브로드캐스팅</span>입니다. 슬라이더로 스칼라 값을, 버튼으로 연산을 바꿔 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 브로드캐스팅</span>
+      <div class="seg" id="w5op">
+        <button class="segbtn on" data-op="+">＋ 더하기</button>
+        <button class="segbtn" data-op="*">× 곱하기</button>
+      </div>
+      <div class="stage">
+        <div class="arr"><span class="lbl">arr</span><span class="cell a">10</span><span class="cell a">20</span><span class="cell a">30</span>
+          <span class="op" id="w5op2">+</span><span class="cell res" id="w5scalar" style="background:#a8762f;color:#fff;">5</span></div>
+        <input type="range" min="0" max="20" value="5" step="1" class="sld" id="w5sld">
+        <div class="axis-hint">스칼라 값: <b id="w5val" style="color:var(--accent);">5</b> (모든 요소에 적용됨)</div>
+        <div class="arr" id="w5res" style="margin-top:12px;"></div>
+      </div>
+    </div>
+
+    <div class="note"><b>📌 데이터 분석</b> &nbsp;"모든 가격에 10% 할인" 같은 작업이 <code>arr * 0.9</code> 한 줄로 끝납니다. 판다스의 <code>df['가격'] * 0.9</code>가 바로 이 브로드캐스팅입니다.</div>
+
+    <h3>다양한 브로드캐스팅 — 한 줄을 넘어 2차원으로</h3>
+    <p>브로드캐스팅은 스칼라에만 그치지 않습니다. <strong>모양(shape)이 맞으면</strong> 작은 배열이 큰 배열에 맞춰 <strong>자동으로 늘어나(stretch)</strong> 계산됩니다. 스칼라 → 행 벡터 → 열 벡터 → 격자까지, 버튼으로 형태를 바꿔 어떻게 확장되는지 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 다양한 브로드캐스팅</span>
+      <div class="seg" id="w5btab">
+        <button class="segbtn on" data-k="scalar">스칼라</button>
+        <button class="segbtn" data-k="row">행 벡터 (1×3)</button>
+        <button class="segbtn" data-k="col">열 벡터 (3×1)</button>
+        <button class="segbtn" data-k="grid">(3×1)+(1×3) 격자</button>
+      </div>
+      <div class="stage">
+        <div id="w5bvis" style="overflow-x:auto;"></div>
+        <div class="axis-hint" id="w5bhint" style="margin-top:12px;"></div>
+        <div class="out" id="w5bout" style="margin-top:10px;"></div>
+      </div>
+    </div>
+
+    <div class="note"><b>📏 규칙</b> &nbsp;두 배열의 모양을 <b>뒤쪽 축부터</b> 맞춰 보아, 크기가 같거나 한쪽이 <b>1</b>이면 그 축으로 <b>늘려서(broadcast)</b> 계산합니다. <code>(3,3)+(3,)</code>는 행마다, <code>(3,1)</code>은 열마다 적용되고, <code>(3,1)+(1,3)</code>은 <code>(3,3)</code> 격자(구구단표 같은)가 됩니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>배열끼리는 같은 위치 요소끼리, 스칼라는 모든 요소에 적용.</li>
+      <li>모양이 맞으면(한쪽 축이 1) 작은 배열이 자동 확장 — <b>행 벡터=행마다, 열 벡터=열마다</b>.</li>
+      <li><code>(3,1)+(1,3)→(3,3)</code> 격자까지, 반복문 없이 한 줄로.</li>
+    </ol></div>
+  </section>
+
+  <!-- S6 axis -->
+  <section class="reveal">
+    <div class="sec-no">06</div>
+    <h2>집계 함수와 축(axis) — 가장 중요</h2>
+    <p>배열의 합·평균·최소·최대를 계산합니다. 핵심은 <strong>축(axis)</strong>입니다. <code>axis=0</code>은 세로(↓)로 내려가며 계산해 <strong>열별 결과</strong>를, <code>axis=1</code>은 가로(→)로 가며 계산해 <strong>행별 결과</strong>를 줍니다. 토글하며 계산 방향과 결과를 확인해 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · axis 집계</span>
+      <div class="rowflex" style="margin-bottom:12px;">
+        <div class="seg" id="w6axis" style="margin:0;">
+          <button class="segbtn on" data-ax="all">전체</button>
+          <button class="segbtn" data-ax="0">axis=0 (열별)</button>
+          <button class="segbtn" data-ax="1">axis=1 (행별)</button>
+        </div>
+        <div class="seg" id="w6fn" style="margin:0;">
+          <button class="segbtn on" data-fn="sum">sum</button>
+          <button class="segbtn" data-fn="mean">mean</button>
+        </div>
+      </div>
+      <div class="stage">
+        <div class="grid2d" id="w6grid" style="grid-template-columns:repeat(3,46px);"></div>
+        <div class="axis-hint" id="w6hint"></div>
+        <div class="out" id="w6out" style="margin-top:10px;"></div>
+      </div>
+    </div>
+
+    <div class="note warn"><b>⚠️ axis 헷갈림 주의</b> &nbsp;<code>axis=0</code>은 "행 방향으로 내려가며" 계산해 <b>열별</b> 결과를, <code>axis=1</code>은 "열 방향으로 가며" 계산해 <b>행별</b> 결과를 줍니다. "0=세로축, 1=가로축"으로 기억하세요.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>sum</code>·<code>mean</code>·<code>min</code>·<code>max</code>로 집계.</li>
+      <li><code>axis=0</code>=열별, <code>axis=1</code>=행별.</li>
+      <li>이 축 개념이 판다스 <code>groupby</code>·<code>pivot_table</code>의 뿌리.</li>
+    </ol></div>
+  </section>
+
+</main>
+
+<footer>
+  <a class="next-card" href="01_Series_DataFrame_웹강의.html">
+    <div class="nl">NEXT · PART 1</div>
+    <div class="nt">Series와 DataFrame</div>
+    <p style="margin-top:8px;">이제 NumPy 배열 위에 세워진 판다스로 들어갑니다. 배열에 "이름표(인덱스)"를 붙인 <strong>Series</strong>와, 그것들이 모인 표 <strong>DataFrame</strong>부터 시작합니다.</p>
+  </a>
+  <p style="margin-top:24px;">데이터 분석 프로세스와 판다스 활용하기 · 선행 NumPy · 데이터 분석을 위한 토대</p>
+</footer>
+
+<script>
+const prog=document.getElementById('progress');
+addEventListener('scroll',()=>{const h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ===== W1: list vs array ===== */
+(function(){
+  const A=[1,2,3], B=[4,5,6];
+  let op='+';
+  function calc(a,b){return op==='+'?a+b:op==='-'?a-b:a*b;}
+  function render(){
+    document.getElementById('w1op1').textContent=op;
+    document.getElementById('w1op2').textContent=op;
+    const lo=document.getElementById('w1listout'), ao=document.getElementById('w1arrout');
+    if(op==='+'){
+      lo.innerHTML='<span class="dim">list1 + list2 ▸ </span>['+A.concat(B).join(', ')+']  <span class="accent">← 두 리스트가 이어붙여짐!</span>';
+    }else{
+      lo.innerHTML='<span class="dim">list1 '+op+' list2 ▸ </span><span class="accent">TypeError</span> <span class="dim">— 리스트끼리 '+(op==='-'?'빼기':'곱하기')+'는 불가</span>';
+    }
+    const r=A.map((v,i)=>calc(v,B[i]));
+    ao.innerHTML='<span class="dim">array1 '+op+' array2 ▸ </span><span class="hl">array(['+r.join(', ')+'])</span>  <span class="accent">← 요소별 계산</span>';
+  }
+  document.querySelectorAll('#w1op .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w1op .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');op=b.dataset.op;render();}));
+  render();
+})();
+
+/* ===== W2: array creation ===== */
+(function(){
+  let k='array';
+  const ctrl=document.getElementById('w2ctrl'), code=document.getElementById('w2code'), vis=document.getElementById('w2vis'), dt=document.getElementById('w2dtype');
+  let arange={start:0,stop:10,step:2};
+  function chips(values,cls){return values.map(v=>'<span class="cell '+(cls||'')+'">'+v+'</span>').join('');}
+  function render(){
+    ctrl.innerHTML='';
+    if(k==='array'){
+      code.innerHTML='<span class="k">np</span>.array([1, 2, 3, 4, 5])';
+      vis.innerHTML=chips([1,2,3,4,5],'a');
+      dt.innerHTML='dtype: <b>int64</b> (정수). 실수가 하나라도 섞이면 float64가 됩니다.';
+    }else if(k==='zeros'){
+      code.innerHTML='<span class="k">np</span>.zeros(5)';
+      vis.innerHTML=chips(['0.','0.','0.','0.','0.']);
+      dt.innerHTML='dtype: <b>float64</b> — zeros·ones는 기본이 실수형입니다.';
+    }else if(k==='ones'){
+      code.innerHTML='<span class="k">np</span>.ones((2, 3))   <span class="c"># 2행 3열</span>';
+      vis.innerHTML='<div style="display:grid;grid-template-columns:repeat(3,42px);gap:6px;">'+chips(['1.','1.','1.','1.','1.','1.'])+'</div>';
+      dt.innerHTML='shape: <b>(2, 3)</b> · dtype: <b>float64</b>';
+    }else{
+      ctrl.innerHTML='<div class="rowflex" style="font-size:13px;">'+
+        ['start','stop','step'].map(p=>'<label>'+p+': <input type="number" id="w2_'+p+'" value="'+arange[p]+'" style="width:58px;padding:4px 6px;border:1.5px solid var(--line);border-radius:6px;font-family:monospace;"></label>').join('')+'</div>';
+      const a=[];for(let i=arange.start;i<arange.stop;i+=(arange.step||1)){a.push(i);if(a.length>40)break;}
+      code.innerHTML='<span class="k">np</span>.arange('+arange.start+', '+arange.stop+', '+arange.step+')   <span class="c"># stop 미포함</span>';
+      vis.innerHTML=chips(a.length?a:['(빈 배열)'],'a');
+      dt.innerHTML='길이 <b>'+a.length+'</b>개 · stop('+arange.stop+')은 포함되지 않습니다.';
+      ['start','stop','step'].forEach(p=>document.getElementById('w2_'+p).addEventListener('input',e=>{arange[p]=parseInt(e.target.value||0);render();}));
+    }
+  }
+  document.querySelectorAll('#w2tab .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w2tab .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');k=b.dataset.k;render();}));
+  render();
+})();
+
+/* ===== W3: ndim/shape/size ===== */
+(function(){
+  let k='d1';
+  const vis=document.getElementById('w3vis'), out=document.getElementById('w3out');
+  function chips(vals){return vals.map(v=>'<span class="cell a">'+v+'</span>').join('');}
+  function render(){
+    if(k==='d1'){
+      vis.innerHTML='<div class="arr">'+chips([1,2,3])+'</div>';
+      out.innerHTML='<span class="dim">arr.ndim ▸ </span><span class="hl">1</span>\n<span class="dim">arr.shape ▸ </span><span class="hl">(3,)</span>\n<span class="dim">arr.size ▸ </span><span class="hl">3</span>';
+    }else if(k==='d2'){
+      vis.innerHTML='<div class="grid2d" style="grid-template-columns:repeat(3,42px);">'+chips([1,2,3,4,5,6])+'</div>';
+      out.innerHTML='<span class="dim">arr.ndim ▸ </span><span class="hl">2</span>\n<span class="dim">arr.shape ▸ </span><span class="hl">(2, 3)</span>  <span class="accent">← 2행 3열</span>\n<span class="dim">arr.size ▸ </span><span class="hl">6</span>';
+    }else{
+      vis.innerHTML='<div style="display:flex;gap:14px;flex-wrap:wrap;">'+
+        '<div class="grid2d" style="grid-template-columns:repeat(3,38px);">'+chips([1,2,3,4,5,6])+'</div>'+
+        '<div class="grid2d" style="grid-template-columns:repeat(3,38px);">'+chips([7,8,9,10,11,12])+'</div></div>';
+      out.innerHTML='<span class="dim">arr.ndim ▸ </span><span class="hl">3</span>\n<span class="dim">arr.shape ▸ </span><span class="hl">(2, 2, 3)</span>  <span class="accent">← 2장 × 2행 × 3열</span>\n<span class="dim">arr.size ▸ </span><span class="hl">12</span>';
+    }
+  }
+  document.querySelectorAll('#w3tab .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w3tab .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');k=b.dataset.k;render();}));
+  render();
+})();
+
+/* ===== W4: indexing/slicing ===== */
+(function(){
+  const M=[[1,2,3],[4,5,6],[7,8,9]];
+  const grid=document.getElementById('w4grid'), code=document.getElementById('w4code'), out=document.getElementById('w4out');
+  const cells=[];
+  for(let r=0;r<3;r++)for(let c=0;c<3;c++){const d=document.createElement('div');d.className='cell';d.textContent=M[r][c];grid.appendChild(d);cells.push({el:d,r,c});}
+  const ex={
+    e0:{code:'arr2[1, 2]', sel:(r,c)=>r===1&&c===2, res:'6  <span class="dim">(2번째 행, 3번째 열)</span>'},
+    e1:{code:'arr2[:2, 1:]', sel:(r,c)=>r<2&&c>=1, res:'[[2, 3],\n [5, 6]]'},
+    e2:{code:'arr2[0]', sel:(r,c)=>r===0, res:'[1, 2, 3]  <span class="dim">(첫 번째 행 전체)</span>'},
+    e3:{code:'arr2[::2, ::2]', sel:(r,c)=>r%2===0&&c%2===0, res:'[[1, 3],\n [7, 9]]'},
+    e4:{code:'arr2[1:, :2]', sel:(r,c)=>r>=1&&c<2, res:'[[4, 5],\n [7, 8]]'}
+  };
+  function render(k){
+    const e=ex[k];
+    code.innerHTML=e.code;
+    cells.forEach(o=>{o.el.classList.toggle('sel',e.sel(o.r,o.c));o.el.classList.toggle('dim',!e.sel(o.r,o.c));});
+    out.innerHTML='<span class="dim">결과 ▸ </span><span class="hl">'+e.res+'</span>';
+  }
+  document.querySelectorAll('#w4tab .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w4tab .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(b.dataset.k);}));
+  render('e0');
+})();
+
+/* ===== W5: broadcasting (scalar) ===== */
+(function(){
+  const A=[10,20,30];let op='+',s=5;
+  const res=document.getElementById('w5res'), val=document.getElementById('w5val'), sc=document.getElementById('w5scalar'), o2=document.getElementById('w5op2');
+  function render(){
+    val.textContent=s;sc.textContent=s;o2.textContent=op;
+    const r=A.map(v=>op==='+'?v+s:v*s);
+    res.innerHTML='<span class="lbl">결과</span>'+r.map(v=>'<span class="cell res">'+v+'</span>').join('')+
+      '<span class="axis-hint" style="margin-left:8px;">← 모든 요소에 '+(op==='+'? s+' 더함':s+' 곱함')+'</span>';
+  }
+  document.getElementById('w5sld').addEventListener('input',e=>{s=parseInt(e.target.value);render();});
+  document.querySelectorAll('#w5op .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w5op .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');op=b.dataset.op;render();}));
+  render();
+})();
+
+/* ===== W5b: broadcasting patterns ===== */
+(function(){
+  const A=[[1,2,3],[4,5,6],[7,8,9]];
+  let k='scalar';
+  const vis=document.getElementById('w5bvis'), hint=document.getElementById('w5bhint'), out=document.getElementById('w5bout');
+  function g(rows,cls,cols){
+    const n=cols||rows[0].length;
+    let h='<div class="grid2d" style="grid-template-columns:repeat('+n+',42px);">';
+    rows.forEach(r=>r.forEach(v=>h+='<span class="cell '+cls+'">'+v+'</span>'));
+    return h+'</div>';
+  }
+  function cap(label,inner){return '<div class="cap"><div class="axis-hint">'+label+'</div>'+inner+'</div>';}
+  function sym(ch,col){return '<div class="op" style="font-size:24px;'+(col?'color:'+col+';':'')+'">'+ch+'</div>';}
+  function lay(parts){return '<div class="bcast">'+parts.join('')+'</div>';}
+  function render(){
+    let code, hnt, html;
+    if(k==='scalar'){
+      const R=A.map(r=>r.map(v=>v+10));
+      html=lay([cap('arr2 (3×3)',g(A,'a',3)), sym('+'), cap('스칼라','<div class="cell b" style="height:40px;min-width:42px;">10</div>'), sym('=','#2f6b5e'), cap('결과 (3×3)',g(R,'res',3))]);
+      code='arr2 + 10'; hnt='스칼라 <b>10</b>이 <b>9개 요소 전부</b>에 적용 — 모양 ()가 (3,3)으로 확장.';
+    }else if(k==='row'){
+      const b=[10,20,30], R=A.map(r=>r.map((v,c)=>v+b[c]));
+      html=lay([cap('arr2 (3×3)',g(A,'a',3)), sym('+'), cap('행 벡터 (1×3)',g([b],'b',3)), sym('=','#2f6b5e'), cap('결과 (3×3)',g(R,'res',3))]);
+      code='arr2 + np.array([10, 20, 30])'; hnt='행 벡터가 <b>아래로 복제</b>되어 <b>각 행</b>에 더해짐 — (3,)이 (1,3)→3행으로 확장.';
+    }else if(k==='col'){
+      const b=[100,200,300], R=A.map((r,ri)=>r.map(v=>v+b[ri]));
+      html=lay([cap('arr2 (3×3)',g(A,'a',3)), sym('+'), cap('열 벡터 (3×1)',g(b.map(x=>[x]),'b',1)), sym('=','#2f6b5e'), cap('결과 (3×3)',g(R,'res',3))]);
+      code='arr2 + np.array([[100],[200],[300]])'; hnt='열 벡터가 <b>오른쪽으로 복제</b>되어 <b>각 열</b>에 더해짐 — (3,1)이 3열로 확장.';
+    }else{
+      const col=[1,2,3], rw=[10,20,30], R=col.map(cv=>rw.map(rv=>cv+rv));
+      html=lay([cap('열 (3×1)',g(col.map(x=>[x]),'a',1)), sym('+'), cap('행 (1×3)',g([rw],'b',3)), sym('=','#2f6b5e'), cap('결과 (3×3)',g(R,'res',3))]);
+      code='np.array([[1],[2],[3]]) + np.array([10, 20, 30])'; hnt='서로 다른 축의 두 벡터가 만나 <b>3×3 격자</b>를 만듦 — (3,1)+(1,3)→(3,3). 덧셈표·구구단표가 이 원리.';
+    }
+    vis.innerHTML=html; hint.innerHTML=hnt;
+    out.innerHTML='<span class="dim">'+code+' ▸ </span><span class="hl">shape (3, 3)</span>';
+  }
+  document.querySelectorAll('#w5btab .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w5btab .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');k=b.dataset.k;render();}));
+  render();
+})();
+
+/* ===== W6: axis aggregation ===== */
+(function(){
+  const M=[[1,2,3],[4,5,6]];let ax='all',fn='sum';
+  const grid=document.getElementById('w6grid'), hint=document.getElementById('w6hint'), out=document.getElementById('w6out');
+  const cells=[];
+  for(let r=0;r<2;r++)for(let c=0;c<3;c++){const d=document.createElement('div');d.className='cell';d.textContent=M[r][c];grid.appendChild(d);cells.push({el:d,r,c});}
+  const agg=arr=>fn==='sum'?arr.reduce((a,b)=>a+b,0):(arr.reduce((a,b)=>a+b,0)/arr.length);
+  function fmt(v){return Number.isInteger(v)?v:v.toFixed(1);}
+  function render(){
+    cells.forEach(o=>o.el.classList.remove('sel','dim'));
+    let result, desc;
+    if(ax==='all'){
+      cells.forEach(o=>o.el.classList.add('sel'));
+      result=fmt(agg([1,2,3,4,5,6]));
+      desc='전체 6개 요소의 '+fn;
+      out.innerHTML='<span class="dim">np.'+fn+'(arr) ▸ </span><span class="hl">'+result+'</span>';
+      hint.innerHTML='전체를 한 번에 집계합니다.';
+    }else if(ax==='0'){
+      const cols=[0,1,2].map(c=>fmt(agg([M[0][c],M[1][c]])));
+      result='['+cols.join(', ')+']';
+      out.innerHTML='<span class="dim">np.'+fn+'(arr, axis=0) ▸ </span><span class="hl">'+result+'</span>  <span class="accent">열별</span>';
+      hint.innerHTML='↓ <b>세로(열)</b> 방향으로 내려가며 계산 → 결과는 <b>열 개수(3개)</b>';
+    }else{
+      const rows=[0,1].map(r=>fmt(agg(M[r])));
+      result='['+rows.join(', ')+']';
+      out.innerHTML='<span class="dim">np.'+fn+'(arr, axis=1) ▸ </span><span class="hl">'+result+'</span>  <span class="accent">행별</span>';
+      hint.innerHTML='→ <b>가로(행)</b> 방향으로 가며 계산 → 결과는 <b>행 개수(2개)</b>';
+    }
+  }
+  document.querySelectorAll('#w6axis .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w6axis .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');ax=b.dataset.ax;render();}));
+  document.querySelectorAll('#w6fn .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w6fn .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');fn=b.dataset.fn;render();}));
+  render();
+})();
+</script>
+</body>
+</html>

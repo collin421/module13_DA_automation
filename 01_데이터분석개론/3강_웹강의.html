@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>데이터 분석 개요 · 3강 · 데이터란 무엇인가</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;--accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;--serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:768px;color-scheme:light only;}
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.9;font-size:17px;-webkit-text-size-adjust:100%;background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:84px 22px 36px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(28px,5.6vw,44px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:50px 0 26px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 18px;line-height:1.3;}
+  h3{font-family:var(--serif);font-weight:700;font-size:19px;margin:26px 0 12px;color:#3a342e;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  .term{background:#eef5f3;border:1px solid #cfe3dd;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;}
+  .term b{color:var(--teal);}
+  .ex{background:#fbf3e6;border:1px solid #ecd9b8;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;color:#6b5526;}
+  .ex b{color:var(--gold);}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:24px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:14px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;color:#9ec79a;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:13.5px;min-height:42px;white-space:pre-wrap;line-height:1.7;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}.out .y{color:#e0b15f;}
+  .btn{border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:13px;padding:9px 15px;border-radius:9px;cursor:pointer;}
+  .btn.ghost{background:#fdfaf4;border:1.5px solid var(--line);color:var(--sub);}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+  .seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:var(--sans);transition:.15s;color:var(--ink);}
+  .seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  /* DIKW 피라미드 */
+  .pyramid{display:flex;flex-direction:column;align-items:center;gap:4px;margin:14px 0;}
+  .pyr-row{border-radius:8px;padding:9px;text-align:center;cursor:pointer;transition:.2s;font-size:13px;font-weight:700;color:#fff;}
+  .pyr-row.dim{opacity:.45;}
+  .pyr-w{color:#fff;}
+  /* 정형 vs 비정형 카드 */
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .tc{border:1.5px solid var(--line);border-radius:12px;padding:14px;font-size:13px;}
+  .tc.a{background:#eef5f3;border-color:var(--teal);}
+  .tc.b{background:#fbf3e6;border-color:var(--gold);}
+  .tc .t{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:8px;}
+  .tc.a .t{color:var(--teal);}.tc.b .t{color:var(--gold);}
+  .minitable{width:100%;border-collapse:collapse;font-size:11.5px;font-family:monospace;margin-top:8px;}
+  .minitable th,.minitable td{border:1px solid #cfe3dd;padding:4px 6px;}
+  .minitable th{background:#d8e8e3;}
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}.twocol{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<header class="hero">
+  <div class="eyebrow">데이터 분석 개요 및 기초 이론 · 3강</div>
+  <h1>데이터란<br>무엇인가</h1>
+  <p class="lead">1·2강에서 "데이터"라는 말을 수없이 썼지만, 정작 데이터가 정확히 무엇인지는 짚지 않았음. 요리에 비유하면 이제 <strong>"재료가 무엇인가"</strong>를 배우는 단계임. 좋은 요리사가 재료를 정확히 알듯, 좋은 분석가는 다루는 재료(데이터)의 정체와 종류를 정확히 알아야 함.</p>
+  <div class="hero-meta">
+    <span class="chip">📊 개요 · 3/7</span>
+    <span class="chip t">DIKW · 정형/비정형 · 정량/정성</span>
+    <span class="chip t">완전 초보용</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- 3-1 -->
+  <section class="reveal">
+    <div class="sec-no">3-1</div>
+    <h2>데이터란 무엇인가 — 가장 기본부터</h2>
+    <div class="term"><b>데이터(data)란?</b><br>현실의 사실·현상을 <b>기록한 값</b>. 숫자·글자·날짜·이미지·소리 등 어떤 형태든, "관찰하거나 측정해 적어 둔 것"은 모두 데이터임.</div>
+    <p>아주 쉽게 — 오늘 하루를 적어 보면 그게 다 데이터임. "오전 7시 기상", "기온 18도", "점심 8,000원", "버스 2번 환승"… 우리는 이미 데이터 속에서 살고 있음.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 데이터는 그 자체로는 "그냥 값"</span>
+      <p class="wdesc">아래 값을 보고, "이게 무슨 뜻일까?"를 생각해 봄. 그다음 버튼을 눌러 맥락을 더해 봄.</p>
+      <div class="out" id="w1out"></div>
+      <div style="text-align:center;margin-top:10px;">
+        <button class="btn" id="w1btn">맥락 더하기 →</button>
+        <button class="btn ghost" id="w1reset">↻</button>
+      </div>
+    </div>
+
+    <div class="note"><b>📌 핵심</b><br>데이터(예: "36.5")는 그 자체로는 의미가 불분명함. 맥락(체온인지, 기온인지)이 붙어야 비로소 쓸모 있는 <b>정보</b>가 됨. 그래서 데이터를 "가공"해 의미를 끌어내는 게 분석임 — 다음 절의 DIKW로 이어짐.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>데이터는 현실의 사실·현상을 기록한 값임(숫자·글자·이미지·소리 등).</li>
+      <li>우리 하루의 거의 모든 것이 데이터로 적힐 수 있음.</li>
+      <li>데이터는 그 자체로는 "그냥 값"이고, 맥락이 붙어야 의미를 가짐.</li>
+    </ol></div>
+  </section>
+
+  <!-- 3-2 DIKW -->
+  <section class="reveal">
+    <div class="sec-no">3-2</div>
+    <h2>데이터에서 지혜까지 — DIKW 피라미드</h2>
+    <p>데이터는 <strong>가공을 거칠수록 가치가 커짐</strong>. 그 단계를 네 글자로 정리한 것이 <strong>DIKW 피라미드</strong>임 — <strong>Data(데이터) → Information(정보) → Knowledge(지식) → Wisdom(지혜)</strong>.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · DIKW 피라미드 (카페 매출 이야기)</span>
+      <p class="wdesc">피라미드의 각 층을 눌러, 같은 카페 데이터가 어떻게 정보→지식→지혜로 가치가 커지는지 봄.</p>
+      <div class="pyramid" id="pyr">
+        <div class="pyr-row" data-k="3" style="background:var(--accent);width:55%;">W · 지혜</div>
+        <div class="pyr-row" data-k="2" style="background:#b4622a;width:70%;">K · 지식</div>
+        <div class="pyr-row" data-k="1" style="background:var(--teal);width:85%;">I · 정보</div>
+        <div class="pyr-row" data-k="0" style="background:#3a342e;width:100%;">D · 데이터</div>
+      </div>
+      <div class="out" id="pyrout"></div>
+    </div>
+
+    <div class="note"><b>📌 이 흐름이 곧 데이터 분석</b><br>분석이란 결국 맨 아래 "데이터"를 위로 끌어올려 "정보 → 지식 → 지혜(행동)"로 바꾸는 일임. 1강에서 본 "데이터로 더 나은 결정"이 바로 데이터를 지혜(행동)까지 올리는 것임.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>데이터는 가공을 거칠수록 가치가 커짐 — DIKW(데이터·정보·지식·지혜).</li>
+      <li>데이터에 맥락이 붙으면 정보, 패턴이 더해지면 지식, 판단이 더해지면 지혜가 됨.</li>
+      <li>데이터를 위 단계로 끌어올려 행동으로 잇는 것이 곧 데이터 분석임.</li>
+    </ol></div>
+  </section>
+
+  <!-- 3-3 주변 데이터 -->
+  <section class="reveal">
+    <div class="sec-no">3-3</div>
+    <h2>우리 주변의 데이터</h2>
+    <p>데이터는 특별한 곳이 아니라 <strong>어디에나 있음</strong>. 분석할 거리는 이미 우리 주변에 넘쳐남. 영역별로 둘러봄.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 세상은 데이터로 가득 차 있다</span>
+      <p class="wdesc">영역을 눌러, 우리 주변 곳곳의 데이터를 살펴봄.</p>
+      <div class="seg" id="around">
+        <button class="on" data-k="life">🏠 일상</button>
+        <button data-k="shop">🛒 상거래</button>
+        <button data-k="public">🏛️ 공공·사회</button>
+      </div>
+      <div class="out" id="aroundout"></div>
+    </div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>데이터는 일상·상거래·공공 등 우리 주변 어디에나 있음.</li>
+      <li>디지털화로 과거엔 없던 양의 데이터가 매일 쌓이고 있음.</li>
+      <li>분석할 거리는 이미 넘쳐나며, 중요한 건 "무엇을 물을지"임.</li>
+    </ol></div>
+  </section>
+
+  <!-- 3-4 정형/비정형 -->
+  <section class="reveal">
+    <div class="sec-no">3-4</div>
+    <h2>첫 번째 분류 — 정형 vs 비정형</h2>
+    <p>데이터를 나누는 첫 기준은 <strong>"표로 깔끔하게 정리되는가"</strong>임.</p>
+
+    <div class="widget">
+      <span class="wlabel">시각화 · 정형 데이터 vs 비정형 데이터</span>
+      <p class="wdesc">두 종류를 나란히 비교해 봄. 표로 정리되면 정형, 틀이 없으면 비정형임.</p>
+      <div class="twocol">
+        <div class="tc a">
+          <div class="t">📋 정형 데이터</div>
+          행과 열의 <b>표</b>로 깔끔히 정리됨. 엑셀·데이터베이스의 모습.
+          <table class="minitable"><tr><th>이름</th><th>나이</th><th>구매액</th></tr><tr><td>김OO</td><td>32</td><td>45000</td></tr><tr><td>이OO</td><td>27</td><td>12000</td></tr></table>
+          <div style="margin-top:6px;color:var(--teal);">→ 매출표·고객명부·설문 응답표</div>
+        </div>
+        <div class="tc b">
+          <div class="t">🗂️ 비정형 데이터</div>
+          정해진 틀이 <b>없는</b> 데이터.
+          <div style="margin-top:8px;font-family:monospace;font-size:11px;line-height:1.7;">💬 "배송 빨라서 좋아요!"<br>📷 (상품 사진)<br>🎵 (통화 녹음)<br>📄 (자유 형식 메모)</div>
+          <div style="margin-top:6px;color:var(--gold);">→ 리뷰·이미지·음성·영상·문서</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ex"><b>비유 — 서류 캐비닛 vs 잡동사니 상자</b><br>정형은 칸칸이 라벨 붙은 <b>서류 캐비닛</b>(어디에 뭐가 있는지 명확). 비정형은 온갖 게 뒤섞인 <b>잡동사니 상자</b>(쓸모 있지만 정리가 안 됨).</div>
+
+    <div class="note"><b>📌 중요한 사실</b><br>세상 데이터의 <b>대부분(약 80% 이상)은 비정형</b>임(리뷰·사진·영상·문서). 정형은 다루기 쉽지만 양은 적고, 비정형은 양은 많지만 다루기 어려움. 그래서 우리는 먼저 다루기 쉬운 <b>정형 데이터</b>(표)부터 배움 — 판다스가 바로 표를 다루는 도구임. (틀이 약간 있는 중간 형태를 <b>반정형</b>이라 함: JSON·로그 등)</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>정형 데이터는 행·열의 표로 정리됨(매출표·고객명부), 다루기 쉬움.</li>
+      <li>비정형 데이터는 틀이 없음(리뷰·이미지·음성), 양이 많지만 다루기 어려움.</li>
+      <li>세상 데이터 대부분은 비정형이며, 우리는 먼저 정형(표)부터 배움.</li>
+    </ol></div>
+  </section>
+
+  <!-- 3-5 정량/정성 + 함정 -->
+  <section class="reveal">
+    <div class="sec-no">3-5</div>
+    <h2>두 번째 분류 — 정량 vs 정성</h2>
+    <p>또 다른 기준은 <strong>"숫자냐, 말(성질)이냐"</strong>임.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 정량 데이터 vs 정성 데이터</span>
+      <p class="wdesc">두 종류를 눌러 비교해 봄. 측정되는 숫자면 정량, 성질·특성이면 정성임.</p>
+      <div class="seg" id="qq">
+        <button class="on" data-k="quant">📏 정량 (숫자)</button>
+        <button data-k="qual">🏷️ 정성 (성질)</button>
+      </div>
+      <div class="out" id="qqout"></div>
+    </div>
+
+    <div class="ex"><b>비유 — 저울 vs 라벨</b><br>정량은 <b>저울</b>로 잰 값(무게·키·매출 — 크고 작음을 따짐). 정성은 <b>라벨</b>(혈액형·성별·지역 — 종류·특성을 나타냄).</div>
+
+    <h3>헷갈리기 쉬운 함정 — "숫자처럼 보이는 정성 데이터"</h3>
+    <p>이것이 초보자가 가장 많이 틀리는 부분임. <strong>숫자로 적혀 있다고 다 정량이 아님!</strong> 직접 확인해 봄.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 이건 정량일까 정성일까?</span>
+      <p class="wdesc">각 항목이 정량인지 정성인지 맞혀 봄. 숫자처럼 보여도 정성일 수 있음!</p>
+      <div class="out" id="trapout"></div>
+      <div class="seg" id="trapbtn" style="margin-top:10px;">
+        <button data-a="quant">정량(숫자)</button>
+        <button data-a="qual">정성(성질)</button>
+        <button class="ghost" data-a="next" style="border-color:var(--accent);color:var(--accent);">다음 문제 →</button>
+      </div>
+    </div>
+
+    <div class="note"><b>📌 왜 이 구분이 중요한가</b><br>척도를 잘못 보면 "혈액형의 평균" 같은 말이 안 되는 분석을 하게 됨. 등번호 7번 선수와 28번 선수의 "평균 17.5번"은 아무 의미가 없음 — 등번호는 숫자처럼 보여도 <b>이름표(정성)</b>이기 때문임. 이 이야기를 4강(측정 척도)에서 훨씬 정밀하게 발전시킴.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>정량 데이터는 측정되는 숫자(무게·매출), 정성 데이터는 성질·특성(혈액형·지역).</li>
+      <li>숫자처럼 보여도 정성일 수 있음(전화번호·등번호) — 가장 흔한 함정.</li>
+      <li>구분이 중요한 이유는 척도에 따라 가능한 분석이 완전히 달라지기 때문임(→ 4강).</li>
+    </ol></div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="next-card">
+    <div class="nl">NEXT · 4강</div>
+    <div class="nt">데이터의 종류 — 측정 척도</div>
+    <p style="margin-top:8px;">3강의 "숫자처럼 보이는 정성 데이터" 함정을 훨씬 정밀하게 발전시킴. 데이터는 <strong>네 가지 측정 척도</strong> — 명목·순서·등간·비율 — 로 더 정확히 나뉘고, 척도에 따라 할 수 있는 계산과 그래프가 완전히 달라짐.</p>
+  </div>
+  <p style="margin-top:24px;">데이터 분석 개요 및 기초 이론 · 3강 / 7강 · 데이터 분석 자동화 커리큘럼</p>
+</footer>
+
+<script>
+var prog=document.getElementById('progress');
+addEventListener('scroll',function(){var h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+
+/* 3-1 맥락 */
+(function(){
+  var steps=[
+    '<span class="hl">36.5</span>\n<span class="dim">이 숫자만 보면… 무슨 뜻일까? 알 수 없음.</span>',
+    '<span class="hl">36.5 ℃</span>  <span class="dim">(단위가 붙음)</span>\n<span class="dim">온도구나. 그런데 무엇의 온도?</span>',
+    '<span class="hl">체온: 36.5 ℃</span>  <span class="dim">(맥락이 붙음)</span>\n<span class="y">→ 이제 "정상 체온"이라는 의미가 생김!</span>\n<span style="color:#9ec79a">데이터(36.5)는 그냥 값,\n맥락이 붙어야 쓸모 있는 정보가 됨</span>'
+  ];
+  var i=0,out=document.getElementById('w1out');
+  function r(){out.innerHTML=steps[i];}
+  document.getElementById('w1btn').addEventListener('click',function(){if(i<steps.length-1)i++;r();});
+  document.getElementById('w1reset').addEventListener('click',function(){i=0;r();});
+  r();
+})();
+
+/* DIKW */
+(function(){
+  var R=[
+    {t:'D · 데이터 (Data)',d:'<span class="hl">"오늘 카페 매출: 50만 원"</span>\n그냥 기록된 값. 좋은지 나쁜지조차 모름.'},
+    {t:'I · 정보 (Information)',d:'<span class="hl">"어제 40만, 오늘 50만 — 25% 증가"</span>\n데이터에 맥락(비교)이 붙어 의미가 생김.'},
+    {t:'K · 지식 (Knowledge)',d:'<span class="hl">"비 오는 날 매출이 늘 높았음 (패턴)"</span>\n여러 정보를 모아 규칙·패턴을 발견함.'},
+    {t:'W · 지혜 (Wisdom)',d:'<span class="hl">"비 예보가 있으면 재료를 더 준비하자"</span>\n<span class="y">지식을 바탕으로 더 나은 행동을 결정 — 분석의 목표!</span>'}
+  ];
+  var out=document.getElementById('pyrout');
+  function sel(i){
+    document.querySelectorAll('#pyr .pyr-row').forEach(function(x){x.classList.add('dim');});
+    document.querySelector('#pyr [data-k="'+i+'"]').classList.remove('dim');
+    out.innerHTML='<span class="dim">'+R[i].t+'</span>\n'+R[i].d;
+  }
+  document.querySelectorAll('#pyr .pyr-row').forEach(function(el){el.addEventListener('click',function(){sel(+el.dataset.k);});});
+  document.querySelectorAll('#pyr .pyr-row').forEach(function(x){x.classList.remove('dim');});
+  out.innerHTML='<span class="dim">피라미드의 각 층을 눌러 보세요 (아래 데이터 → 위 지혜)</span>';
+})();
+
+/* 주변 데이터 */
+(function(){
+  var R={
+    life:'<span class="hl">🏠 일상의 데이터</span>\n· 스마트폰 걸음 수·수면 시간\n· 검색 기록·시청 기록\n· 가계부·교통카드 이용 내역\n· 날씨·기온·미세먼지',
+    shop:'<span class="hl">🛒 상거래의 데이터</span>\n· 영수증·주문 내역\n· 상품 리뷰·별점\n· 장바구니·찜 목록\n· 광고 클릭·방문 기록',
+    public:'<span class="hl">🏛️ 공공·사회의 데이터</span>\n· 인구조사·통계청 자료\n· 대중교통 이용량\n· 기상·환경 측정\n· 공공데이터포털의 개방 데이터'
+  };
+  var out=document.getElementById('aroundout');
+  document.querySelectorAll('#around button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#around button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.life;
+})();
+
+/* 정량/정성 */
+(function(){
+  var R={
+    quant:'<span class="hl">📏 정량 데이터 — 숫자로 측정</span>\n크고 작음, 많고 적음을 따질 수 있음.\n· 키 170cm, 몸무게 65kg\n· 매출 50만 원, 나이 32세\n· 방문자 1,200명, 기온 18도\n<span class="dim">→ 더하고 평균 내는 계산이 의미 있음</span>',
+    qual:'<span class="hl">🏷️ 정성 데이터 — 성질·특성</span>\n종류·범주를 나타냄(크고 작음 아님).\n· 혈액형(A·B·O·AB), 성별\n· 지역(서울·부산), 직업\n· 만족도(좋음·보통·나쁨)\n<span class="dim">→ 개수를 세거나 분류하는 게 의미 있음</span>'
+  };
+  var out=document.getElementById('qqout');
+  document.querySelectorAll('#qq button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#qq button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.quant;
+})();
+
+/* 함정 퀴즈 */
+(function(){
+  var Q=[
+    {q:'몸무게 "65" (kg)',a:'quant',why:'무게는 크고 작음을 따지고 더할 수 있음 → 정량'},
+    {q:'전화번호 "010-1234..."',a:'qual',why:'숫자지만 더하거나 평균 내면 무의미한 이름표 → 정성!'},
+    {q:'축구 등번호 "7"',a:'qual',why:'7번+28번의 "평균 17.5번"은 무의미 → 이름표(정성)!'},
+    {q:'한 달 매출 "500" (만원)',a:'quant',why:'금액은 더하고 평균 내는 게 의미 있음 → 정량'},
+    {q:'우편번호 "06236"',a:'qual',why:'지역을 가리키는 코드일 뿐, 계산은 무의미 → 정성!'}
+  ];
+  var i=0,answered=false,out=document.getElementById('trapout');
+  function show(){out.innerHTML='<span class="dim">문제 '+(i+1)+'/'+Q.length+' — 이건 정량일까 정성일까?</span>\n\n<span class="hl">'+Q[i].q+'</span>';answered=false;}
+  function judge(a){
+    if(answered)return;
+    answered=true;
+    var ok=(a===Q[i].a);
+    out.innerHTML='<span class="dim">문제 '+(i+1)+'/'+Q.length+'</span>\n\n<span class="hl">'+Q[i].q+'</span>\n\n'+(ok?'<span style="color:#9ec79a">⭕ 정답!</span>':'<span style="color:#e0935f">❌ 다시 생각</span>')+' — 정답: <span class="y">'+(Q[i].a==='quant'?'정량':'정성')+'</span>\n<span class="dim">'+Q[i].why+'</span>';
+  }
+  document.querySelectorAll('#trapbtn button').forEach(function(b){
+    b.addEventListener('click',function(){
+      if(b.dataset.a==='next'){i=(i+1)%Q.length;show();}
+      else judge(b.dataset.a);
+    });
+  });
+  show();
+})();
+</script>
+</body>
+</html>

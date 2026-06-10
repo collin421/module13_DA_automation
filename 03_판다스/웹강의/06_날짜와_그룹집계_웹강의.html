@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 6 · 날짜 데이터와 그룹 집계</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--theme:#c2410c;--themed:#8a3408;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:880px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.06),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--theme);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:84px 22px 36px;}
+  .eyebrow{color:var(--theme);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:62ch;}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:54px 0 30px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--theme);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 18px;line-height:1.3;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  code{font-family:'Gowun Dodum',monospace;background:#efe7d8;color:#8a3408;padding:1.5px 7px;border-radius:6px;font-size:.92em;}
+  pre{background:#2b2723;color:#f4efe6;border-radius:12px;padding:16px 18px;overflow-x:auto;font-size:13.5px;line-height:1.7;margin:16px 0;white-space:pre;}
+  pre code{background:none;color:inherit;padding:0;}
+  pre .k{color:#e0935f;}pre .s{color:#9ec79a;}pre .c{color:#8b8175;font-style:italic;}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--theme);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15.5px;color:var(--sub);}
+  .note b{color:var(--themed);}.note.warn{border-left-color:#b4451f;}
+  .summary{background:#f3e7df;border-radius:12px;padding:18px 20px;margin:22px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--themed);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--theme);padding:4px 11px;border-radius:999px;margin-bottom:16px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;border-radius:10px;padding:12px 15px;font-family:monospace;font-size:13.5px;color:#9ec79a;min-height:38px;white-space:pre-wrap;line-height:1.7;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}.out .accent{color:#e0935f;font-weight:700;}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+  .segbtn{border:1.5px solid var(--line);background:#fff;border-radius:9px;padding:8px 13px;cursor:pointer;font-family:var(--sans);font-weight:700;font-size:12.5px;color:var(--sub);transition:.15s;}
+  .segbtn.on{border-color:var(--theme);background:var(--theme);color:#fff;}
+  .stage{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;}
+  .lbl{font-size:12px;color:var(--sub);font-weight:700;}
+
+  .dft{border-collapse:collapse;font-family:monospace;font-size:13px;width:100%;}
+  .dft th,.dft td{border:1px solid var(--line);padding:6px 9px;text-align:center;}
+  .dft th{background:#efe7d8;color:#8a3408;}
+  .dft td{background:#fff;}
+  .dft td.lbl2{background:#f3ecdd;color:#a06a2a;font-weight:700;}
+  .dft tr.gA td{background:#fbf1e6;}
+  .dft tr.gB td{background:#eef4ec;}
+  .dft td.new{background:#e3efe0;color:#2f6b5e;font-weight:700;}
+
+  .flowarr{text-align:center;color:var(--theme);font-weight:700;font-size:18px;margin:6px 0;}
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f7ece4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;text-decoration:none;color:inherit;display:block;transition:.18s;}
+  .next-card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(80,60,30,.1);}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--theme);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .crumb{display:inline-block;margin-bottom:8px;font-size:13px;color:var(--sub);text-decoration:none;}
+  .crumb:hover{color:var(--accent);}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}.dft{font-size:12px;}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<header class="hero">
+  <a class="crumb" href="../00_데이터분석_판다스_목차.html">← 전체 목차</a>
+  <div class="eyebrow">데이터 분석 · 판다스 · 3단계</div>
+  <h1>날짜 데이터와 그룹 집계<br><span style="font-size:.6em;color:var(--sub);font-weight:400;">시간의 흐름을 분석하기</span></h1>
+  <p class="lead">거의 모든 비즈니스 데이터는 <strong>시간의 흐름</strong>을 가집니다. 문자열 날짜를 진짜 날짜형으로 바꿔 연·월·요일을 뽑고(<code>to_datetime</code>·<code>.dt</code>), <code>groupby</code>로 기준별 집계, <code>replace</code>·<code>apply</code>로 가공하는 — 처음으로 "기준별로 묶어 요약하는" 진짜 분석을 합니다.</p>
+  <div class="hero-meta">
+    <span class="chip">🟠 3단계 · 가공·집계</span>
+    <span class="chip t">to_datetime · groupby · agg · apply</span>
+    <span class="chip t">예상 40분</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- S1 to_datetime / .dt -->
+  <section class="reveal">
+    <div class="sec-no">01</div>
+    <h2>문자열 → 날짜 → 추출 (to_datetime · .dt)</h2>
+    <p>CSV에서 날짜는 보통 <strong>그냥 문자열</strong>(<code>'20230301'</code>)로 들어옵니다. 문자열 상태로는 "월만 뽑기"가 안 됩니다. <code>to_datetime</code>으로 날짜형으로 바꾼 뒤, <code>.dt</code>로 연·월·요일·주차를 뽑습니다. 날짜를 골라 추출 결과를 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · .dt 추출</span>
+      <div class="seg" id="w1btn">
+        <button class="segbtn on" data-k="0">2023-03-01</button>
+        <button class="segbtn" data-k="1">2023-12-25</button>
+        <button class="segbtn" data-k="2">2024-06-10</button>
+      </div>
+      <div class="stage">
+        <div class="out" id="w1out"></div>
+      </div>
+    </div>
+
+    <div class="note"><b>⚠️ 속성 vs 메소드</b> &nbsp;<code>.dt.year</code>·<code>.dt.month</code>는 속성(괄호 없음)이지만 <code>.dt.day_name()</code>은 메소드(괄호 있음)입니다. 변환에 성공하면 <code>dtype</code>이 <code>object</code>에서 <b><code>datetime64</code></b>로 바뀝니다. 이 추출 결과가 다음 단계 <code>groupby</code>의 집계 기준이 됩니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>to_datetime(열, format=)</code>로 문자열→날짜형.</li>
+      <li><code>.dt.year/month/day_name()</code>로 분석 축 생성.</li>
+      <li>날짜형이라야 추출·기간 계산이 가능.</li>
+    </ol></div>
+  </section>
+
+  <!-- S2 groupby -->
+  <section class="reveal">
+    <div class="sec-no">02</div>
+    <h2>groupby — 기준별로 묶어 집계</h2>
+    <p>데이터를 <strong>특정 기준으로 그룹화</strong>한 뒤 그룹마다 합계·평균을 계산합니다. 원리는 <strong>분리(split)·적용(apply)·결합(combine)</strong> — 기준 값에 따라 행을 나누고, 각 그룹에 집계를 적용해 합칩니다. 기준을 바꿔 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · groupby</span>
+      <p class="wdesc">주문 6건(연도·요일·수량·금액). 기준을 누르면 같은 그룹끼리 색으로 묶이고 합계가 나옵니다.</p>
+      <div class="seg" id="w2btn">
+        <button class="segbtn on" data-k="연도">groupby('연도')</button>
+        <button class="segbtn" data-k="요일그룹">groupby('주중/주말')</button>
+      </div>
+      <div class="stage">
+        <table class="dft" id="w2raw"></table>
+        <div class="flowarr">▼ 그룹별 수량·금액 합계</div>
+        <table class="dft" id="w2agg"></table>
+      </div>
+    </div>
+
+    <div class="note"><b>📌 인덱스</b> &nbsp;<code>groupby</code> 결과는 <b>기준 열이 인덱스</b>가 됩니다. 표로 다시 다루려면 <code>reset_index()</code>로 일반 열로 되돌립니다. 문법: <code>df.groupby('기준')['집계할열'].집계함수()</code>.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>groupby('기준')['열'].sum()</code> 형태.</li>
+      <li>분리-적용-결합으로 기준별 요약.</li>
+      <li>여러 기준은 리스트로(<code>['연도','월']</code>).</li>
+    </ol></div>
+  </section>
+
+  <!-- S3 agg -->
+  <section class="reveal">
+    <div class="sec-no">03</div>
+    <h2>agg — 여러 통계를 한 번에</h2>
+    <p><code>groupby</code> 뒤에 붙여 <strong>여러 집계 함수를 동시에</strong> 적용합니다. 한 열에 여러 함수는 <strong>리스트</strong>, 열마다 다른 함수는 <strong>딕셔너리</strong>를 줍니다.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · agg</span>
+      <div class="seg" id="w3btn">
+        <button class="segbtn on" data-k="list">['sum', 'mean'] · 리스트</button>
+        <button class="segbtn" data-k="dict">{'금액':'sum','수량':'mean'} · 딕셔너리</button>
+      </div>
+      <div class="stage">
+        <pre style="margin:0 0 10px;"><code id="w3code"></code></pre>
+        <table class="dft" id="w3table"></table>
+      </div>
+    </div>
+
+    <div class="note"><b>📊 활용</b> &nbsp;"요일별 매출 합계·평균·건수"처럼 한 번에 여러 각도로 요약할 때 <code>agg</code>가 필수입니다. <code>df.groupby('요일')['금액'].agg(['sum','mean','count'])</code>.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>여러 함수는 <code>.agg(['sum','mean'])</code> 리스트.</li>
+      <li>열별 함수는 <code>.agg({'A':'sum','B':'mean'})</code> 딕셔너리.</li>
+      <li>한 번에 다각도 요약.</li>
+    </ol></div>
+  </section>
+
+  <!-- S4 replace -->
+  <section class="reveal">
+    <div class="sec-no">04</div>
+    <h2>replace — 값 치환 (범주 재분류)</h2>
+    <p>특정 값을 다른 값으로 바꿉니다. 오류 값 보정이나 <strong>범주 재분류</strong>에 씁니다. 요일(영문)을 <strong>주중/주말</strong>로 묶으면 새로운 집계 축이 생깁니다. 딕셔너리로 여러 값을 한 번에 치환합니다.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · replace(딕셔너리)</span>
+      <button class="segbtn on" id="w4go" style="margin-bottom:12px;">요일 → 주중/주말 치환 ▶</button>
+      <div class="stage">
+        <pre style="margin:0 0 10px;"><code id="w4code"></code></pre>
+        <table class="dft" id="w4table"></table>
+        <div class="lbl" id="w4cnt" style="margin-top:8px;color:var(--themed);font-weight:700;"></div>
+      </div>
+    </div>
+
+    <div class="note"><b>📌 새 집계 축</b> &nbsp;<code>replace</code>로 만든 '주중/주말'을 기준으로 <code>groupby</code>하면 주중·주말 매출을 비교할 수 있습니다. 단일 값 치환은 <code>df.replace(-9999, 0)</code>처럼 오류 보정에도 씁니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>replace({옛값:새값})</code>로 여러 값 치환.</li>
+      <li>범주 재분류로 새 집계 축 생성.</li>
+      <li>단일 값 치환은 오류 보정에도 사용.</li>
+    </ol></div>
+  </section>
+
+  <!-- S5 apply -->
+  <section class="reveal">
+    <div class="sec-no">05</div>
+    <h2>apply — 사용자 정의 함수 적용</h2>
+    <p>판다스 기본 함수로 부족할 때, <strong>내가 만든 함수(<code>def</code>·람다)</strong>를 열의 모든 값에 적용합니다. <code>apply</code>는 그 함수를 각 값마다 하나씩 호출해 결과를 모읍니다 — 반복문 없이 한 줄로. 금액에 부가세 10%를 더해 봅니다.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · apply</span>
+      <button class="segbtn on" id="w5go" style="margin-bottom:12px;">apply(lambda x: int(x*1.1)) 적용 ▶</button>
+      <div class="stage">
+        <pre style="margin:0 0 10px;"><code id="w5code"></code></pre>
+        <table class="dft" id="w5table"></table>
+      </div>
+    </div>
+
+    <div class="note warn"><b>⚠️ 함수 이름만</b> &nbsp;<code>apply(함수)</code>처럼 <b>함수 이름만</b> 넘깁니다. <code>apply(함수())</code>처럼 괄호를 붙이면 미리 실행돼 버립니다. 문자열엔 <code>str.split</code> 등과 조합해, 날짜끼리 빼면 <b>기간(timedelta)</b>이 나옵니다(배송 소요일 등).</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>df['열'].apply(함수)</code>로 전 값에 적용.</li>
+      <li>간단하면 <code>lambda</code>, 복잡하면 <code>def</code>.</li>
+      <li>함수는 <b>이름만</b> 넘긴다(괄호 X).</li>
+    </ol></div>
+  </section>
+
+</main>
+
+<footer>
+  <a class="next-card" href="07_데이터합치기_웹강의.html">
+    <div class="nl">NEXT · PART 7</div>
+    <div class="nt">데이터 합치기 — concat · merge</div>
+    <p style="margin-top:8px;">흩어진 여러 테이블을 하나로 모읍니다. 행/열을 이어 붙이는 <strong>concat</strong>, 공통 키로 엮는 <strong>merge</strong>(inner·outer·left·right 조인)를 배웁니다.</p>
+  </a>
+  <p style="margin-top:24px;">데이터 분석 프로세스와 판다스 활용하기 · Part 6 / 9 · 가공·집계</p>
+</footer>
+
+<script>
+const prog=document.getElementById('progress');
+addEventListener('scroll',()=>{const h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ===== W1 to_datetime / dt ===== */
+(function(){
+  const D=[
+    {s:'2023-03-01', y:2023, m:3, dn:'Wednesday', w:9},
+    {s:'2023-12-25', y:2023, m:12, dn:'Monday', w:52},
+    {s:'2024-06-10', y:2024, m:6, dn:'Monday', w:24}
+  ];
+  const out=document.getElementById('w1out');
+  function render(i){
+    const d=D[i];
+    out.innerHTML=
+      "<span class=\"dim\">문자열 </span><span class=\"hl\">'"+d.s.replace(/-/g,'')+"'</span><span class=\"dim\"> (object)</span>\n"+
+      "  ▼ pd.to_datetime(..., format='%Y%m%d')\n"+
+      "<span class=\"dim\">날짜형 </span><span class=\"hl\">"+d.s+"</span> <span class=\"accent\">(datetime64)</span>\n"+
+      "  ▼ .dt 추출\n"+
+      "  .dt.year ▸ <span class=\"hl\">"+d.y+"</span>\n"+
+      "  .dt.month ▸ <span class=\"hl\">"+d.m+"</span>\n"+
+      "  .dt.day_name() ▸ <span class=\"hl\">"+d.dn+"</span>\n"+
+      "  .dt.isocalendar().week ▸ <span class=\"hl\">"+d.w+"</span>";
+  }
+  document.querySelectorAll('#w1btn .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w1btn .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(+b.dataset.k);}));
+  render(0);
+})();
+
+/* 공통 주문 데이터 */
+const O=[
+  {연도:2023, 요일:'Monday', 수량:2, 금액:20000},
+  {연도:2023, 요일:'Saturday', 수량:1, 금액:15000},
+  {연도:2023, 요일:'Friday', 수량:3, 금액:33000},
+  {연도:2024, 요일:'Friday', 수량:2, 금액:24000},
+  {연도:2024, 요일:'Saturday', 수량:1, 금액:12000},
+  {연도:2024, 요일:'Friday', 수량:4, 금액:40000}
+];
+const 주말맵={Monday:'주중',Tuesday:'주중',Wednesday:'주중',Thursday:'주중',Friday:'주중',Saturday:'주말',Sunday:'주말'};
+
+/* ===== W2 groupby ===== */
+(function(){
+  const raw=document.getElementById('w2raw'), agg=document.getElementById('w2agg');
+  function keyOf(r,k){return k==='연도'?r.연도:주말맵[r.요일];}
+  function render(k){
+    const keys=[...new Set(O.map(r=>keyOf(r,k)))];
+    const colorOf=v=>'g'+String.fromCharCode(65+keys.indexOf(v)%2);
+    let h='<tr><th>연도</th><th>요일</th><th>수량</th><th>금액</th></tr>';
+    O.forEach(r=>{h+='<tr class="'+colorOf(keyOf(r,k))+'"><td>'+r.연도+'</td><td>'+r.요일+'</td><td>'+r.수량+'</td><td>'+r.금액.toLocaleString()+'</td></tr>';});
+    raw.innerHTML=h;
+    let a='<tr><th>'+(k==='연도'?'연도':'주중/주말')+'</th><th>수량 합</th><th>금액 합</th></tr>';
+    keys.forEach(v=>{const rows=O.filter(r=>keyOf(r,k)===v);
+      a+='<tr class="'+colorOf(v)+'"><td class="lbl2">'+v+'</td><td>'+rows.reduce((s,r)=>s+r.수량,0)+'</td><td>'+rows.reduce((s,r)=>s+r.금액,0).toLocaleString()+'</td></tr>';});
+    agg.innerHTML=a;
+  }
+  document.querySelectorAll('#w2btn .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w2btn .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(b.dataset.k);}));
+  render('연도');
+})();
+
+/* ===== W3 agg ===== */
+(function(){
+  const code=document.getElementById('w3code'), t=document.getElementById('w3table');
+  const years=[2023,2024];
+  function render(k){
+    if(k==='list'){
+      code.innerHTML="df.groupby(<span class=\"s\">'연도'</span>)[<span class=\"s\">'수량'</span>].<span class=\"k\">agg</span>([<span class=\"s\">'sum'</span>, <span class=\"s\">'mean'</span>])";
+      let h='<tr><th>연도</th><th>sum</th><th>mean</th></tr>';
+      years.forEach(y=>{const r=O.filter(x=>x.연도===y);const s=r.reduce((a,b)=>a+b.수량,0);
+        h+='<tr><td class="lbl2">'+y+'</td><td>'+s+'</td><td>'+(s/r.length).toFixed(3)+'</td></tr>';});
+      t.innerHTML=h;
+    }else{
+      code.innerHTML="df.groupby(<span class=\"s\">'연도'</span>).<span class=\"k\">agg</span>({<span class=\"s\">'금액'</span>:<span class=\"s\">'sum'</span>, <span class=\"s\">'수량'</span>:<span class=\"s\">'mean'</span>})";
+      let h='<tr><th>연도</th><th>금액 (sum)</th><th>수량 (mean)</th></tr>';
+      years.forEach(y=>{const r=O.filter(x=>x.연도===y);
+        h+='<tr><td class="lbl2">'+y+'</td><td>'+r.reduce((a,b)=>a+b.금액,0).toLocaleString()+'</td><td>'+(r.reduce((a,b)=>a+b.수량,0)/r.length).toFixed(3)+'</td></tr>';});
+      t.innerHTML=h;
+    }
+  }
+  document.querySelectorAll('#w3btn .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w3btn .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(b.dataset.k);}));
+  render('list');
+})();
+
+/* ===== W4 replace ===== */
+(function(){
+  const t=document.getElementById('w4table'), code=document.getElementById('w4code'), cnt=document.getElementById('w4cnt'), go=document.getElementById('w4go');
+  let done=false;
+  function render(){
+    code.innerHTML='주말맵 = {<span class="s">\x27Monday\x27</span>:<span class="s">\x27주중\x27</span>, ..., <span class="s">\x27Saturday\x27</span>:<span class="s">\x27주말\x27</span>}\ndf[<span class="s">\x27주중/주말\x27</span>] = df[<span class="s">\x27요일\x27</span>].<span class="k">replace</span>(주말맵)';
+    let h='<tr><th>요일</th>'+(done?'<th>주중/주말</th>':'')+'</tr>';
+    O.forEach(r=>{h+='<tr><td>'+r.요일+'</td>'+(done?'<td class="new">'+주말맵[r.요일]+'</td>':'')+'</tr>';});
+    t.innerHTML=h;
+    if(done){const j=O.filter(r=>주말맵[r.요일]==='주중').length;cnt.innerHTML='치환 완료 ▸ 주중 '+j+'건, 주말 '+(O.length-j)+'건';}
+    else cnt.innerHTML='버튼을 눌러 치환을 적용하세요.';
+  }
+  go.addEventListener('click',()=>{done=!done;go.textContent=done?'원래대로 ◀':'요일 → 주중/주말 치환 ▶';render();});
+  render();
+})();
+
+/* ===== W5 apply ===== */
+(function(){
+  const t=document.getElementById('w5table'), code=document.getElementById('w5code'), go=document.getElementById('w5go');
+  let done=false;
+  function render(){
+    code.innerHTML='<span class="k">def</span> 부가세(x):\n    <span class="k">return</span> int(x * 1.1)\n\ndf[<span class="s">\x27금액(VAT)\x27</span>] = df[<span class="s">\x27금액\x27</span>].<span class="k">apply</span>(부가세)';
+    let h='<tr><th>금액</th>'+(done?'<th>금액(VAT) = ×1.1</th>':'')+'</tr>';
+    O.forEach(r=>{h+='<tr><td>'+r.금액.toLocaleString()+'</td>'+(done?'<td class="new">'+Math.floor(r.금액*1.1).toLocaleString()+'</td>':'')+'</tr>';});
+    t.innerHTML=h;
+  }
+  go.addEventListener('click',()=>{done=!done;go.textContent=done?'원래대로 ◀':'apply(lambda x: int(x*1.1)) 적용 ▶';render();});
+  render();
+})();
+</script>
+</body>
+</html>

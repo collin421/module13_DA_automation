@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Part 5 · 리스트</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&amp;family=Gowun+Dodum&amp;display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:760px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:88px 22px 40px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:62ch;}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:76px 0 46px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 20px;line-height:1.3;}
+  p{margin:0 0 16px;}
+  .sub{color:var(--sub);}
+  strong{color:var(--accent);font-weight:700;}
+  code{font-family:'Gowun Dodum',monospace;background:#efe7d8;color:#8a3408;padding:1.5px 7px;border-radius:6px;font-size:.92em;}
+  pre{background:#2b2723;color:#f4efe6;border-radius:12px;padding:16px 18px;overflow-x:auto;font-size:14px;line-height:1.7;margin:16px 0;}
+  pre code{background:none;color:inherit;padding:0;}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15.5px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:22px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:16px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;color:#9ec79a;border-radius:10px;padding:13px 16px;font-family:monospace;font-size:15px;min-height:42px;white-space:pre-wrap;}
+  .out .dim{color:#8b8175;}.out .err{color:#e0935f;}.out .hl{color:#fff;font-weight:700;}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+  .seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:monospace;transition:.15s;color:var(--ink);}
+  .seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  .btn{border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:13px;padding:9px 14px;border-radius:9px;cursor:pointer;}
+  .btn.ghost{background:#fdfaf4;border:1.5px solid var(--line);color:var(--sub);}
+  .pp-input{border:1.5px solid var(--line);border-radius:8px;padding:8px 12px;font-family:monospace;font-size:14px;background:#fff;color:var(--ink);}
+
+  /* list cells */
+  .cells{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:6px 0;}
+  .cell{display:flex;flex-direction:column;align-items:center;gap:3px;}
+  .cell .box{min-width:54px;height:46px;padding:0 8px;border:1.5px solid var(--line);border-radius:9px;display:grid;place-items:center;font-family:monospace;font-size:14px;background:#fff;transition:.15s;}
+  .cell.sel .box{border-color:var(--accent);background:var(--accent);color:#fff;}
+  .cell .idx{font-family:monospace;font-size:11px;color:var(--sub);}
+
+  /* W2 reference diagram */
+  .rf-stage{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px;}
+  .rf-diagram{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:14px;font-family:monospace;flex-wrap:wrap;}
+  .rf-names{display:flex;flex-direction:column;gap:18px;}
+  .rf-name{background:var(--accent);color:#fff;border-radius:8px;padding:6px 12px;font-weight:700;font-size:14px;text-align:center;}
+  .rf-arrows{font-size:22px;color:var(--sub);}
+  .rf-list{border:2px solid var(--teal);background:#d8e8e3;border-radius:10px;padding:10px 14px;font-size:15px;color:#225349;font-weight:700;}
+  .rf-mode{display:flex;gap:8px;margin-bottom:14px;}
+
+  /* W3 add/remove */
+  .ar-list{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:10px 0;min-height:48px;align-items:center;}
+  .ar-item{border:1.5px solid var(--teal);background:#d8e8e3;border-radius:9px;padding:9px 13px;font-family:monospace;font-size:14px;color:#225349;}
+  .ar-empty{color:var(--sub);font-style:italic;font-size:13px;}
+
+  /* W4 sort/agg */
+  .bars{display:flex;gap:8px;align-items:flex-end;justify-content:center;height:120px;margin:14px 0;}
+  .bar{width:46px;background:linear-gradient(180deg,#e9d5c4,#c2410c);border-radius:6px 6px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px;color:#fff;font-size:10px;font-family:monospace;transition:.4s;}
+
+  /* W5 table */
+  .tbl{border-collapse:collapse;margin:8px auto;font-family:monospace;font-size:13px;}
+  .tbl td{border:1.5px solid var(--line);padding:8px 12px;text-align:center;cursor:pointer;transition:.15s;}
+  .tbl td.sel{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .tbl .rowlbl,.tbl .collbl{background:#efe7d8;color:var(--sub);font-size:11px;cursor:default;}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}}
+</style>
+<style id="wide16x9">
+/* ===== 16:9 와이드 반응형 오버라이드 ===== */
+:root{--maxw:1320px;}
+header.hero{text-align:center;padding-top:70px;}
+header.hero .lead{margin-left:auto;margin-right:auto;}
+header.hero .hero-meta{justify-content:center;}
+main.wrap section.two-col .col-text>:first-child{margin-top:0;}
+main.wrap section.two-col .col-text .summary{margin-bottom:0;}
+@media(min-width:980px){
+  main.wrap section.two-col{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.06fr);
+    gap:46px;align-items:start;
+  }
+  main.wrap section.two-col .col-widget{position:sticky;top:22px;}
+  main.wrap section.two-col .col-text{padding-top:2px;}
+}
+@media(max-width:979px){
+  main.wrap section.two-col .col-widget{margin-top:6px;}
+}
+</style></head>
+<body>
+<div id="progress"></div>
+<header class="hero">
+<div class="eyebrow">파이썬 기초 문법 · Part 5 · 자료구조</div>
+<h1>리스트</h1>
+<p class="lead">여러 값을 <strong>순서대로 담는</strong> 가장 많이 쓰는 자료구조. 만들고·꺼내고·자르고(문자열과 닮음), 추가·삭제·정렬함. 그리고 핵심 동작 원리 — 문자열과 달리 리스트는 <strong>바꿀 수 있고(가변)</strong> 변수가 그것을 <strong>가리킨다(참조)</strong>는 점을 익힘.</p>
+<div class="hero-meta">
+<span class="chip">🟡 자료구조 · 5/18</span>
+<span class="chip t">가변 · 참조 · 정렬</span>
+<span class="chip t">예상 35분</span>
+</div>
+</header>
+<main class="wrap">
+<!-- Section 1 -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">5-1</div><h2>리스트 만들기</h2><p><code>[ ]</code> 안에 값을 쉼표로 나열한 순서 있는 묶음. 인덱싱·슬라이싱·<code>len</code>·<code>in</code>이 <strong>문자열과 똑같이</strong> 통함 — 새로 외울 게 적음.</p><div class="note"><b>📌 참고</b>  빈 리스트는 <code>[]</code>로 만들어 나중에 값을 채워 넣음(반복문에서 자주). Part 4의 <code>.split()</code> 결과가 바로 리스트였음 — <code>"a,b,c".split(",")</code> → <code>['a','b','c']</code>.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>리스트는 <code>[ ]</code>에 값을 나열한 순서 있는 묶음.</li>
+<li>인덱싱·슬라이싱·<code>len</code>·<code>in</code>이 문자열처럼 통함.</li>
+<li><code>.split()</code>의 결과가 바로 리스트임.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 리스트 인덱싱</span>
+<p class="wdesc">칸을 클릭해 인덱스를 확인. 문자열의 글자 대신 "값"이 들어 있을 뿐 동작은 같음.</p>
+<div class="cells" id="w1cells"></div>
+<div class="out" id="w1out" style="margin-top:12px;"></div>
+</div></div></section>
+<!-- Section 2: reference -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">5-2</div><h2>가변과 참조 ⭐</h2><p>리스트는 <strong>바꿀 수 있고(가변)</strong>, 변수는 리스트를 <strong>가리킴(참조)</strong>. 그래서 <code>b = a</code>는 <strong>복사가 아니라</strong> 같은 리스트를 둘이 함께 가리키는 것 — 한쪽을 바꾸면 양쪽이 바뀜.</p><div class="note"><b>📌 참고</b>  <b><code>b = a</code>는 복사가 아니다</b> — 같은 리스트를 함께 가리킴(Part 1 바인딩과 같은 원리). 숫자·문자열은 불변이라 이런 일이 없지만, 리스트는 가변·참조라 주의. 따로 다루려면 <code>.copy()</code>.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>리스트는 <strong>가변</strong> — 인덱스로 값을 직접 바꿈.</li>
+<li>변수는 리스트를 <strong>가리킴(참조)</strong> — <code>b=a</code>는 복사 아님.</li>
+<li>따로 다루려면 <code>.copy()</code>로 진짜 복사.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · b = a 는 복사가 아니다</span>
+<p class="wdesc">"b = a"와 "b = a.copy()"를 비교. b를 바꿨을 때 a가 어떻게 되는지 봄.</p>
+<div class="rf-mode seg" id="w2mode" style="margin-bottom:14px;">
+<button class="on" data-k="ref">b = a  (참조)</button>
+<button data-k="copy">b = a.copy()  (복사)</button>
+</div>
+<div class="rf-stage">
+<div class="rf-diagram" id="w2diagram"></div>
+<div style="text-align:center;">
+<button class="btn" id="w2change">b[0] = 999 실행</button>
+<button class="btn ghost" id="w2reset">↻</button>
+</div>
+<div class="out" id="w2out" style="margin-top:12px;"></div>
+</div>
+</div></div></section>
+<!-- Section 3: add/remove -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">5-3</div><h2>추가와 삭제</h2><p><code>.append</code>(끝에 추가)·<code>.pop</code>(맨 끝 빼기)·<code>.remove</code>(값 삭제). 문자열과 정반대로, 리스트 메서드는 <strong>원본을 직접 바꿈</strong>(가변) — 그래서 <strong>다시 담지 않음</strong>.</p><div class="note"><b>📌 참고</b>  ⚠️ <code>목록 = 목록.append("X")</code>처럼 <b>다시 담으면 안 됨</b> — <code>.append()</code>는 원본을 바꾸고 <code>None</code>을 돌려줘서, 다시 담으면 리스트가 사라짐. 그냥 <code>목록.append("X")</code>만.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li><code>append</code>·<code>insert</code>·<code>remove</code>·<code>pop</code>으로 가공함.</li>
+<li>리스트 메서드는 <strong>원본을 직접 바꿈</strong> — 다시 담지 않음.</li>
+<li>빈 리스트 → <code>append</code>로 채우는 패턴이 반복문에서 핵심.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 추가·삭제</span>
+<p class="wdesc">버튼으로 리스트를 직접 가공해 봄. 원본이 그 자리에서 바뀜(다시 담지 않음).</p>
+<div class="ar-list" id="w3list"></div>
+<div class="seg" style="justify-content:center;">
+<input class="pp-input" id="w3val" style="width:90px;" value="가디건"/>
+<button class="btn" data-act="append">.append()</button>
+<button class="btn ghost" data-act="pop">.pop()</button>
+<button class="btn ghost" data-act="reset">↻</button>
+</div>
+<div class="out" id="w3out" style="margin-top:12px;"></div>
+</div></div></section>
+<!-- Section 4: sort/agg -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">5-4</div><h2>정렬과 집계</h2><p><code>.sort()</code>(원본 정렬)·<code>sorted()</code>(새 리스트), 그리고 <code>sum</code>·<code>max</code>·<code>min</code>·<code>len</code>으로 합계·최대·최소·평균을 한 줄에. 데이터 분석의 단골 작업임.</p><div class="note"><b>📌 참고</b>  <code>.sort()</code>는 원본을 바꿈, <code>sorted()</code>는 새 리스트를 돌려줌(원본 보존 시 사용). "비싼 순 상위 N개", "매출 합계·평균"이 정렬+슬라이싱, <code>sum</code>/<code>len</code>으로 바로 됨.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li><code>.sort()</code>는 원본 정렬, <code>sorted()</code>는 새 리스트.</li>
+<li><code>reverse=True</code>로 내림차순.</li>
+<li><code>sum</code>·<code>max</code>·<code>min</code>·<code>len</code>으로 요약값을 구함.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 정렬 + 집계</span>
+<p class="wdesc">정렬 버튼으로 막대를 정렬하고, 합계·평균 등 집계값을 확인.</p>
+<div class="bars" id="w4bars"></div>
+<div class="seg" style="justify-content:center;">
+<button class="btn" data-sort="asc">오름차순 .sort()</button>
+<button class="btn" data-sort="desc">내림차순 reverse=True</button>
+<button class="btn ghost" data-sort="reset">↻</button>
+</div>
+<div class="out" id="w4out" style="margin-top:12px;"></div>
+</div></div></section>
+<!-- Section 5: nested -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">5-5</div><h2>중첩 리스트 — 표 만들기</h2><p>리스트 안에 리스트를 담아 <strong>표(행·열)</strong>를 만듦. <code>[행][열]</code>로 두 번 인덱싱해 한 칸을 꺼냄. 이 "리스트의 리스트"가 데이터 분석의 기본 데이터 형태임.</p><div class="note"><b>📌 참고</b>  "리스트의 리스트"가 CSV·데이터프레임의 바탕임. 중첩이 깊어지면 읽기 어려우니 실무에선 보통 2단계(표)까지 직접 다루고 그 이상은 pandas에 맡김.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>리스트 안에 리스트를 담아(중첩) 표 구조를 만듦.</li>
+<li><code>[행][열]</code>로 두 번 인덱싱해 한 칸을 꺼냄.</li>
+<li>이 "리스트의 리스트"가 데이터 분석의 기본 형태임.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 상품표 [행][열]</span>
+<p class="wdesc">표의 칸을 클릭하면, 그 칸을 꺼내는 <code>[행][열]</code> 코드와 값이 나타남.</p>
+<table class="tbl" id="w5tbl"></table>
+<div class="out" id="w5out" style="margin-top:12px;"></div>
+</div></div></section>
+</main>
+<footer>
+<div class="next-card">
+<div class="nl">NEXT · PART 6</div>
+<div class="nt">튜플과 세트</div>
+<p style="margin-top:8px;">못 바꾸는 리스트 <strong>튜플(불변)</strong>과 중복 없는 <strong>세트(집합)</strong>. 왜 굳이 못 바꾸는 자료구조가 필요한지, 중복 제거엔 왜 세트가 좋은지 동작 원리와 함께.</p>
+</div>
+<p style="margin-top:24px;">파이썬 기초 문법 커리큘럼 · Part 5 / 18 · 데이터 분석 자동화를 위한 기초</p>
+</footer>
+<script>
+var prog=document.getElementById('progress');
+addEventListener('scroll',function(){var h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+
+/* ===== W1 ===== */
+(function(){
+  var list=["니트","코트","가디건","코트"];
+  var wrap=document.getElementById('w1cells'), out=document.getElementById('w1out'), sel=0;
+  function render(){
+    wrap.innerHTML='';
+    list.forEach(function(v,i){
+      var d=document.createElement('div');
+      d.className='cell'+(i===sel?' sel':'');
+      d.innerHTML='<div class="idx">'+i+'</div><div class="box">"'+v+'"</div>';
+      d.addEventListener('click',function(){sel=i;render();});
+      wrap.appendChild(d);
+    });
+    out.innerHTML='<span class="dim">상품목록['+sel+']</span> → <span class="hl">"'+list[sel]+'"</span>    <span class="dim">len=</span><span class="hl">'+list.length+'</span>';
+  }
+  render();
+})();
+
+/* ===== W2 reference ===== */
+(function(){
+  var mode='ref', a, b, changed=false;
+  function reset(){ a=[1,2,3]; b = (mode==='ref')? a : a.slice(); changed=false; render(); }
+  function render(){
+    var dia=document.getElementById('w2diagram');
+    if(mode==='ref'){
+      dia.innerHTML='<div class="rf-names"><div class="rf-name">a</div><div class="rf-name">b</div></div>'+
+        '<div class="rf-arrows">╲<br>╱</div>'+
+        '<div class="rf-list" id="w2list">['+a.join(', ')+']</div>';
+    }else{
+      dia.innerHTML='<div class="rf-names"><div class="rf-name">a</div><div class="rf-name">b</div></div>'+
+        '<div class="rf-arrows">─▶<br>─▶</div>'+
+        '<div style="display:flex;flex-direction:column;gap:10px;"><div class="rf-list">['+a.join(', ')+']</div><div class="rf-list">['+b.join(', ')+']</div></div>';
+    }
+    var out=document.getElementById('w2out');
+    if(!changed){
+      out.innerHTML= mode==='ref'
+        ? '<span class="dim">b = a   (같은 리스트를 a, b가 함께 가리킴)</span>'
+        : '<span class="dim">b = a.copy()   (별개의 리스트 두 개)</span>';
+    }else{
+      out.innerHTML='<span class="dim">b[0] = 999</span>\na = <span class="hl">['+a.join(', ')+']</span>\nb = <span class="hl">['+b.join(', ')+']</span>\n'+
+        (mode==='ref'
+          ? '<span class="err">→ a도 바뀜! (같은 리스트니까)</span>'
+          : '<span style="color:#9ec79a">→ a는 그대로 (별개의 리스트)</span>');
+    }
+  }
+  document.querySelectorAll('#w2mode button').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('#w2mode button').forEach(function(x){x.classList.remove('on');});
+      btn.classList.add('on'); mode=btn.dataset.k; reset();
+    });
+  });
+  document.getElementById('w2change').addEventListener('click',function(){
+    b[0]=999; changed=true; render();
+  });
+  document.getElementById('w2reset').addEventListener('click',reset);
+  reset();
+})();
+
+/* ===== W3 add/remove ===== */
+(function(){
+  var ORIG=["니트","코트"], list;
+  function reset(){ list=ORIG.slice(); render('초기화'); }
+  function render(msg){
+    var wrap=document.getElementById('w3list');
+    if(list.length===0){ wrap.innerHTML='<span class="ar-empty">(빈 리스트)</span>'; }
+    else wrap.innerHTML=list.map(function(v){return '<span class="ar-item">"'+v+'"</span>';}).join('');
+    document.getElementById('w3out').innerHTML='<span class="dim">'+msg+'</span>\n상품목록 = <span class="hl">['+list.map(function(v){return "'"+v+"'";}).join(', ')+']</span>';
+  }
+  document.querySelectorAll('#w3list').length;
+  document.querySelectorAll('[data-act]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var act=btn.dataset.act;
+      if(act==='reset'){ reset(); return; }
+      if(act==='append'){
+        var v=document.getElementById('w3val').value.trim()||'신상';
+        list.push(v); render('상품목록.append("'+v+'")');
+      }else if(act==='pop'){
+        if(list.length){ var x=list.pop(); render('상품목록.pop() → "'+x+'" 빠짐'); }
+        else render('빈 리스트라 pop 불가');
+      }
+    });
+  });
+  reset();
+})();
+
+/* ===== W4 sort/agg ===== */
+(function(){
+  var ORIG=[89,120,79,95];   // 천 단위 생략(천원)
+  var list;
+  function reset(){ list=ORIG.slice(); render('초기 상태'); }
+  function render(msg){
+    var bars=document.getElementById('w4bars'); bars.innerHTML='';
+    var mx=Math.max.apply(null,list);
+    list.forEach(function(v){
+      var b=document.createElement('div'); b.className='bar';
+      b.style.height=(v/mx*100)+'px'; b.textContent=v;
+      bars.appendChild(b);
+    });
+    var sum=list.reduce(function(a,c){return a+c;},0);
+    document.getElementById('w4out').innerHTML='<span class="dim">'+msg+'</span>\n리스트 = <span class="hl">['+list.join(', ')+']</span> (천원)\n'+
+      'sum=<span class="hl">'+sum+'</span>  max=<span class="hl">'+Math.max.apply(null,list)+'</span>  min=<span class="hl">'+Math.min.apply(null,list)+'</span>  평균=<span class="hl">'+(sum/list.length).toFixed(1)+'</span>';
+  }
+  document.querySelectorAll('[data-sort]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var s=btn.dataset.sort;
+      if(s==='asc'){ list.sort(function(a,b){return a-b;}); render('.sort()  (오름차순)'); }
+      else if(s==='desc'){ list.sort(function(a,b){return b-a;}); render('.sort(reverse=True)  (내림차순)'); }
+      else reset();
+    });
+  });
+  reset();
+})();
+
+/* ===== W5 nested table ===== */
+(function(){
+  var data=[["니트",89000,12],["코트",120000,5],["가디건",79000,8]];
+  var cols=["상품명","가격","재고"];
+  var tbl=document.getElementById('w5tbl'), out=document.getElementById('w5out');
+  function render(sr,sc){
+    var html='<tr><td class="rowlbl"></td>';
+    cols.forEach(function(c,j){ html+='<td class="collbl">['+j+'] '+c+'</td>'; });
+    html+='</tr>';
+    data.forEach(function(row,i){
+      html+='<tr><td class="rowlbl">['+i+']</td>';
+      row.forEach(function(v,j){
+        var sel=(i===sr&&j===sc)?' class="sel"':'';
+        html+='<td'+sel+' data-r="'+i+'" data-c="'+j+'">'+ (typeof v==='number'? v.toLocaleString() : '"'+v+'"') +'</td>';
+      });
+      html+='</tr>';
+    });
+    tbl.innerHTML=html;
+    tbl.querySelectorAll('td[data-r]').forEach(function(td){
+      td.addEventListener('click',function(){ render(+td.dataset.r,+td.dataset.c); });
+    });
+    if(sr!=null){
+      var val=data[sr][sc];
+      out.innerHTML='<span class="dim">상품표['+sr+']['+sc+']</span> → <span class="hl">'+(typeof val==='number'?val.toLocaleString():'"'+val+'"')+'</span>';
+    }else{
+      out.innerHTML='<span class="dim">칸을 클릭해 [행][열]로 값을 꺼내 보세요</span>';
+    }
+  }
+  render(null,null);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>데이터 분석 개요 · 1강 · 데이터 분석이란 / 왜 하는가</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:768px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.9;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:84px 22px 36px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(28px,5.6vw,44px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  .callout{background:#fdfaf4;border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:22px 0;font-size:15.5px;color:var(--sub);}
+  .callout b{color:var(--accent);}
+  section{padding:50px 0 26px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 18px;line-height:1.3;}
+  h3{font-family:var(--serif);font-weight:700;font-size:19px;margin:26px 0 12px;color:#3a342e;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  .term{background:#eef5f3;border:1px solid #cfe3dd;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;}
+  .term b{color:var(--teal);}
+  .ex{background:#fbf3e6;border:1px solid #ecd9b8;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;color:#6b5526;}
+  .ex b{color:var(--gold);}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:24px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:14px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;color:#9ec79a;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:13.5px;min-height:42px;white-space:pre-wrap;line-height:1.7;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}.out .y{color:#e0b15f;}
+  .btn{border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:13px;padding:9px 15px;border-radius:9px;cursor:pointer;}
+  .btn.ghost{background:#fdfaf4;border:1.5px solid var(--line);color:var(--sub);}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+  .seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:var(--sans);transition:.15s;color:var(--ink);}
+  .seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  .vs{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:stretch;}
+  .vs-col{border:1.5px solid var(--line);border-radius:12px;padding:14px;}
+  .vs-col.gut{background:#fbeee8;border-color:#e0a890;}
+  .vs-col.data{background:#eef5f3;border-color:var(--teal);}
+  .vs-col .t{font-family:var(--serif);font-weight:700;font-size:14px;margin-bottom:8px;}
+  .vs-col.gut .t{color:#9a3a14;}.vs-col.data .t{color:var(--teal);}
+  .vs-col .c{font-size:13px;color:var(--sub);line-height:1.65;}
+  .vs-mid{align-self:center;font-family:var(--serif);font-weight:700;color:var(--sub);font-size:13px;}
+  .tl{position:relative;padding-left:30px;}
+  .tl::before{content:"";position:absolute;left:9px;top:6px;bottom:6px;width:2px;background:var(--line);}
+  .tl-item{position:relative;padding:10px 0 10px 6px;cursor:pointer;transition:.15s;border-radius:8px;}
+  .tl-item::before{content:"";position:absolute;left:-25px;top:16px;width:11px;height:11px;border-radius:50%;background:#fff;border:2px solid var(--line);transition:.15s;}
+  .tl-item.on::before{background:var(--accent);border-color:var(--accent);transform:scale(1.35);}
+  .tl-year{font-family:monospace;font-weight:700;font-size:13px;color:var(--accent);}
+  .tl-title{font-size:13.5px;font-weight:700;}
+  .tl-item.on{background:#fdf2ec;}
+  .barbox{margin:10px 0;}
+  .bar-row{display:flex;align-items:center;gap:8px;margin:5px 0;font-family:monospace;font-size:12.5px;}
+  .bar-row .lbl{width:54px;color:var(--sub);}
+  .bar{height:18px;border-radius:4px;transition:.6s;}
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}.vs{grid-template-columns:1fr;}.vs-mid{padding:4px 0;}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<header class="hero">
+  <div class="eyebrow">데이터 분석 개요 및 기초 이론 · 1강</div>
+  <h1>데이터 분석이란 /<br>왜 하는가</h1>
+  <p class="lead">미리 알아야 할 지식은 <strong>아무것도 없음</strong>. 수학을 못해도, 컴퓨터를 못 다뤄도 괜찮음. 이 강의 단 하나의 문장 — <strong>"느낌(직감)이 아니라 사실(데이터)을 근거로 더 나은 결정을 내리는 일"</strong> — 에서 출발해, 이 발상이 어떻게 150년에 걸쳐 거대한 산업이 됐는지 따라감.</p>
+  <div class="hero-meta">
+    <span class="chip">📊 개요 · 1/7</span>
+    <span class="chip t">감 vs 근거 · 비즈니스 역사</span>
+    <span class="chip t">완전 초보용</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ===== 1-1 ===== -->
+  <section class="reveal">
+    <div class="sec-no">1-1</div>
+    <h2>데이터 분석이란 무엇인가</h2>
+
+    <h3>아주 작은 이야기로 시작함</h3>
+    <p>작은 분식집을 운영하는 사장님이 있다고 상상해 봄. 어느 날 고민에 빠짐 — <strong>"떡볶이를 더 팔까, 김밥을 더 팔까?"</strong> 둘 중 하나에 재료와 노력을 집중하고 싶은데, 무엇이 더 잘 팔리는지 확신이 안 섬. 이때 결정하는 방법은 크게 두 가지임.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 두 가지 결정 방법</span>
+      <p class="wdesc">사장님의 두 가지 선택을 눌러 비교해 봄. 어느 쪽이 "데이터 분석"일까?</p>
+      <div class="seg" id="w1a">
+        <button class="on" data-k="feel">🤔 방법 A — 느낌으로</button>
+        <button data-k="data">📒 방법 B — 기록을 보고</button>
+      </div>
+      <div class="out" id="w1aout"></div>
+    </div>
+
+    <p>여기서 <strong>방법 B가 바로 데이터 분석</strong>임. 거창한 컴퓨터도, 어려운 수학도 없음. <strong>"기록(데이터)을 모아서, 세어 보고, 그 사실을 근거로 결정한 것"</strong> — 이것이 데이터 분석의 가장 본질적인 모습임.</p>
+
+    <div class="term"><b>데이터 분석(data analysis)이란?</b><br>흩어져 있는 데이터(기록·숫자·사실)를 <b>모으고 → 정리하고 → 살펴보아서</b>, 그 안에 숨은 의미나 규칙을 찾아내고, 그것을 <b>근거로 더 나은 결정</b>을 내리는 일.</div>
+
+    <h3>비유 — 안개 속의 등대</h3>
+    <p>데이터 분석을 비유하면 <strong>안개 속에서 등대를 켜는 일</strong>과 같음. 배를 모는데 안개로 앞이 안 보일 때(이 "안개"가 바로 <strong>불확실함</strong>임), 등대 불빛(데이터)이 켜지면 암초와 항구 방향이 어렴풋이 보이기 시작함. 등대가 파도를 없애 주진 않지만, <strong>"어디로 가야 할지"가 훨씬 분명해짐.</strong> 분석도 똑같음 — 모든 위험을 없애 주진 않지만, "어느 쪽이 더 나은 선택일 확률이 높은지"를 선명하게 보여 줌.</p>
+
+    <h3>"감 vs 근거"의 진짜 차이</h3>
+    <p>사람은 본래 <strong>직감</strong>으로 결정함. 직감은 나쁜 게 아니라 종종 빠르고 유용함. 그런데 두 가지 약점이 있음.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 직감의 두 가지 약점</span>
+      <p class="wdesc">각 약점을 눌러, 직감이 왜 흔들리는지와 데이터가 그것을 어떻게 보완하는지 봄.</p>
+      <div class="seg" id="w1b">
+        <button class="on" data-k="bias">약점 1 — 편향</button>
+        <button data-k="share">약점 2 — 검증·공유 곤란</button>
+      </div>
+      <div class="out" id="w1bout"></div>
+    </div>
+
+    <div class="ex"><b>일상 예시 (편향)</b><br>"요즘 비행기 사고 뉴스가 많네, 비행기 타기 무서워." → 실제로는 비행기가 자동차보다 훨씬 안전한데도, <b>뉴스에서 본 강렬한 장면</b> 때문에 위험을 과대평가함. 이것이 편향임.</div>
+
+    <h3>아주 중요한 오해 — 분석은 직감을 "버리는" 게 아님</h3>
+    <p>초보자가 흔히 하는 오해 — "분석을 하면 직감은 쓸모없어지나?" <strong>전혀 아님.</strong> 좋은 분석가는 직감을 <strong>출발점</strong>으로 씀.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 직감과 데이터의 협력</span>
+      <p class="wdesc">"분석 진행" 버튼을 눌러, 직감(가설)이 데이터로 확인·교정되는 흐름을 따라가 봄.</p>
+      <div class="out" id="w1cout"></div>
+      <div style="text-align:center;margin-top:10px;">
+        <button class="btn" id="w1cstep">▶ 다음 단계</button>
+        <button class="btn ghost" id="w1creset">↻ 처음부터</button>
+      </div>
+    </div>
+
+    <p>즉 직감과 데이터는 <strong>경쟁이 아니라 협력 관계</strong>임. 직감은 "어디를 살펴볼지" 방향을 정해 주고, 데이터는 "그 방향이 정말 맞는지" 확인해 줌.</p>
+
+    <div class="note"><b>📌 데이터 분석은 "정답 기계"가 아님</b><br>같은 데이터라도 어떤 질문을 던지고 어떻게 해석하느냐에 따라 다른 결론이 나옴. "김밥이 65인분 팔렸다"를 두고 누구는 "김밥에 집중", 누구는 "떡볶이 고객층도 따로 있으니 둘 다 키우자"고 함. 데이터는 사실을 보여 줄 뿐, 해석과 결정은 사람의 몫임. 그래서 분석은 "무엇을 물을 것인가"를 고민하는 <b>사고방식</b>이기도 함.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>데이터 분석은 기록을 모아 살펴보고, 그 사실을 근거로 더 나은 결정을 내리는 일임.</li>
+      <li>직감의 약점(편향·검증 곤란)을 데이터가 보완하되, 직감을 버리는 게 아니라 협력함.</li>
+      <li>데이터는 정답 기계가 아니며, 무엇을 묻고 어떻게 해석할지는 사람의 판단임.</li>
+    </ol></div>
+  </section>
+
+  <!-- ===== 1-2 ===== -->
+  <section class="reveal">
+    <div class="sec-no">1-2</div>
+    <h2>기원 — 1865년의 한 은행가</h2>
+
+    <p>많은 사람이 놀라는 사실 — "데이터(정보)로 결정한다"는 생각은 컴퓨터가 나오기 훨씬 전부터 있었음. 무려 <strong>150년도 더 전</strong>, 전화기도 제대로 없던 시절임. 그 증거가 <strong>"비즈니스 인텔리전스(business intelligence)"</strong>라는 용어이고, 이 말이 처음 기록된 것이 <strong>1865년</strong>임.</p>
+
+    <h3>먼저 — "intelligence"의 진짜 뜻</h3>
+    <div class="term"><b>intelligence = "지능"이 아니라 "정보·첩보"</b><br>스파이 영화의 "정보국(intelligence agency)", 미국 CIA의 I가 모두 Intelligence(정보)임. 즉 <b>business intelligence = "사업에 관한 정보를 모아 활용하는 것"</b>. "사업 정보 활용"으로 이해하면 정확함.</div>
+
+    <h3>작가 디벤스와 은행가 퍼니스</h3>
+    <p>1865년, 미국 작가 <strong>리처드 밀러 디벤스</strong>가 펴낸 책 <em>상업·비즈니스 일화 백과사전</em>에서 이 용어가 처음 등장함. 그는 성공한 은행가 <strong>헨리 퍼니스</strong>의 이야기를 소개하며 이 말을 썼음.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 퍼니스의 성공 방법</span>
+      <p class="wdesc">단계를 따라가며, 150여 년 전에 이미 "감보다 근거"가 표현됐음을 확인해 봄.</p>
+      <div class="out" id="w2out"></div>
+      <div style="text-align:center;margin-top:10px;">
+        <button class="btn" id="w2step">▶ 다음 단계</button>
+        <button class="btn ghost" id="w2reset">↻</button>
+      </div>
+    </div>
+
+    <p>당시에는 먼 지역 소식이 며칠씩 걸려 전해졌음. 퍼니스는 연락망을 만들어 그 소식을 <strong>남들보다 하루라도 먼저</strong> 알아냈고, "이 물건 값이 곧 오르겠구나" 판단해 먼저 사고팔아 큰 이익을 얻음. 디벤스가 남긴 통찰은 이것임:</p>
+
+    <div class="ex"><b>1865년 디벤스의 통찰</b><br>"사업 전략은 직감(gut instinct)이 아니라, 데이터와 실증적 증거(empirical evidence)에 기반할 때 더 믿을 만하다." → 1강 처음의 "감이 아니라 근거로"와 <b>정확히 같은 말</b>임.</div>
+
+    <h3>비유 — 일기예보를 먼저 들은 농부</h3>
+    <p>같은 하늘 아래 두 농부. 한 명은 하늘만 보고 직감으로 판단하고, 다른 한 명은 일기예보(정보)를 먼저 구해 "내일 비"를 미리 앎. 후자는 비 오기 전에 곡식을 거둬 손해를 막음. <strong>같은 환경에서도, 정보를 먼저 모아 행동한 사람이 더 나은 결과를 얻음.</strong></p>
+
+    <div class="note"><b>📌 지금도 살아 있는 발상</b><br>회사에서 흔히 보는 "BI 대시보드"(매출·방문자 수를 한눈에 보여 주는 화면)의 BI가 바로 이 business intelligence임. 1865년 퍼니스의 발상이 화면 위 그래프로 모습을 바꿔 지금도 살아 있는 셈임.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>"business intelligence(사업 정보 활용)" 용어는 1865년 작가 디벤스가 처음 기록했음.</li>
+      <li>은행가 퍼니스처럼 "정보를 먼저 모아 먼저 행동"하는 것이 그 핵심이었음.</li>
+      <li>감이 아니라 근거로 결정하라는 사상은 컴퓨터 이전부터 있었고, 지금도 같음.</li>
+    </ol></div>
+  </section>
+
+  <!-- ===== 1-3 ===== -->
+  <section class="reveal">
+    <div class="sec-no">1-3</div>
+    <h2>체계화 — 테일러와 포드</h2>
+
+    <p>1865년 디벤스가 <strong>발상</strong>을 남겼다면, 다음은 그것을 <strong>누구나 따라 할 수 있는 체계</strong>로 만드는 일이었음. 19세기 말~20세기 초 <strong>미국</strong>에서, <strong>프레더릭 테일러</strong>가 그 일을 함.</p>
+
+    <div class="term"><b>시간 연구(time study)</b><br>공장에서 노동자가 일하는 모습을 <b>스톱워치로 관찰하며</b> 각 동작이 몇 초 걸리는지 측정·기록하고, 그 기록을 분석해 "이 동작은 불필요하다", "이 순서가 더 빠르다" 같은 개선점을 찾는 방법. = <b>측정 → 기록 → 분석 → 개선</b>의 체계.</div>
+
+    <h3>비유 — "감으로 요리"에서 "레시피로 요리"로</h3>
+    <p>할머니 요리는 "소금 적당히, 간장 한 바퀴…"라 할머니만 그 맛을 냄. 정확한 레시피는 "소금 5g, 간장 15ml, 3분 볶기"처럼 <strong>측정된 숫자</strong>라 <strong>누구나 같은 맛을 내고, 어디를 바꾸면 더 맛있어질지 분석</strong>할 수 있음. 테일러는 공장 일을 "할머니 요리"에서 "정확한 레시피"로 바꾼 셈임.</p>
+
+    <h3>테일러와 포드 — 자동차를 바꾼 측정</h3>
+    <p>테일러는 자동차 왕 <strong>헨리 포드의 컨설턴트</strong>가 됨. 포드는 <strong>모델 T</strong> 조립 라인에서 각 공정 시간을 일일이 측정했음. 아래 위젯에서 그 원리를 직접 체험해 봄.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · "측정해야 개선할 수 있다"</span>
+      <p class="wdesc">측정 전엔 어디가 느린지 안 보임. "측정 켜기"를 차례로 눌러 측정→발견→개선을 체험해 봄.</p>
+      <div class="barbox" id="w3bars"></div>
+      <div style="text-align:center;">
+        <button class="btn" id="w3btn">① 측정 켜기</button>
+        <button class="btn ghost" id="w3reset">↻</button>
+      </div>
+      <div class="out" id="w3out" style="margin-top:10px;"></div>
+    </div>
+
+    <div class="ex"><b>현대 사례</b><br>배달 앱·물류 회사는 "주문→배달 평균 몇 분", "어느 단계가 가장 오래 걸리나"를 측정함. "조리는 빠른데 배달원 배정에서 평균 7분이 샌다"가 드러나면 그 단계를 집중 개선함. 100년 전 포드 공장의 원리가 지금도 똑같이 작동함.</div>
+
+    <div class="note"><b>📌 빛과 그림자</b><br>테일러 방식은 효율을 크게 높였지만 "노동자를 기계 부품처럼 다룬다"는 비판도 받았음. 데이터 분석이 "무엇을 측정하고 어떻게 쓰느냐"에 따라 좋게도 나쁘게도 쓰일 수 있음을 일찍 보여 준 사례임(윤리는 7강). 그래도 "측정→분석→개선" 틀은 오늘날까지 분석의 기본 골격으로 남음.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>테일러가 미국에서 최초로 비즈니스 분석을 체계화함(시간 연구: 측정→기록→분석→개선).</li>
+      <li>포드가 모델 T 조립 라인에 적용해, 측정·분석으로 제조업 전체를 혁신함.</li>
+      <li>"측정해야 개선할 수 있다"는 비즈니스 분석의 변치 않는 기본 골격임.</li>
+    </ol></div>
+  </section>
+
+  <!-- ===== 1-4 (산업화) + 1-5 (기술) 통합 타임라인 ===== -->
+  <section class="reveal">
+    <div class="sec-no">1-4 · 1-5</div>
+    <h2>산업화와 기술의 발전</h2>
+
+    <h3>컨설팅 산업으로 성장</h3>
+    <p>"데이터로 돕는 일"은 점차 전문 직업, 나아가 거대한 산업이 됐음. 특히 <strong>경영 컨설팅</strong> 영역에서 크게 발전함.</p>
+    <div class="term"><b>컨설팅(consulting)</b><br>어떤 분야의 전문가가, 문제를 가진 사람·회사에게 <b>"당신의 문제는 이것이고, 이렇게 해결하면 됩니다"</b>라고 분석해 주고 조언하는 일. 테일러가 포드에게 한 일이 바로 이것임.</div>
+    <p>비유하면 컨설팅 회사는 <strong>기업의 "건강검진 의사"</strong>임. 의사가 혈압·혈당(수치)을 분석해 "식습관을 바꾸세요"라고 진단·처방하듯, 컨설턴트는 기업의 매출·고객·운영 데이터를 분석해 "이 사업부는 이렇게 바꾸세요"라고 진단·처방함. <strong>기업 의사결정은 큰돈과 직결</strong>되므로(수백억대 결정), 데이터 근거의 가치가 매우 컸고, 그래서 분석은 전문 산업이 됨.</p>
+
+    <div class="ex"><b>사례 — 회계법인에서 출발한 컨설팅 거인</b><br>오늘날 세계적 기업 <b>액센추어(Accenture)</b>는 1953년 회계법인 '아서 앤더슨'의 한 부문으로 출발함. 회계(=돈을 숫자로 기록·정리 = 데이터 다루는 일)에서, 그 데이터를 분석해 조언하는 컨설팅으로 자연스럽게 확장된 것임.</div>
+
+    <h3>기술이 분석의 규모를 키우다</h3>
+    <p>발상(1865)과 방법론(테일러)이 먼저 있었고, <strong>기술</strong>이 뒤따르며 분석을 폭발적으로 키웠음. 핵심 원리는 단순함 — <strong>저장·계산 기술이 좋아질수록 → 더 많은 데이터를 다룰 수 있고 → 분석이 더 강력해짐.</strong> 아래 타임라인을 눌러 가며 그 흐름을 따라가 봄.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 데이터 분석의 역사 타임라인</span>
+      <p class="wdesc">각 이정표를 눌러, 비즈니스 관점에서 분석이 어떻게 발전했는지 자세히 봄.</p>
+      <div class="tl" id="w4tl"></div>
+      <div class="out" id="w4out" style="margin-top:12px;"></div>
+    </div>
+
+    <div class="note"><b>📌 흥미로운 순서 — 발상이 기술보다 먼저였다</b><br>보통 "기술이 먼저 나오고 분석을 시작했겠지" 생각하지만 반대임: <b>발상(1865) → 방법론(1900s) → 기술(1956~)</b>. "데이터로 결정한다"는 생각이 먼저 있었고, 기술은 그것을 더 크고 빠르게 실현해 주는 도구로 뒤따라왔음. 도구는 수단이고, 중심은 "감이 아니라 근거로"임.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>데이터 분석은 컨설팅 영역에서 전문 산업으로 성장함(예: 액센추어는 회계법인 부문에서 출발).</li>
+      <li>천공카드·하드디스크·메인프레임·클라우드로 분석 가능한 데이터 규모가 단계적으로 도약함.</li>
+      <li>발상(1865)이 기술(1956~)보다 먼저였고, 1989년 가트너의 재정립으로 현대 BI 개념이 자리 잡음.</li>
+    </ol></div>
+  </section>
+
+  <!-- ===== 1-6 ===== -->
+  <section class="reveal">
+    <div class="sec-no">1-6</div>
+    <h2>왜 지금, 우리가 배우는가</h2>
+
+    <p>이제 가장 현실적인 질문 — "왜 하필 지금, 나도 배워야 하는가?" 답은 분명함. 데이터 분석은 더 이상 전문가만의 것이 아니라 <strong>거의 모든 직무의 기본 역량</strong>이 됐음. 세 가지 변화가 이것을 "누구나의 일"로 만들었음.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 데이터의 대중화 — 세 가지 변화</span>
+      <p class="wdesc">각 변화를 눌러, 분석이 왜 지금 누구나의 역량이 됐는지 자세히 봄.</p>
+      <div class="seg" id="w5tog">
+        <button class="on" data-k="boom">① 데이터 폭증</button>
+        <button data-k="cost">② 비용 하락</button>
+        <button data-k="tool">③ 도구 대중화</button>
+      </div>
+      <div class="out" id="w5out"></div>
+    </div>
+
+    <div class="term"><b>데이터 리터러시(data literacy)</b><br>리터러시는 본래 "글을 읽고 쓰는 능력(문해력)". 이제 데이터에도 같은 말이 붙음 — <b>"데이터를 읽고 분석하는 능력"이 글처럼 시대의 기본 소양</b>이 됐다는 뜻. 옛날에 글을 못 읽으면 불편했듯, 앞으로는 데이터를 못 읽으면 일하기 불편해짐.</div>
+
+    <div class="note"><b>📌 어디서든 쓰이는 능력</b><br>"데이터 분석가"라는 직업만이 아니라 거의 모든 직무가 이 능력을 요구함. 한 번 익히면 마케팅·기획·연구·창업 등 어디서든 쓰임 — 분석은 특정 산업의 기술이 아니라 "더 나은 결정을 내리는 보편적 방법"이기 때문임.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>데이터 폭증·비용 하락·도구 대중화라는 세 변화로 분석이 누구나의 일이 됐음.</li>
+      <li>데이터를 읽고 분석하는 능력(데이터 리터러시)이 글처럼 기본 소양이 됐음.</li>
+      <li>이 커리큘럼은 오랜 발상을 현대 도구로 실현하는 여정이며, 지금은 그 출발점임.</li>
+    </ol></div>
+  </section>
+
+  <!-- ===== 마무리 ===== -->
+  <section class="reveal">
+    <div class="sec-no">정리</div>
+    <h2>가장 중요한 한 문장</h2>
+    <p>1강의 모든 이야기를 단 하나로 줄이면 이러함:</p>
+    <div class="ex" style="text-align:center;font-size:18px;color:var(--accent);font-family:var(--serif);font-weight:700;">"감(感)이 아니라 데이터(근거)로<br>더 나은 결정을 내린다."</div>
+    <p>이 발상이 1865년 한 책에서 시작해 150년에 걸쳐 거대한 산업과 모두의 기본 소양이 됐음. 앞으로 어떤 어려운 개념·도구를 만나도, 늘 이 문장으로 돌아오면 됨 — <strong>"왜 이걸 하는가? 더 나은 결정을 위해서."</strong></p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="next-card">
+    <div class="nl">NEXT · 2강</div>
+    <div class="nt">데이터 분석 방법의 진화</div>
+    <p style="margin-top:8px;">1강이 <em>비즈니스 관점</em>의 역사였다면, 2강은 <em>방법론 관점</em>의 역사임. 세고 합치던 <strong>집계</strong>에서, 일부로 전체를 추정하는 <strong>통계 분석</strong>, 패턴을 캐는 <strong>데이터 마이닝</strong>, 스스로 배우는 <strong>머신러닝</strong>, 그리고 <strong>딥러닝·AI</strong>까지 — 분석의 무기가 어떻게 강력해져 왔는지 따라감.</p>
+  </div>
+  <p style="margin-top:24px;">데이터 분석 개요 및 기초 이론 · 1강 / 7강 · 데이터 분석 자동화 커리큘럼</p>
+</footer>
+
+<script>
+var prog=document.getElementById('progress');
+addEventListener('scroll',function(){var h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+
+/* W1a 두 방법 */
+(function(){
+  var R={
+    feel:'<span class="dim">방법 A — 느낌으로 결정</span>\n"요즘 추워졌고, 떡볶이가 잘 나가는 것 같던데?\n 떡볶이로 가자."\n<span class="y">근거: 사장님의 느낌·최근 기억</span>\n→ 맞을 수도, 틀릴 수도. 검증·설득 어려움',
+    data:'<span class="dim">방법 B — 기록(데이터)을 보고 결정</span>\n지난 한 달 장부를 셈:\n  떡볶이 하루 평균 <span class="hl">40인분</span>\n  김밥   하루 평균 <span class="hl">65인분</span>\n→ "김밥이 1.6배 더 나갔구나. 김밥에 집중!"\n<span style="color:#9ec79a">이것이 바로 데이터 분석!</span>'
+  };
+  var out=document.getElementById('w1aout');
+  document.querySelectorAll('#w1a button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#w1a button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.feel;
+})();
+
+/* W1b 약점 */
+(function(){
+  var R={
+    bias:'<span class="y">약점 1 — 편향 (보고 싶은 것만 봄)</span>\n사장님이 "떡볶이가 잘 나간다"고 느낀 이유가\n사실은 <span class="dim">어제 우연히 떡볶이가 몰린 한순간</span> 때문일 수 있음.\n사람은 강렬한 최근 기억을 실제보다 크게 평가함.\n\n<span style="color:#9ec79a">→ 데이터는 한 달 전체를 세므로 이 편향을 줄여 줌</span>',
+    share:'<span class="y">약점 2 — 검증·공유가 어려움</span>\n"내 느낌엔 이게 맞아"는 남을 설득하기 어려움.\n팀에서 "느낌"으로는 합의에 이르기 힘듦.\n\n<span style="color:#9ec79a">→ "장부상 김밥이 1.6배 더 팔렸다"는\n   누구나 같은 장부로 확인 가능 → 설득·공유 쉬움</span>'
+  };
+  var out=document.getElementById('w1bout');
+  document.querySelectorAll('#w1b button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#w1b button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.bias;
+})();
+
+/* W1c 협력 흐름 */
+(function(){
+  var steps=[
+    '<span class="dim">의류 매장 매니저의 이야기로 협력을 봄</span>\n"버튼을 눌러 단계를 진행하세요"',
+    '<span class="y">① 직감으로 가설</span>\n"젊은 손님이 늘어난 것 같으니\n 청바지를 더 들여놓자!"\n<span class="dim">(직감이 방향을 던짐)</span>',
+    '<span class="y">② 데이터로 확인</span>\n결제 데이터를 분석해 봄…\n실제로 늘어난 건 젊은 손님이 아니라\n<span class="hl">40대 손님의 외투 구매</span>였음!',
+    '<span class="y">③ 직감을 교정 → 실행</span>\n매니저는 생각을 바꿔 <span class="hl">외투에 집중</span> → 매출 상승\n\n<span style="color:#9ec79a">직감(방향) + 데이터(확인) = 협력!\n직감을 버린 게 아니라 데이터로 다듬은 것</span>'
+  ];
+  var i=0,out=document.getElementById('w1cout');
+  function r(){out.innerHTML=steps[i];}
+  document.getElementById('w1cstep').addEventListener('click',function(){if(i<steps.length-1)i++;r();});
+  document.getElementById('w1creset').addEventListener('click',function(){i=0;r();});
+  r();
+})();
+
+/* W2 퍼니스 */
+(function(){
+  var steps=[
+    '<span class="dim">1865년, 작가 디벤스가 책에서 "business intelligence"를 처음 기록</span>\n"버튼을 눌러 퍼니스의 방법을 따라가세요"',
+    '<span class="y">① 정보를 먼저 모음 (intelligence)</span>\n은행가 퍼니스는 연락망을 만들어\n먼 지역 소식을 <span class="hl">남들보다 하루 먼저</span> 알아냄\n<span class="dim">(당시엔 소식이 며칠씩 걸려 전해짐)</span>',
+    '<span class="y">② 그 정보로 먼저 행동</span>\n"이 물건 값이 곧 오르겠구나" 판단\n→ 경쟁자보다 <span class="hl">먼저 사고팔아 이익</span>',
+    '<span class="y">디벤스의 통찰 (1865)</span>\n"직감이 아니라 데이터·실증 증거로\n 전략을 세우는 것이 더 믿을 만하다"\n\n<span style="color:#9ec79a">→ 150여 년 전, 이미 "감보다 근거"!</span>'
+  ];
+  var i=0,out=document.getElementById('w2out');
+  function r(){out.innerHTML=steps[i];}
+  document.getElementById('w2step').addEventListener('click',function(){if(i<steps.length-1)i++;r();});
+  document.getElementById('w2reset').addEventListener('click',function(){i=0;r();});
+  r();
+})();
+
+/* W3 측정 바 */
+(function(){
+  var jobs=[{n:"공정 A",t:8},{n:"공정 B",t:14},{n:"공정 C",t:6},{n:"공정 D",t:11}];
+  var measured=false,improved=false;
+  var bars=document.getElementById('w3bars'),out=document.getElementById('w3out'),btn=document.getElementById('w3btn');
+  function r(){
+    bars.innerHTML=jobs.map(function(j){
+      var t=(improved&&j.t>10)?Math.round(j.t*0.6):j.t;
+      var w=measured?t*8:8;
+      var color=measured?((improved&&j.t>10)?'#3f7d4f':(t>10?'#c2410c':'#a8762f')):'#ddd2bf';
+      return '<div class="bar-row"><span class="lbl">'+j.n+'</span><div class="bar" style="width:'+w+'px;background:'+color+'"></div><span style="color:var(--sub)">'+(measured?t+'초':'?초')+'</span></div>';
+    }).join('');
+  }
+  btn.addEventListener('click',function(){
+    if(!measured){measured=true;btn.textContent='② 느린 공정 개선';out.innerHTML='<span class="y">① 측정 완료</span> — 각 공정 시간을 데이터로 기록\n→ <span class="hl">공정 B(14초)가 가장 느림이 한눈에 보임!</span>\n<span class="dim">측정 전엔 어디가 느린지 전혀 안 보였음</span>';}
+    else if(!improved){improved=true;btn.textContent='✓ 개선 완료';out.innerHTML='<span class="y">② 개선 완료</span> — 느린 공정 B·D를 집중 개선\n→ <span style="color:#9ec79a">전체 시간이 크게 단축됨!</span>\n\n<span class="hl">"측정할 수 없으면 개선할 수 없다"</span>';}
+    r();
+  });
+  document.getElementById('w3reset').addEventListener('click',function(){measured=false;improved=false;btn.textContent='① 측정 켜기';out.innerHTML='<span class="dim">측정 전: 어느 공정이 느린지 전혀 안 보임. "측정 켜기"를 눌러 보세요</span>';r();});
+  r();out.innerHTML='<span class="dim">측정 전: 어느 공정이 느린지 전혀 안 보임. "측정 켜기"를 눌러 보세요</span>';
+})();
+
+/* W4 타임라인 */
+(function(){
+  var items=[
+    {y:"1865",t:"BI 용어 등장 (디벤스)",d:"작가 디벤스가 은행가 퍼니스 사례로 \"business intelligence\"를 기록 — 발상의 시작. \"감이 아니라 근거로\"."},
+    {y:"1880",t:"홀러리스 천공카드",d:"미국 인구조사가 손 집계로 10년이나 걸려 적체됨. 구멍 뚫은 카드와 집계 기계로 몇 달로 단축 — \"기계로 데이터를 처리한다\"의 첫 큰 성과."},
+    {y:"1900s",t:"테일러·포드의 과학적 관리",d:"공정 시간을 측정·분석 → 모델 T 생산 혁신. 미국 최초의 체계적 비즈니스 분석. \"측정해야 개선한다\"."},
+    {y:"1953",t:"컨설팅 산업의 성장",d:"데이터로 기업을 진단·자문하는 일이 전문 산업으로. 예: 액센추어가 회계법인 아서 앤더슨의 한 부문에서 출발."},
+    {y:"1956",t:"IBM 최초 하드디스크",d:"대량 데이터를 유연하게 저장하고 빠르게 찾게 됨. \"데이터를 쌓아 둘 곳\"이 생기자 분석할 데이터도 쌓이기 시작."},
+    {y:"1960s",t:"메인프레임 BI",d:"거대 컴퓨터로 재무·운영 보고서를 자동 집계. 사람이 손으로 만들던 월간 보고서를 컴퓨터가 — 현대 BI의 본격 출발."},
+    {y:"1989",t:"가트너의 BI 재정립",d:"IT 분석기관 가트너의 하워드 드레스너가 옛 용어 BI를 \"데이터 기술로 더 나은 비즈니스 결정\"이라는 현대적 의미로 재정의 → 오늘날 BI 개념 확립."},
+    {y:"2000s~",t:"빅데이터·클라우드·AI",d:"저장·계산 비용 급락, 무료 도구 확산. 누구나 노트북으로 수백만 건을 분석하는 대중화 시대 — 같은 발상을 더 강력한 기술로."}
+  ];
+  var tl=document.getElementById('w4tl'),out=document.getElementById('w4out');
+  tl.innerHTML=items.map(function(it,i){return '<div class="tl-item" data-i="'+i+'"><span class="tl-year">'+it.y+'</span> <span class="tl-title">'+it.t+'</span></div>';}).join('');
+  function sel(i){tl.querySelectorAll('.tl-item').forEach(function(el){el.classList.remove('on');});tl.querySelector('[data-i="'+i+'"]').classList.add('on');out.innerHTML='<span class="hl">'+items[i].y+' — '+items[i].t+'</span>\n<span class="dim">'+items[i].d+'</span>';}
+  tl.querySelectorAll('.tl-item').forEach(function(el){el.addEventListener('click',function(){sel(+el.dataset.i);});});
+  sel(0);
+})();
+
+/* W5 대중화 */
+(function(){
+  var R={
+    boom:'<span class="y">① 데이터 폭증</span>\n스마트폰 검색·카드 결제·교통카드·SNS…\n우리의 거의 모든 활동이 <span class="hl">데이터로 기록</span>됨.\n<span class="dim">한 사람이 하루에 만드는 데이터가,\n수십 년 전 한 회사의 1년치보다 많다고 함</span>',
+    cost:'<span class="y">② 비용 하락</span>\n과거엔 저장·분석에 거대한 컴퓨터+전문 인력이 필요\n→ 대기업만 가능. 지금은 <span class="hl">클라우드</span>로 비용 급락.\n<span class="dim">예전엔 "발전소를 직접 지어야" 했다면,\n지금은 "콘센트에 플러그만 꽂으면" 됨</span>',
+    tool:'<span class="y">③ 도구의 대중화</span>\n과거엔 비싼 전문 소프트웨어가 필요.\n지금은 <span class="hl">파이썬·판다스가 무료</span>, 자료도 풍부.\n→ 마케터·기획자·소상공인·학생 모두 데이터로 판단.\n<span style="color:#9ec79a">데이터 리터러시 = 읽고 쓰기 같은 기본 소양</span>'
+  };
+  var out=document.getElementById('w5out');
+  document.querySelectorAll('#w5tog button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#w5tog button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.boom;
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Part 13 · 함수 심화</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&amp;family=Gowun+Dodum&amp;display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:760px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:88px 22px 40px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:62ch;}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:76px 0 46px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 20px;line-height:1.3;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  code{font-family:'Gowun Dodum',monospace;background:#efe7d8;color:#8a3408;padding:1.5px 7px;border-radius:6px;font-size:.92em;}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15.5px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:22px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:16px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;color:#9ec79a;border-radius:10px;padding:13px 16px;font-family:monospace;font-size:14px;min-height:42px;white-space:pre-wrap;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}
+  .btn{border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:13px;padding:9px 15px;border-radius:9px;cursor:pointer;}
+  .btn.ghost{background:#fdfaf4;border:1.5px solid var(--line);color:var(--sub);}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+  .seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:monospace;transition:.15s;color:var(--ink);}
+  .seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  .pp-input{border:1.5px solid var(--line);border-radius:8px;padding:7px 10px;font-family:monospace;font-size:14px;background:#fff;color:var(--ink);}
+  .chips-in{display:flex;gap:5px;flex-wrap:wrap;align-items:center;}
+  .nchip{background:#eef5f3;border:1.5px solid var(--teal);border-radius:8px;padding:6px 11px;font-family:monospace;font-size:13px;color:#225349;}
+
+  /* sort cards */
+  .sc-list{display:flex;flex-direction:column;gap:6px;margin:10px 0;}
+  .sc-card{display:flex;justify-content:space-between;border:1.5px solid var(--line);border-radius:9px;padding:9px 14px;background:#fff;font-family:monospace;font-size:13px;transition:.4s;}
+  .sc-card .nm{font-weight:700;color:var(--accent);}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}}
+</style>
+<style id="wide16x9">
+/* ===== 16:9 와이드 반응형 오버라이드 ===== */
+:root{--maxw:1320px;}
+header.hero{text-align:center;padding-top:70px;}
+header.hero .lead{margin-left:auto;margin-right:auto;}
+header.hero .hero-meta{justify-content:center;}
+main.wrap section.two-col .col-text>:first-child{margin-top:0;}
+main.wrap section.two-col .col-text .summary{margin-bottom:0;}
+@media(min-width:980px){
+  main.wrap section.two-col{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.06fr);
+    gap:46px;align-items:start;
+  }
+  main.wrap section.two-col .col-widget{position:sticky;top:22px;}
+  main.wrap section.two-col .col-text{padding-top:2px;}
+}
+@media(max-width:979px){
+  main.wrap section.two-col .col-widget{margin-top:6px;}
+}
+</style></head>
+<body>
+<div id="progress"></div>
+<header class="hero">
+<div class="eyebrow">파이썬 기초 문법 · Part 13 · 함수</div>
+<h1>함수 심화</h1>
+<p class="lead">함수를 더 유연하고 강력하게. 이름으로 넘기는 <strong>키워드 인자</strong>, 개수 자유로운 <code>*args</code>, 한 줄 함수 <strong>람다</strong>(Part 8의 정렬 <code>key</code>!), 그리고 핵심 원리 — <strong>함수도 값이라 넘길 수 있다</strong>(<code>map</code>·<code>filter</code>).</p>
+<div class="hero-meta">
+<span class="chip">🟠 함수 · 13/18</span>
+<span class="chip t">람다 · 고차 함수</span>
+<span class="chip t">예상 35분</span>
+</div>
+</header>
+<main class="wrap">
+<!-- 1 keyword -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">13-1</div><h2>키워드 인자</h2><p>순서 대신 <code>이름=값</code>으로 지정해 넘김. 이름표가 있어 순서가 헷갈릴 일이 없고, 인자가 많을 때 명확함. (위치 인자가 키워드보다 앞에 와야 함.)</p><div class="note"><b>📌 참고</b>  인자가 3개 넘거나 불리언·기본값이 섞이면 키워드가 훨씬 읽기 좋음 — <code>함수(True, False, 3)</code>보다 <code>함수(포장=True, 급송=False, 수량=3)</code>. 라이브러리가 키워드를 많이 쓰는 이유.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>키워드 인자는 <code>이름=값</code>으로 지정해 넘김.</li>
+<li>순서 무관·가독성 좋음(특히 인자 많을 때).</li>
+<li>위치 인자가 키워드 인자보다 앞에 와야 함.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 같은 호출, 다른 방식</span>
+<p class="wdesc">호출 방식을 골라, 위치 인자와 키워드 인자가 같은 결과를 내는 걸 봄.</p>
+<div class="seg" id="w1tog">
+<button class="on" data-k="pos">상품등록("니트", 89000, 12)</button>
+<button data-k="kw">이름="니트", 가격=89000, 재고=12</button>
+<button data-k="mix">"니트", 재고=12, 가격=89000</button>
+</div>
+<div class="out" id="w1out"></div>
+</div></div></section>
+<!-- 2 *args -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">13-2</div><h2>*args — 개수 자유로운 인자</h2><p><code>*args</code>는 넘긴 여러 위치 인자를 <strong>튜플로 모음</strong>("몇 개가 오든 담는 바구니"). <code>**kwargs</code>는 키워드 인자를 딕셔너리로. <code>print(a, b, c, ...)</code>가 인자를 몇 개든 받는 원리.</p><div class="note"><b>📌 참고</b>  입문 단계엔 "이런 게 있다" 정도로 충분 — <code>print</code>처럼 인자를 자유롭게 받는 함수의 비밀. "별표는 여러 개를 하나로 모은다"는 감만 잡으면 됨.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li><code>*args</code>는 여러 위치 인자를 튜플로 모음.</li>
+<li><code>**kwargs</code>는 여러 키워드 인자를 딕셔너리로.</li>
+<li><code>print</code>처럼 인자 자유로운 함수의 원리.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 합(*숫자들)</span>
+<p class="wdesc">숫자를 추가/삭제해, 개수가 달라져도 한 함수가 다 받아 합산하는 걸 봄.</p>
+<div class="chips-in" id="w2chips" style="margin-bottom:10px;"></div>
+<div style="text-align:center;">
+<input class="pp-input" id="w2val" style="width:80px;" type="number" value="50"/>
+<button class="btn" id="w2add">+ 추가</button>
+<button class="btn ghost" id="w2pop">− 빼기</button>
+</div>
+<div class="out" id="w2out" style="margin-top:10px;"></div>
+</div></div></section>
+<!-- 3 lambda -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">13-3</div><h2>람다 — 한 줄 익명 함수</h2><p><code>lambda 매개변수: 식</code> — 이름도 <code>return</code>도 없는 한 줄 함수. 정렬 <strong>기준을 즉석에서 넘길 때</strong> 가장 자주 씀. 드디어 Part 8의 <code>key=lambda 상품: 상품["가격"]</code>이 이해됨!</p><div class="note"><b>📌 참고</b>  <code>key=lambda 상품: 상품["가격"]</code> = "각 상품에서 가격을 꺼내는 한 줄 함수" — <code>sorted</code>가 그 함수로 비교 기준을 정함. 짧고 단순할 때만 람다, 복잡하면 <code>def</code>.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>람다는 <code>lambda 매개변수: 식</code>의 한 줄 익명 함수.</li>
+<li><code>key=lambda x: x["가격"]</code>처럼 기준을 즉석에서 넘김.</li>
+<li>짧고 단순할 때만, 복잡하면 <code>def</code>.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 람다로 정렬 기준 바꾸기</span>
+<p class="wdesc">정렬 기준(람다)을 골라, 상품이 그 기준으로 다시 정렬되는 걸 봄.</p>
+<div class="seg" id="w3key">
+<button class="on" data-k="가격">key=lambda s: s["가격"]</button>
+<button data-k="재고">key=lambda s: s["재고"]</button>
+<button data-k="이름">key=lambda s: s["이름"]</button>
+</div>
+<div class="sc-list" id="w3list"></div>
+<div class="out" id="w3out"></div>
+</div></div></section>
+<!-- 4 함수는 값 -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">13-4</div><h2>함수는 값이다 — map·filter</h2><p>핵심 원리 — <strong>함수도 값(객체)</strong>이라 변수에 담고 다른 함수에 넘길 수 있음. 함수를 받는 <strong>고차 함수</strong> <code>map</code>(모든 값 변환)·<code>filter</code>(조건 맞는 값만)가 그 예.</p><div class="note"><b>📌 참고</b>  함수를 넘길 땐 괄호 없이 이름만(<code>map(두배, ...)</code>), 호출은 괄호(<code>두배(5)</code>) — 이 차이가 핵심. <code>map</code>=변환, <code>filter</code>=거름. (다만 다음 파트 컴프리헨션이 더 읽기 쉬워 실무선 그쪽 선호.)</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>함수도 값(객체)이라 변수에 담고 넘길 수 있음.</li>
+<li>함수를 받는 고차 함수 — <code>sorted(key=)</code>·<code>map</code>·<code>filter</code>.</li>
+<li><code>map</code>은 변환, <code>filter</code>는 거름.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · map vs filter</span>
+<p class="wdesc">map(변환)과 filter(거름)를 골라, 함수를 넘겨 일괄 처리하는 결과를 봄.</p>
+<div class="seg" id="w4tog">
+<button class="on" data-k="map">map(lambda 가: 가*0.9)</button>
+<button data-k="filter">filter(lambda 가: 가&gt;=100000)</button>
+</div>
+<div class="out" id="w4out"></div>
+</div></div></section>
+<!-- 5 종합 -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">13-5</div><h2>종합 — 함수로 데이터 가공</h2><p>정렬(람다 <code>key</code>) + 변환(함수) + 필터를 결합해 데이터를 가공함. 함수·람다·고차 함수가 데이터 가공의 도구로 한데 모임.</p><div class="note"><b>📌 참고</b>  <code>[s["이름"] for s in 상품목록 if ...]</code> 같은 표현이 다음 파트의 <b>컴프리헨션</b> — 반복+수집을 한 줄로. 함수·람다·정렬·필터에 컴프리헨션을 더하면 데이터 가공이 거의 자연어처럼 읽힘.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>함수 + 람다 + 정렬·필터로 데이터를 가공함.</li>
+<li>정렬 기준은 람다 <code>key</code>, 변환·판정은 <code>def</code>.</li>
+<li>컴프리헨션(Part 14)을 더하면 더 간결해짐.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 가공 파이프라인</span>
+<p class="wdesc">단계를 골라, 같은 상품 데이터가 정렬·변환·필터되는 결과를 봄.</p>
+<div class="seg" id="w5tog">
+<button class="on" data-k="sort">① 비싼 순 정렬</button>
+<button data-k="discount">② 할인가 계산</button>
+<button data-k="low">③ 재고 부족 필터</button>
+</div>
+<div class="out" id="w5out"></div>
+</div></div></section>
+</main>
+<footer>
+<div class="next-card">
+<div class="nl">NEXT · PART 14</div>
+<div class="nt">컴프리헨션과 내장 함수</div>
+<p style="margin-top:8px;"><code>[... for ... in ... if ...]</code> 한 줄 데이터 가공, 그리고 <code>enumerate</code>·<code>zip</code>·<code>sum</code>·<code>sorted</code> 등 유용한 내장 함수. 데이터 처리 코드가 한 단계 더 깔끔해짐.</p>
+</div>
+<p style="margin-top:24px;">파이썬 기초 문법 커리큘럼 · Part 13 / 18 · 데이터 분석 자동화를 위한 기초</p>
+</footer>
+<script>
+var prog=document.getElementById('progress');
+addEventListener('scroll',function(){var h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+
+/* W1 keyword */
+(function(){
+  var R={
+    pos:'<span class="dim">상품등록("니트", 89000, 12)</span>\n<span class="dim"># 위치 인자 — 순서대로 이름,가격,재고</span>\n출력 ▸ <span class="hl">니트: 89000원, 재고 12</span>',
+    kw:'<span class="dim">상품등록(이름="니트", 가격=89000, 재고=12)</span>\n<span class="dim"># 키워드 인자 — 이름표를 붙임</span>\n출력 ▸ <span class="hl">니트: 89000원, 재고 12</span>',
+    mix:'<span class="dim">상품등록("니트", 재고=12, 가격=89000)</span>\n<span class="dim"># 키워드는 순서 무관 (재고·가격 순서 바꿔도 OK)</span>\n출력 ▸ <span class="hl">니트: 89000원, 재고 12</span>'
+  };
+  var out=document.getElementById('w1out');
+  document.querySelectorAll('#w1tog button').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#w1tog button').forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on'); out.innerHTML=R[b.dataset.k];
+    });
+  });
+  out.innerHTML=R.pos;
+})();
+
+/* W2 *args */
+(function(){
+  var nums=[10, 20, 30];
+  var chips=document.getElementById('w2chips'), out=document.getElementById('w2out');
+  function render(){
+    chips.innerHTML=nums.length? nums.map(function(n){return '<span class="nchip">'+n+'</span>';}).join('') : '<span class="dim" style="color:var(--sub)">(인자 없음)</span>';
+    var sum=nums.reduce(function(a,c){return a+c;},0);
+    out.innerHTML='<span class="dim">합('+nums.join(', ')+')</span>\n<span class="dim">→ 숫자들 = ('+nums.join(', ')+')  (튜플로 모임, '+nums.length+'개)</span>\nreturn sum(숫자들) ▸ <span class="hl">'+sum+'</span>';
+  }
+  document.getElementById('w2add').addEventListener('click',function(){
+    var v=parseInt(document.getElementById('w2val').value,10); if(!isNaN(v)){ nums.push(v); render(); }
+  });
+  document.getElementById('w2pop').addEventListener('click',function(){ nums.pop(); render(); });
+  render();
+})();
+
+/* W3 lambda sort */
+(function(){
+  var data=[{이름:"니트",가격:89000,재고:12},{이름:"코트",가격:120000,재고:3},{이름:"가디건",가격:79000,재고:8}];
+  function render(key){
+    var sorted=data.slice().sort(function(a,b){
+      if(key==='이름') return a.이름<b.이름?-1:1;
+      return a[key]-b[key];
+    });
+    document.getElementById('w3list').innerHTML=sorted.map(function(d){
+      return '<div class="sc-card"><span class="nm">'+d.이름+'</span><span>가격 '+d.가격.toLocaleString()+' / 재고 '+d.재고+'</span></div>';
+    }).join('');
+    document.getElementById('w3out').innerHTML='<span class="dim">sorted(상품들, key=lambda s: s["'+key+'"])</span>\n→ '+key+' 오름차순으로 정렬됨';
+  }
+  document.querySelectorAll('#w3key button').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#w3key button').forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on'); render(b.dataset.k);
+    });
+  });
+  render('가격');
+})();
+
+/* W4 map/filter */
+(function(){
+  var prices=[89000,120000,79000];
+  var R={
+    map:function(){
+      var r=prices.map(function(p){return Math.round(p*0.9);});
+      return '<span class="dim">list(map(lambda 가: 가*0.9, '+JSON.stringify(prices)+'))</span>\n<span class="dim"># 모든 값을 변환</span>\n▸ <span class="hl">['+r.join(', ')+']</span>';
+    },
+    filter:function(){
+      var r=prices.filter(function(p){return p>=100000;});
+      return '<span class="dim">list(filter(lambda 가: 가>=100000, '+JSON.stringify(prices)+'))</span>\n<span class="dim"># 조건(True) 맞는 값만</span>\n▸ <span class="hl">['+r.join(', ')+']</span>';
+    }
+  };
+  var out=document.getElementById('w4out');
+  document.querySelectorAll('#w4tog button').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#w4tog button').forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on'); out.innerHTML=R[b.dataset.k]();
+    });
+  });
+  out.innerHTML=R.map();
+})();
+
+/* W5 종합 */
+(function(){
+  var data=[{이름:"니트",가격:89000,재고:12},{이름:"코트",가격:120000,재고:3},{이름:"가디건",가격:79000,재고:8},{이름:"패딩",가격:159000,재고:5}];
+  var R={
+    sort:function(){
+      var s=data.slice().sort(function(a,b){return b.가격-a.가격;});
+      return '<span class="dim">sorted(상품목록, key=lambda s: s["가격"], reverse=True)</span>\n비싼 순 ▸ <span class="hl">'+s.map(function(d){return d.이름;}).join(', ')+'</span>';
+    },
+    discount:function(){
+      var lines=data.map(function(d){return d.이름+': '+Math.round(d.가격*0.9).toLocaleString()+'원';});
+      return '<span class="dim">def 할인가(상품, 율=0.1): return round(...)</span>\n'+lines.map(function(l){return '▸ <span class="hl">'+l+'</span>';}).join('\n');
+    },
+    low:function(){
+      var r=data.filter(function(d){return d.재고<=5;}).map(function(d){return d.이름;});
+      return '<span class="dim">[s["이름"] for s in 상품목록 if s["재고"] <= 5]</span>\n재고 부족 ▸ <span class="hl">['+r.map(function(x){return "'"+x+"'";}).join(', ')+']</span>';
+    }
+  };
+  var out=document.getElementById('w5out');
+  document.querySelectorAll('#w5tog button').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('#w5tog button').forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on'); out.innerHTML=R[b.dataset.k]();
+    });
+  });
+  out.innerHTML=R.sort();
+})();
+</script>
+</body>
+</html>

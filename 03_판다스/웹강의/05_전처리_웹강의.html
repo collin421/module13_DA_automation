@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 5 · 데이터 전처리 — 결측치와 이상치</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--theme:#c2410c;--themed:#8a3408;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:880px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.06),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--theme);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:84px 22px 36px;}
+  .eyebrow{color:var(--theme);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:62ch;}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:54px 0 30px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--theme);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 18px;line-height:1.3;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  code{font-family:'Gowun Dodum',monospace;background:#efe7d8;color:#8a3408;padding:1.5px 7px;border-radius:6px;font-size:.92em;}
+  pre{background:#2b2723;color:#f4efe6;border-radius:12px;padding:16px 18px;overflow-x:auto;font-size:13.5px;line-height:1.7;margin:16px 0;white-space:pre;}
+  pre code{background:none;color:inherit;padding:0;}
+  pre .k{color:#e0935f;}pre .s{color:#9ec79a;}pre .c{color:#8b8175;font-style:italic;}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--theme);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15.5px;color:var(--sub);}
+  .note b{color:var(--themed);}.note.warn{border-left-color:#b4451f;}
+  .summary{background:#f3e7df;border-radius:12px;padding:18px 20px;margin:22px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--themed);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--theme);padding:4px 11px;border-radius:999px;margin-bottom:16px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;border-radius:10px;padding:12px 15px;font-family:monospace;font-size:13.5px;color:#9ec79a;min-height:38px;white-space:pre-wrap;line-height:1.65;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}.out .accent{color:#e0935f;font-weight:700;}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+  .segbtn{border:1.5px solid var(--line);background:#fff;border-radius:9px;padding:8px 13px;cursor:pointer;font-family:var(--sans);font-weight:700;font-size:12.5px;color:var(--sub);transition:.15s;}
+  .segbtn.on{border-color:var(--theme);background:var(--theme);color:#fff;}
+  .stage{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px;}
+  .lbl{font-size:12px;color:var(--sub);font-weight:700;}
+
+  .dft{border-collapse:collapse;font-family:monospace;font-size:13px;width:100%;}
+  .dft th,.dft td{border:1px solid var(--line);padding:6px 9px;text-align:center;}
+  .dft th{background:#efe7d8;color:#8a3408;}
+  .dft td{background:#fff;}
+  .dft td.nan{background:#f6e0d6;color:#b4451f;font-weight:700;}
+  .dft td.tf{font-weight:700;}.dft td.tf.t{color:#b4451f;}.dft td.tf.f{color:#2f6b5e;}
+  .dft td.fill{background:#e3efe0;color:#2f6b5e;font-weight:700;}
+  .dft tr.gone td{opacity:.25;text-decoration:line-through;}
+  .dft td.out{background:#f6d9cf;color:#a3331a;font-weight:700;}
+
+  /* number line for IQR */
+  .nline{position:relative;height:64px;margin:14px 0 6px;border-bottom:2px solid var(--line);}
+  .ntick{position:absolute;bottom:0;transform:translateX(-50%);}
+  .ntick .dot{width:11px;height:11px;border-radius:50%;background:#3f7d4f;margin:0 auto;}
+  .ntick .dot.out{background:#c2410c;width:14px;height:14px;}
+  .ntick .vv{font-size:10px;color:var(--sub);margin-top:3px;}
+  .nband{position:absolute;top:8px;height:30px;background:rgba(63,125,79,.12);border-left:2px dashed #3f7d4f;border-right:2px dashed #3f7d4f;border-radius:4px;}
+  .cnt{font-size:13px;color:var(--themed);font-weight:700;margin-top:10px;}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f7ece4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;text-decoration:none;color:inherit;display:block;transition:.18s;}
+  .next-card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(80,60,30,.1);}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--theme);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .crumb{display:inline-block;margin-bottom:8px;font-size:13px;color:var(--sub);text-decoration:none;}
+  .crumb:hover{color:var(--accent);}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}.dft{font-size:12px;}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<header class="hero">
+  <a class="crumb" href="../00_데이터분석_판다스_목차.html">← 전체 목차</a>
+  <div class="eyebrow">데이터 분석 · 판다스 · 3단계</div>
+  <h1>데이터 전처리<br><span style="font-size:.6em;color:var(--sub);font-weight:400;">결측치와 이상치 다루기</span></h1>
+  <p class="lead">현실의 데이터는 깨끗하지 않습니다. 빈 값(<strong>결측치</strong>)과 비정상적으로 튀는 값(<strong>이상치</strong>)이 거의 항상 섞여 있습니다. 그대로 두면 평균·분산이 왜곡됩니다. 찾아서 삭제·대체하는 법을 직접 만져봄 — 실무 분석 시간의 절반 이상을 차지하는 단계.</p>
+  <div class="hero-meta">
+    <span class="chip">🟠 3단계 · 정제</span>
+    <span class="chip t">isnull · dropna · fillna · IQR</span>
+    <span class="chip t">예상 40분</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- S1 결측 확인 -->
+  <section class="reveal">
+    <div class="sec-no">01</div>
+    <h2>결측치 확인 — isnull()</h2>
+    <p>각 칸이 비어 있는지(<code>NaN</code>인지)를 True/False로 알려줍니다. <code>isnull()</code>과 <code>isna()</code>는 같은 메소드입니다. 여기에 <code>.sum()</code>을 붙이면 True를 1로 세어 <strong>열별 결측 개수</strong>가 나옵니다.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · isnull → sum</span>
+      <p class="wdesc">빨간 칸이 결측(NaN)입니다. 단계를 눌러 확인 과정을 보세요.</p>
+      <div class="seg" id="w1btn">
+        <button class="segbtn on" data-k="raw">원본 (NaN 표시)</button>
+        <button class="segbtn" data-k="bool">isnull() · True/False</button>
+        <button class="segbtn" data-k="sum">isnull().sum() · 열별 개수</button>
+      </div>
+      <div class="stage">
+        <table class="dft" id="w1table"></table>
+        <div class="cnt" id="w1cnt"></div>
+      </div>
+    </div>
+
+    <div class="note"><b>📌 출발점</b> &nbsp;<code>df.isnull().sum()</code>은 전처리의 시작입니다. "어느 열에 결측이 몇 개인지" 먼저 파악해야 처리 전략(삭제 vs 대체)을 정할 수 있습니다. <code>.sum().sum()</code>이면 전체 결측 총개수.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>isnull()</code>=<code>isna()</code>로 결측을 True/False 표시.</li>
+      <li><code>.sum()</code>으로 열별 결측 개수.</li>
+      <li>결측 위치·규모 파악이 전처리의 첫걸음.</li>
+    </ol></div>
+  </section>
+
+  <!-- S2 dropna -->
+  <section class="reveal">
+    <div class="sec-no">02</div>
+    <h2>결측 처리 ① — 삭제: dropna()</h2>
+    <p>결측치가 있는 <strong>행을 통째로 삭제</strong>합니다. 기본은 "결측이 하나라도 있는 행"을 모두 지웁니다. 간단하지만 <strong>데이터 손실이 큽니다.</strong></p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · dropna</span>
+      <div class="seg" id="w2btn">
+        <button class="segbtn on" data-k="raw">원본 (5행)</button>
+        <button class="segbtn" data-k="drop">dropna() 적용</button>
+      </div>
+      <div class="stage">
+        <table class="dft" id="w2table"></table>
+        <div class="cnt" id="w2cnt"></div>
+      </div>
+    </div>
+
+    <div class="note warn"><b>⚠️ 손실 주의</b> &nbsp;<code>dropna()</code>는 결측이 하나만 있어도 그 행을 통째로 지웁니다. 결측이 많으면 데이터가 크게 줄어듭니다. 그럴 땐 특정 열만(<code>subset=</code>) 또는 <b>대체</b>(다음 절)를 고려하세요. 행은 <code>axis=0</code>, 열은 <code>axis=1</code>.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>dropna()</code>는 결측 있는 행을 삭제.</li>
+      <li>손실이 크면 <code>subset</code>이나 대체를 고려.</li>
+      <li>처리 전후 행 수를 꼭 비교.</li>
+    </ol></div>
+  </section>
+
+  <!-- S3 fillna -->
+  <section class="reveal">
+    <div class="sec-no">03</div>
+    <h2>결측 처리 ② — 대체: fillna()</h2>
+    <p>결측치를 <strong>특정 값으로 채웁니다.</strong> 보통 그 열의 <strong>평균·중앙값</strong>을 씁니다. 이상치가 많으면 평균은 흔들리므로 <strong>중앙값</strong>이 안전합니다. 대체 방식을 바꿔 채워지는 값을 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · fillna</span>
+      <p class="wdesc">값에 <strong>100</strong>이라는 이상치가 섞여 있습니다. 평균과 중앙값이 얼마나 다른지 보세요.</p>
+      <div class="seg" id="w3btn">
+        <button class="segbtn on" data-k="mean">fillna(mean)</button>
+        <button class="segbtn" data-k="median">fillna(median)</button>
+      </div>
+      <div class="stage">
+        <table class="dft" id="w3table"></table>
+        <div class="out" id="w3out" style="margin-top:12px;"></div>
+      </div>
+    </div>
+
+    <div class="note"><b>📌 평균 vs 중앙값</b> &nbsp;변동성이 클 땐(변동계수 CV ≥ 30%) 이상치에 흔들리지 않는 <b>중앙값</b>이 안전합니다. 결측이 너무 많은 열은 채우기보다 <code>drop(columns=...)</code>로 열을 삭제하기도 합니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>fillna(값)</code>으로 결측을 대체.</li>
+      <li>이상치 많으면 평균 대신 <b>중앙값</b>.</li>
+      <li>결측 과다 열은 <code>drop(columns=)</code>도 선택.</li>
+    </ol></div>
+  </section>
+
+  <!-- S4 ffill bfill -->
+  <section class="reveal">
+    <div class="sec-no">04</div>
+    <h2>결측 처리 ③ — 앞뒤 값: ffill / bfill</h2>
+    <p>시계열(날짜순)처럼 <strong>연속성이 중요한</strong> 데이터는 바로 앞/뒤 값으로 채웁니다. <code>ffill</code>은 앞 값(전일 가격 유지), <code>bfill</code>은 뒤 값입니다. 주가 데이터로 채움 방향을 보세요.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · ffill / bfill</span>
+      <div class="seg" id="w4btn">
+        <button class="segbtn on" data-k="raw">원본 (결측 포함)</button>
+        <button class="segbtn" data-k="ffill">ffill() · 앞 값으로</button>
+        <button class="segbtn" data-k="bfill">bfill() · 뒤 값으로</button>
+      </div>
+      <div class="stage">
+        <table class="dft" id="w4table"></table>
+        <div class="cnt" id="w4cnt"></div>
+      </div>
+    </div>
+
+    <div class="note warn"><b>⚠️ 버전 주의</b> &nbsp;예전 방식 <code>fillna(method='ffill')</code>은 최신 판다스(2.x)에서 <b>사라질 예정(deprecated)</b>입니다. 이제는 <code>df.ffill()</code>, <code>df.bfill()</code>를 쓰세요. 주가·기온처럼 직전 값과 이어지는 데이터에 자연스럽습니다.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li><code>ffill()</code>=앞 값, <code>bfill()</code>=뒤 값으로 채움.</li>
+      <li>시계열·연속성 데이터에 적합.</li>
+      <li>구버전 <code>fillna(method=)</code> 대신 <code>ffill()</code>.</li>
+    </ol></div>
+  </section>
+
+  <!-- S5 이상치 -->
+  <section class="reveal">
+    <div class="sec-no">05</div>
+    <h2>이상치 탐지 — IQR · 표준편차</h2>
+    <p>이상치가 눈에 안 보일 때는 통계로 경계를 정합니다. <strong>IQR</strong>은 가운데 50% 범위로 경계(<code>Q1−1.5·IQR ~ Q3+1.5·IQR</code>)를, <strong>표준편차</strong>는 <code>평균±3σ</code>를 씁니다. 수학 점수(0~100점인데 일부 입력 오류)에서 경계 밖 값을 찾아 봅니다.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 이상치 경계</span>
+      <div class="seg" id="w5btn">
+        <button class="segbtn on" data-k="iqr">IQR 방법</button>
+        <button class="segbtn" data-k="std">표준편차 ±3σ</button>
+      </div>
+      <div class="stage">
+        <div class="lbl">수학 점수 (정상 범위 = 초록 띠, 빨강 = 이상치)</div>
+        <div class="nline" id="w5line"></div>
+        <div class="out" id="w5out" style="margin-top:6px;"></div>
+        <div class="cnt" id="w5cnt"></div>
+      </div>
+    </div>
+
+    <div class="note"><b>📌 핵심</b> &nbsp;어떤 방법이든 핵심은 <b>"경계를 정하고 → 조건 필터로 골라낸다"</b>입니다. 경계 계산만 다를 뿐, 처리(제거·대체)는 Part 3의 필터링과 똑같습니다. <code>df[(df['수학']>=하한) & (df['수학']<=상한)]</code>.</div>
+
+    <div class="summary"><div class="h">3줄 요약</div><ol>
+      <li>IQR: <code>Q1−1.5·IQR ~ Q3+1.5·IQR</code> 밖이 이상치.</li>
+      <li>표준편차: <code>평균±3σ</code> 밖이 이상치.</li>
+      <li>경계를 정해 조건 필터로 제거·대체.</li>
+    </ol></div>
+  </section>
+
+</main>
+
+<footer>
+  <a class="next-card" href="06_날짜와_그룹집계_웹강의.html">
+    <div class="nl">NEXT · PART 6</div>
+    <div class="nt">날짜 데이터와 그룹 집계</div>
+    <p style="margin-top:8px;">문자열을 날짜로 바꿔 연·월·요일을 뽑고(<strong>to_datetime</strong>, <strong>.dt</strong>), <strong>groupby</strong>로 기준별 집계, <strong>apply</strong>로 사용자 함수를 적용하는 실전 가공을 배웁니다.</p>
+  </a>
+  <p style="margin-top:24px;">데이터 분석 프로세스와 판다스 활용하기 · Part 5 / 9 · 가공·정제</p>
+</footer>
+
+<script>
+const prog=document.getElementById('progress');
+addEventListener('scroll',()=>{const h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+const NA=null;
+/* ===== W1 isnull ===== */
+(function(){
+  const cols=['현재가','거래량','Credit'];
+  const D=[[70000,1000000,5],[NA,800000,3],[380000,NA,8],[135000,600000,NA],[800000,300000,9]];
+  const t=document.getElementById('w1table'), cnt=document.getElementById('w1cnt');
+  function cell(v){return v===NA?'<td class="nan">NaN</td>':'<td>'+v.toLocaleString()+'</td>';}
+  function render(k){
+    let h='<tr><th></th>';cols.forEach(c=>h+='<th>'+c+'</th>');h+='</tr>';
+    D.forEach((r,ri)=>{h+='<tr><td class="lbl" style="background:#f3ecdd;color:#a06a2a;font-weight:700;">'+ri+'</td>';
+      r.forEach(v=>{
+        if(k==='raw')h+=cell(v);
+        else h+='<td class="tf '+(v===NA?'t':'f')+'">'+(v===NA?'True':'False')+'</td>';
+      });h+='</tr>';});
+    t.innerHTML=h;
+    if(k==='sum'){
+      const sums=cols.map((_,ci)=>D.filter(r=>r[ci]===NA).length);
+      cnt.innerHTML='isnull().sum() ▸ 현재가 <b>'+sums[0]+'</b>, 거래량 <b>'+sums[1]+'</b>, Credit <b>'+sums[2]+'</b>  (전체 <b>'+sums.reduce((a,b)=>a+b,0)+'개</b>)';
+    }else if(k==='bool'){cnt.innerHTML='각 칸을 True(결측)/False로 변환 — True를 세면 결측 개수';}
+    else{cnt.innerHTML='빨간 칸 = NaN(결측). 현재가·거래량·Credit에 각각 1개씩.';}
+  }
+  document.querySelectorAll('#w1btn .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w1btn .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(b.dataset.k);}));
+  render('raw');
+})();
+
+/* ===== W2 dropna ===== */
+(function(){
+  const cols=['현재가','거래량','Credit'];
+  const D=[[70000,1000000,5],[NA,800000,3],[380000,NA,8],[135000,600000,NA],[800000,300000,9]];
+  const t=document.getElementById('w2table'), cnt=document.getElementById('w2cnt');
+  function cell(v){return v===NA?'<td class="nan">NaN</td>':'<td>'+v.toLocaleString()+'</td>';}
+  function render(k){
+    let h='<tr><th></th>';cols.forEach(c=>h+='<th>'+c+'</th>');h+='</tr>';
+    D.forEach((r,ri)=>{const hasNA=r.includes(NA);const gone=(k==='drop'&&hasNA);
+      h+='<tr class="'+(gone?'gone':'')+'"><td class="lbl" style="background:#f3ecdd;color:#a06a2a;font-weight:700;">'+ri+'</td>';
+      r.forEach(v=>h+=cell(v));h+='</tr>';});
+    t.innerHTML=h;
+    if(k==='drop'){const left=D.filter(r=>!r.includes(NA)).length;
+      cnt.innerHTML='dropna() ▸ 5행 → <b>'+left+'행</b> (결측 있는 3행 삭제 — 손실 큼!)';}
+    else cnt.innerHTML='5개 행 중 3개 행에 결측이 있음.';
+  }
+  document.querySelectorAll('#w2btn .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w2btn .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(b.dataset.k);}));
+  render('raw');
+})();
+
+/* ===== W3 fillna ===== */
+(function(){
+  const vals=[2,4,NA,6,100];
+  const nonNull=vals.filter(v=>v!==NA);
+  const mean=nonNull.reduce((a,b)=>a+b,0)/nonNull.length;          // 28.0
+  const sorted=[...nonNull].sort((a,b)=>a-b);
+  const median=(sorted[1]+sorted[2])/2;                            // (4+6)/2=5.0
+  const t=document.getElementById('w3table'), out=document.getElementById('w3out');
+  function render(k){
+    const fillv=k==='mean'?mean:median;
+    let h='<tr><th>인덱스</th>';vals.forEach((_,i)=>h+='<th>'+i+'</th>');h+='</tr><tr><td class="lbl" style="background:#f3ecdd;color:#a06a2a;font-weight:700;">값</td>';
+    vals.forEach(v=>{if(v===NA)h+='<td class="fill">'+fillv+'</td>';else h+='<td>'+v+'</td>';});h+='</tr>';
+    t.innerHTML=h;
+    out.innerHTML='<span class="dim">비결측 값: [2, 4, 6, 100] — 100이 이상치</span>\n'+
+      '<span class="dim">mean() ▸ </span><span class="'+(k==='mean'?'accent':'hl')+'">28.0</span>'+(k==='mean'?'  ← 이상치 100에 끌려 큼':'')+'\n'+
+      '<span class="dim">median() ▸ </span><span class="'+(k==='median'?'accent':'hl')+'">5.0</span>'+(k==='median'?'  ← 이상치에 흔들리지 않음':'')+'\n'+
+      'NaN을 <span class="accent">'+fillv+'</span> 로 채움 (df.fillna(df.<span class="hl">'+k+'</span>()))';
+  }
+  document.querySelectorAll('#w3btn .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w3btn .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(b.dataset.k);}));
+  render('mean');
+})();
+
+/* ===== W4 ffill/bfill ===== */
+(function(){
+  const dates=['1일','2일','3일','4일','5일'];
+  const raw=[100,NA,NA,103,107];
+  const t=document.getElementById('w4table'), cnt=document.getElementById('w4cnt');
+  function compute(k){
+    const a=[...raw];
+    if(k==='ffill'){for(let i=1;i<a.length;i++)if(a[i]===NA)a[i]=a[i-1];}
+    else if(k==='bfill'){for(let i=a.length-2;i>=0;i--)if(a[i]===NA)a[i]=a[i+1];}
+    return a;
+  }
+  function render(k){
+    const a=k==='raw'?raw:compute(k);
+    let h='<tr><th>날짜</th>';dates.forEach(d=>h+='<th>'+d+'</th>');h+='</tr><tr><td class="lbl" style="background:#f3ecdd;color:#a06a2a;font-weight:700;">종가</td>';
+    a.forEach((v,i)=>{if(v===NA)h+='<td class="nan">NaN</td>';else if(k!=='raw'&&raw[i]===NA)h+='<td class="fill">'+v+'</td>';else h+='<td>'+v+'</td>';});h+='</tr>';
+    t.innerHTML=h;
+    if(k==='ffill')cnt.innerHTML='ffill() ▸ 2·3일의 빈 값을 <b>앞 값(100)</b>으로 채움';
+    else if(k==='bfill')cnt.innerHTML='bfill() ▸ 2·3일의 빈 값을 <b>뒤 값(103)</b>으로 채움';
+    else cnt.innerHTML='2일·3일 종가가 결측(NaN).';
+  }
+  document.querySelectorAll('#w4btn .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w4btn .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(b.dataset.k);}));
+  render('raw');
+})();
+
+/* ===== W5 이상치 IQR/std ===== */
+(function(){
+  const scores=[85,78,92,75,88,90,84,88,123,200];
+  const sorted=[...scores].sort((a,b)=>a-b);
+  function quantile(q){const pos=(sorted.length-1)*q,base=Math.floor(pos),rest=pos-base;
+    return sorted[base+1]!==undefined?sorted[base]+rest*(sorted[base+1]-sorted[base]):sorted[base];}
+  const Q1=quantile(.25), Q3=quantile(.75), IQR=Q3-Q1;
+  const iqrLo=Q1-1.5*IQR, iqrHi=Q3+1.5*IQR;
+  const mean=scores.reduce((a,b)=>a+b,0)/scores.length;
+  const sd=Math.sqrt(scores.reduce((a,b)=>a+(b-mean)**2,0)/(scores.length-1)); // 표본 std
+  const stdLo=mean-3*sd, stdHi=mean+3*sd;
+  const line=document.getElementById('w5line'), out=document.getElementById('w5out'), cnt=document.getElementById('w5cnt');
+  const minV=60, maxV=210;
+  function pos(v){return (v-minV)/(maxV-minV)*100;}
+  function render(k){
+    const lo=k==='iqr'?iqrLo:stdLo, hi=k==='iqr'?iqrHi:stdHi;
+    const outs=scores.filter(v=>v<lo||v>hi);
+    let h='<div class="nband" style="left:'+Math.max(pos(lo),0)+'%;width:'+(Math.min(pos(hi),100)-Math.max(pos(lo),0))+'%;"></div>';
+    scores.forEach(v=>{const o=v<lo||v>hi;h+='<div class="ntick" style="left:'+pos(v)+'%;"><div class="dot'+(o?' out':'')+'"></div><div class="vv">'+v+'</div></div>';});
+    line.innerHTML=h;
+    if(k==='iqr'){
+      out.innerHTML='Q1=<span class="hl">'+Q1.toFixed(2)+'</span>, Q3=<span class="hl">'+Q3.toFixed(2)+'</span>, IQR=<span class="hl">'+IQR.toFixed(2)+'</span>\n하한=Q1-1.5·IQR=<span class="accent">'+iqrLo.toFixed(2)+'</span>, 상한=Q3+1.5·IQR=<span class="accent">'+iqrHi.toFixed(2)+'</span>';
+    }else{
+      out.innerHTML='평균=<span class="hl">'+mean.toFixed(2)+'</span>, 표준편차=<span class="hl">'+sd.toFixed(2)+'</span>\n하한=평균-3σ=<span class="accent">'+stdLo.toFixed(2)+'</span>, 상한=평균+3σ=<span class="accent">'+stdHi.toFixed(2)+'</span>';
+    }
+    if(outs.length){
+      cnt.innerHTML='이상치 ▸ <b>'+outs.join(', ')+'</b>  (100점 만점 초과 — 입력 오류!)';
+    }else{
+      cnt.innerHTML='이상치 ▸ <b>없음</b>  <span style="color:#b4451f;">※ 이상치(123·200)가 표준편차를 키워 ±3σ 경계가 너무 넓어짐 → 이런 극단값엔 <b>IQR이 더 강건</b>합니다.</span>';
+    }
+  }
+  document.querySelectorAll('#w5btn .segbtn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#w5btn .segbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');render(b.dataset.k);}));
+  render('iqr');
+})();
+</script>
+</body>
+</html>

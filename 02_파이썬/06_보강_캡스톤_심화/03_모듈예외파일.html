@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Part 16 · 모듈·예외·파일</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&amp;family=Gowun+Dodum&amp;display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:760px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.85;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:88px 22px 40px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);max-width:62ch;}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:76px 0 46px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 20px;line-height:1.3;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  code{font-family:'Gowun Dodum',monospace;background:#efe7d8;color:#8a3408;padding:1.5px 7px;border-radius:6px;font-size:.92em;}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15.5px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .note.warn{border-left-color:#b4451f;background:#fbeee8;}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:22px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:16px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;color:#9ec79a;border-radius:10px;padding:13px 16px;font-family:monospace;font-size:13.5px;min-height:42px;white-space:pre-wrap;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}.out .err{color:#e0935f;}
+  .btn{border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:13px;padding:9px 15px;border-radius:9px;cursor:pointer;}
+  .btn.ghost{background:#fdfaf4;border:1.5px solid var(--line);color:var(--sub);}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+  .seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:monospace;transition:.15s;color:var(--ink);}
+  .seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  .codebox{background:#2b2723;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:13px;line-height:1.7;color:#f4efe6;white-space:pre-wrap;}
+  .codebox .kw{color:#e0935f;}.codebox .dim{color:#6f6457;}
+  .codebox .run{background:rgba(158,199,154,.18);border-radius:4px;}
+  .codebox .jump{background:rgba(224,147,95,.22);border-radius:4px;}
+
+  /* memory vs disk */
+  .md-stage{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap;}
+  .md-box{flex:1;min-width:160px;border-radius:12px;padding:14px;}
+  .md-ram{border:2px dashed var(--accent);background:#fdf2ec;}
+  .md-disk{border:2px solid var(--teal);background:#eef5f3;}
+  .md-box .t{font-family:var(--serif);font-weight:700;font-size:14px;margin-bottom:8px;}
+  .md-ram .t{color:var(--accent);}.md-disk .t{color:var(--teal);}
+  .md-item{font-family:monospace;font-size:12px;background:#fff;border:1px solid var(--line);border-radius:6px;padding:5px 9px;margin:3px 0;transition:.3s;}
+  .md-item.gone{opacity:0;transform:translateX(-10px);}
+  .md-arrow{align-self:center;font-size:20px;color:var(--gold);}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}}
+</style>
+<style id="wide16x9">
+/* ===== 16:9 와이드 반응형 오버라이드 ===== */
+:root{--maxw:1320px;}
+header.hero{text-align:center;padding-top:70px;}
+header.hero .lead{margin-left:auto;margin-right:auto;}
+header.hero .hero-meta{justify-content:center;}
+main.wrap section.two-col .col-text>:first-child{margin-top:0;}
+main.wrap section.two-col .col-text .summary{margin-bottom:0;}
+@media(min-width:980px){
+  main.wrap section.two-col{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.06fr);
+    gap:46px;align-items:start;
+  }
+  main.wrap section.two-col .col-widget{position:sticky;top:22px;}
+  main.wrap section.two-col .col-text{padding-top:2px;}
+}
+@media(max-width:979px){
+  main.wrap section.two-col .col-widget{margin-top:6px;}
+}
+</style></head>
+<body>
+<div id="progress"></div>
+<header class="hero">
+<div class="eyebrow">파이썬 기초 문법 · Part 16 · 실전과 클래스</div>
+<h1>모듈·예외·파일</h1>
+<p class="lead">프로그램을 실전 수준으로 — 코드 가져다 쓰기(<strong>모듈</strong>), 오류에 안전하게 대응(<strong>예외</strong>), 데이터를 디스크에 영구 저장(<strong>파일</strong>). 특히 파일은 Part 1의 "값은 메모리라 끝나면 사라진다 → 영구 저장은 파일"의 바로 그 파일.</p>
+<div class="hero-meta">
+<span class="chip">🔴 실전 · 16/18</span>
+<span class="chip t">import · try-except · file</span>
+<span class="chip t">예상 40분</span>
+</div>
+</header>
+<main class="wrap">
+<!-- 1 모듈 -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">16-1</div><h2>모듈 — 코드 가져다 쓰기</h2><p><code>import</code>로 함수·기능이 모인 <strong>코드 묶음 파일</strong>을 가져와 씀. 망치를 직접 만들 필요 없이 도구 상자를 가져오는 것 — Part 0의 "거인의 어깨".</p><div class="note"><b>📌 참고</b>  자주 쓰는 표준 모듈 — <code>math</code>·<code>random</code>·<code>statistics</code>·<code>datetime</code>·<code>os</code>. <code>pandas</code>·<code>numpy</code>는 외부 모듈(다음 단계)이고 <code>import pandas as pd</code>처럼 <b>별명</b>을 붙이는 게 분석 관례.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>모듈은 코드 묶음 파일, <code>import</code>로 가져와 씀.</li>
+<li><code>import 모듈</code> / <code>from ... import</code> / <code>as 별명</code>.</li>
+<li>표준·외부 라이브러리로 기능을 재사용함.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 세 가지 import 방식</span>
+<p class="wdesc">방식을 골라, 같은 기능을 가져오는 세 문법을 비교(결과는 같음).</p>
+<div class="seg" id="w1tog">
+<button class="on" data-k="all">import 모듈</button>
+<button data-k="from">from 모듈 import</button>
+<button data-k="as">import ... as 별명</button>
+</div>
+<div class="out" id="w1out"></div>
+</div></div></section>
+<!-- 2 예외 -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">16-2</div><h2>예외 — 오류에 안전하게</h2><p>실행 중 오류(예외)가 나면 프로그램이 <strong>그 자리에서 죽음</strong>. <code>try-except</code>로 예외를 "잡아" 죽지 않고 대응함 — 안전망. <code>try</code> 중 예외가 나면 즉시 <code>except</code>로 점프.</p><div class="note"><b>📌 참고</b>  자주 만나는 예외 — <code>ValueError</code>·<code>ZeroDivisionError</code>·<code>KeyError</code>·<code>IndexError</code>·<code>FileNotFoundError</code>. 데이터 1000개 중 1개가 잘못돼도 전체가 안 멈추게! 단, <b>예상되는 오류만</b> 콕 집어 잡을 것(넓은 except는 진짜 버그를 숨김).</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>예외는 실행 중 오류, 나면 프로그램이 멈춤.</li>
+<li><code>try-except</code>로 예외를 잡아 죽지 않고 대응.</li>
+<li>예상되는 오류만 구체적으로 잡는 게 좋음.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · try → except 흐름</span>
+<p class="wdesc">입력값을 골라, 예외가 날 때 코드가 어디로 점프하는지 봄.</p>
+<div class="seg" id="w2tog">
+<button class="on" data-k="ok">int("4")</button>
+<button data-k="val">int("abc")</button>
+<button data-k="zero">100 / 0</button>
+</div>
+<div class="codebox" id="w2code"></div>
+<div class="out" id="w2out" style="margin-top:10px;"></div>
+</div></div></section>
+<!-- 3 파일 쓰기 -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">16-3</div><h2>파일 쓰기 — 메모리 → 디스크 ⭐</h2><p>지금까지 값은 <strong>메모리(RAM)</strong>에 있어 프로그램이 끝나면 사라졌음(Part 1). 영구히 남기려면 <strong>파일(디스크)</strong>에 써야 함. 화이트보드(메모리)에서 노트(파일)로 옮겨 적는 것.</p><div class="note warn"><b>⚠️ 참고</b>  모드 <code>"w"</code>는 기존 파일을 <b>덮어씀</b>(이어쓰기는 <code>"a"</code>). 항상 <code>with open(...) as f:</code> 형태를 쓰면 파일이 자동으로 닫혀 안전. <code>encoding="utf-8"</code>로 한글 깨짐 방지. <b>이제 Part 1의 "메모리 vs 디스크"가 완성됨.</b></div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>메모리의 값은 종료 시 사라지므로 파일에 저장함.</li>
+<li><code>with open(파일,"w",encoding="utf-8") as f: f.write(...)</code>.</li>
+<li><code>with</code>가 파일을 자동으로 닫아 안전, <code>"w"</code>는 덮어씀.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 종료 시 메모리는 사라지고 파일은 남는다</span>
+<p class="wdesc">"파일에 쓰기" 후 "프로그램 종료"를 눌러, 메모리 값은 사라져도 파일은 남는 걸 봄.</p>
+<div class="md-stage">
+<div class="md-box md-ram"><div class="t">메모리 (RAM)</div><div id="w3ram"></div></div>
+<div class="md-arrow" id="w3arrow">→</div>
+<div class="md-box md-disk"><div class="t">디스크 (파일)</div><div id="w3disk"><span class="dim" style="font-size:12px;color:var(--sub)">(비어 있음)</span></div></div>
+</div>
+<div style="text-align:center;margin-top:12px;">
+<button class="btn" id="w3write">파일에 쓰기 (w)</button>
+<button class="btn ghost" id="w3exit">프로그램 종료</button>
+<button class="btn ghost" id="w3reset">↻</button>
+</div>
+<div class="out" id="w3out" style="margin-top:10px;"></div>
+</div></div></section>
+<!-- 4 파일 읽기 -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">16-4</div><h2>파일 읽기 — 디스크 → 메모리</h2><p>저장한 파일을 다시 <strong>읽어 들여</strong> 프로그램에서 씀. <code>"r"</code> 모드로 열고, <code>for 줄 in f:</code>로 한 줄씩 순회(파일도 iterable — Part 10). 없는 파일은 <code>FileNotFoundError</code>.</p><div class="note"><b>📌 참고</b>  파일 읽기는 반복(Part 10)·문자열(Part 4)·예외(16-2)가 한데 모이는 지점 — <code>for 줄 in f</code>로 순회하고 <code>.strip()</code>·<code>.split(",")</code>로 가공하고 <code>try-except</code>로 없는 파일에 대비.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li><code>"r"</code> 모드로 읽음(<code>read</code>/<code>readlines</code>).</li>
+<li><code>for 줄 in f:</code>로 한 줄씩 순회(파일도 iterable).</li>
+<li>없는 파일은 <code>FileNotFoundError</code>, <code>try-except</code>로 대비.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 세 가지 읽기 방법</span>
+<p class="wdesc">읽기 방법을 골라, 파일 내용이 어떤 형태로 들어오는지 봄.</p>
+<div class="seg" id="w4tog">
+<button class="on" data-k="read">f.read() 전체</button>
+<button data-k="lines">f.readlines() 리스트</button>
+<button data-k="for">for 줄 in f 순회</button>
+<button data-k="err">없는 파일</button>
+</div>
+<div class="out" id="w4out"></div>
+</div></div></section>
+<!-- 5 CSV -->
+<section class="reveal two-col"><div class="col-text"><div class="sec-no">16-5</div><h2>종합 — CSV 저장·불러오기</h2><p>데이터 분석의 표준 형식 <strong>CSV</strong>(쉼표로 구분된 표)를 다룸. "딕셔너리들의 리스트"를 CSV로 저장하고 다시 읽어 복원 — 반복·문자열·형변환·딕셔너리·파일이 모두 결합됨.</p><div class="note"><b>📌 참고</b>  CSV 값은 모두 <b>문자열로 읽힘</b> → 숫자는 <code>int()</code>·<code>float()</code> 형변환 필요(Part 1·3의 input과 같은 원리). 실무에선 <code>import csv</code>나 <code>pandas.read_csv()</code>가 자동 처리하지만, 그 밑단 동작이 바로 이것.</div><div class="summary"><div class="h">3줄 요약</div><ol>
+<li>CSV는 쉼표로 구분된 표 데이터의 표준 형식.</li>
+<li>딕셔너리 리스트를 CSV로 쓰고 읽어서 복원함.</li>
+<li>읽은 값은 문자열이라 숫자는 형변환이 필요함.</li>
+</ol></div></div><div class="col-widget"><div class="widget">
+<span class="wlabel">인터랙티브 · 저장 → 파일 → 복원 사이클</span>
+<p class="wdesc">단계를 따라가며, 딕셔너리 리스트가 CSV로 저장되고 다시 복원되는 걸 봄.</p>
+<div class="seg" id="w5tog">
+<button class="on" data-k="data">① 원본 (딕셔너리 리스트)</button>
+<button data-k="csv">② CSV 파일</button>
+<button data-k="load">③ 복원</button>
+</div>
+<div class="out" id="w5out"></div>
+</div></div></section>
+</main>
+<footer>
+<div class="next-card">
+<div class="nl">NEXT · PART 17</div>
+<div class="nt">클래스 기초</div>
+<p style="margin-top:8px;">데이터(속성)와 그것을 다루는 함수(메서드)를 <strong>하나로 묶는</strong> 객체 지향의 기초. 지금까지 "상품 딕셔너리 + 함수"를 따로 다뤘다면, 클래스는 둘을 <code>Product</code>라는 하나의 틀로 묶음 — 데이터와 동작이 한 몸이 되는 사고방식!</p>
+</div>
+<p style="margin-top:24px;">파이썬 기초 문법 커리큘럼 · Part 16 / 18 · 데이터 분석 자동화를 위한 기초</p>
+</footer>
+<script>
+var prog=document.getElementById('progress');
+addEventListener('scroll',function(){var h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+
+/* W1 모듈 */
+(function(){
+  var R={
+    all:'<span class="dim">import math</span>\nmath.sqrt(16) ▸ <span class="hl">4.0</span>\n<span class="dim"># 모듈.함수 형태로 사용</span>',
+    from:'<span class="dim">from random import randint</span>\nrandint(1, 10) ▸ <span class="hl">7</span>\n<span class="dim"># random. 없이 바로 함수명</span>',
+    as:'<span class="dim">import statistics as st</span>\nst.mean([1, 2, 3]) ▸ <span class="hl">2</span>\n<span class="dim"># 별명으로 짧게 (pandas as pd 처럼)</span>'
+  };
+  var out=document.getElementById('w1out');
+  document.querySelectorAll('#w1tog button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#w1tog button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.all;
+})();
+
+/* W2 예외 */
+(function(){
+  var cases={
+    ok:{val:'int("4")',jump:'else',out:'정상 처리됨 (결과: 25.0)',color:'#9ec79a'},
+    val:{val:'int("abc")',jump:'except1',out:'숫자를 입력하세요',color:'#e0935f'},
+    zero:{val:'100 / 0',jump:'except2',out:'0으로 나눌 수 없습니다',color:'#e0935f'}
+  };
+  function render(k){
+    var c=cases[k];
+    document.getElementById('w2code').innerHTML=
+      '<span class="kw">try</span>:\n'+
+      '    값 = '+(k==='val'?'<span class="jump">int("abc")</span>':'int("4")')+'\n'+
+      '    결과 = '+(k==='zero'?'<span class="jump">100 / 0</span>':'100 / 값')+'\n'+
+      '<span class="kw">except</span> ValueError:'+(c.jump==='except1'?'  <span class="jump">← 점프</span>':'')+'\n'+
+      '    print("숫자를 입력하세요")\n'+
+      '<span class="kw">except</span> ZeroDivisionError:'+(c.jump==='except2'?'  <span class="jump">← 점프</span>':'')+'\n'+
+      '    print("0으로 나눌 수 없습니다")\n'+
+      '<span class="kw">else</span>:'+(c.jump==='else'?'  <span class="run">← 예외 없음</span>':'')+'\n'+
+      '    print("정상 처리됨")';
+    document.getElementById('w2out').innerHTML='출력 ▸ <span style="color:'+c.color+';font-weight:700">'+c.out+'</span>';
+  }
+  document.querySelectorAll('#w2tog button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#w2tog button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');render(b.dataset.k);});});
+  render('ok');
+})();
+
+/* W3 메모리 vs 디스크 */
+(function(){
+  var written=false, exited=false;
+  var ram=document.getElementById('w3ram'), disk=document.getElementById('w3disk'), out=document.getElementById('w3out');
+  function render(){
+    if(!exited){
+      ram.innerHTML='<div class="md-item">상품 = "니트"</div><div class="md-item">가격 = 89000</div>';
+    } else {
+      ram.innerHTML='<div class="md-item gone">상품 = "니트"</div><div class="md-item gone">가격 = 89000</div><div class="dim" style="font-size:11px;color:var(--accent)">↑ 종료 시 사라짐</div>';
+    }
+    disk.innerHTML = written ? '<div class="md-item" style="border-color:var(--teal)">상품.txt</div><div class="md-item" style="border-color:var(--teal)">니트: 89000원</div>' : '<span class="dim" style="font-size:12px;color:var(--sub)">(비어 있음)</span>';
+  }
+  document.getElementById('w3write').addEventListener('click',function(){
+    written=true; render();
+    out.innerHTML='<span class="dim">with open("상품.txt","w") as f: f.write(...)</span>\n→ <span class="hl">메모리 값이 디스크 파일로 복사됨</span>';
+  });
+  document.getElementById('w3exit').addEventListener('click',function(){
+    exited=true; render();
+    out.innerHTML= written
+      ? '<span class="err">프로그램 종료 — 메모리 값은 사라짐</span>\n<span style="color:#9ec79a">하지만 상품.txt 파일은 디스크에 그대로 남음!</span>'
+      : '<span class="err">프로그램 종료 — 메모리 값이 사라짐 (저장 안 했으면 영영 사라짐!)</span>';
+  });
+  document.getElementById('w3reset').addEventListener('click',function(){ written=false; exited=false; render(); out.innerHTML='<span class="dim">"파일에 쓰기" → "프로그램 종료" 순서로 눌러 보세요</span>'; });
+  render(); out.innerHTML='<span class="dim">"파일에 쓰기" → "프로그램 종료" 순서로 눌러 보세요</span>';
+})();
+
+/* W4 파일 읽기 */
+(function(){
+  var R={
+    read:'<span class="dim">with open("상품.txt","r") as f: f.read()</span>\n▸ <span class="hl">"니트: 89000원\\n코트: 120000원\\n"</span>\n<span class="dim">(전체가 한 문자열로)</span>',
+    lines:'<span class="dim">f.readlines()</span>\n▸ <span class="hl">["니트: 89000원\\n", "코트: 120000원\\n"]</span>\n<span class="dim">(한 줄씩 리스트로, 각 줄 끝에 \\n)</span>',
+    for:'<span class="dim">for 줄 in f:  (파일도 iterable!)</span>\n▸ <span class="hl">니트: 89000원</span>\n▸ <span class="hl">코트: 120000원</span>\n<span class="dim">(.strip()으로 \\n 제거, 가장 흔한 방식)</span>',
+    err:'<span class="dim">open("없는파일.txt", "r")</span>\n▸ <span class="err">FileNotFoundError</span>\n<span class="dim">→ try-except FileNotFoundError 로 대비</span>'
+  };
+  var out=document.getElementById('w4out');
+  document.querySelectorAll('#w4tog button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#w4tog button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.read;
+})();
+
+/* W5 CSV */
+(function(){
+  var R={
+    data:'<span class="dim"># 메모리의 딕셔너리 리스트</span>\n상품목록 = [\n  {"이름":"니트", "가격":89000, "재고":12},\n  {"이름":"코트", "가격":120000, "재고":5},\n]',
+    csv:'<span class="dim"># f.write로 저장한 상품.csv (디스크)</span>\n<span class="hl">이름,가격,재고</span>      <span class="dim"># 헤더</span>\n<span class="hl">니트,89000,12</span>\n<span class="hl">코트,120000,5</span>\n<span class="dim"># 쉼표로 구분된 텍스트</span>',
+    load:'<span class="dim"># 읽어서 split(",") + int() 형변환</span>\n값들 = 줄.strip().split(",")\n{"이름": 값들[0],\n "가격": <span class="hl">int</span>(값들[1]),  <span class="dim"># 문자열→숫자!</span>\n "재고": <span class="hl">int</span>(값들[2])}\n▸ <span class="hl">{"이름":"니트", "가격":89000, "재고":12}</span>'
+  };
+  var out=document.getElementById('w5out');
+  document.querySelectorAll('#w5tog button').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('#w5tog button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.data;
+})();
+</script>
+</body>
+</html>

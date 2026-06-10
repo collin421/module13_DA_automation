@@ -1,0 +1,1865 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>데이터 분석 개요 및 기초 이론 — 전체 합본 (1~7강)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:768px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.9;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:84px 22px 36px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(28px,5.6vw,44px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  .callout{background:#fdfaf4;border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:22px 0;font-size:15.5px;color:var(--sub);}
+  .callout b{color:var(--accent);}
+  section{padding:50px 0 26px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 18px;line-height:1.3;}
+  h3{font-family:var(--serif);font-weight:700;font-size:19px;margin:26px 0 12px;color:#3a342e;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  .term{background:#eef5f3;border:1px solid #cfe3dd;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;}
+  .term b{color:var(--teal);}
+  .ex{background:#fbf3e6;border:1px solid #ecd9b8;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;color:#6b5526;}
+  .ex b{color:var(--gold);}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:24px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:14px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;color:#9ec79a;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:13.5px;min-height:42px;white-space:pre-wrap;line-height:1.7;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}.out .y{color:#e0b15f;}
+  .btn{border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:13px;padding:9px 15px;border-radius:9px;cursor:pointer;}
+  .btn.ghost{background:#fdfaf4;border:1.5px solid var(--line);color:var(--sub);}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+  .seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:var(--sans);transition:.15s;color:var(--ink);}
+  .seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  .vs{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:stretch;}
+  .vs-col{border:1.5px solid var(--line);border-radius:12px;padding:14px;}
+  .vs-col.gut{background:#fbeee8;border-color:#e0a890;}
+  .vs-col.data{background:#eef5f3;border-color:var(--teal);}
+  .vs-col .t{font-family:var(--serif);font-weight:700;font-size:14px;margin-bottom:8px;}
+  .vs-col.gut .t{color:#9a3a14;}.vs-col.data .t{color:var(--teal);}
+  .vs-col .c{font-size:13px;color:var(--sub);line-height:1.65;}
+  .vs-mid{align-self:center;font-family:var(--serif);font-weight:700;color:var(--sub);font-size:13px;}
+  .tl{position:relative;padding-left:30px;}
+  .tl::before{content:"";position:absolute;left:9px;top:6px;bottom:6px;width:2px;background:var(--line);}
+  .tl-item{position:relative;padding:10px 0 10px 6px;cursor:pointer;transition:.15s;border-radius:8px;}
+  .tl-item::before{content:"";position:absolute;left:-25px;top:16px;width:11px;height:11px;border-radius:50%;background:#fff;border:2px solid var(--line);transition:.15s;}
+  .tl-item.on::before{background:var(--accent);border-color:var(--accent);transform:scale(1.35);}
+  .tl-year{font-family:monospace;font-weight:700;font-size:13px;color:var(--accent);}
+  .tl-title{font-size:13.5px;font-weight:700;}
+  .tl-item.on{background:#fdf2ec;}
+  .barbox{margin:10px 0;}
+  .bar-row{display:flex;align-items:center;gap:8px;margin:5px 0;font-family:monospace;font-size:12.5px;}
+  .bar-row .lbl{width:54px;color:var(--sub);}
+  .bar{height:18px;border-radius:4px;transition:.6s;}
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}.vs{grid-template-columns:1fr;}.vs-mid{padding:4px 0;}}
+
+
+  :root{
+    --bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;
+    --accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;
+    --serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:768px;color-scheme:light only;
+  }
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.9;font-size:17px;-webkit-text-size-adjust:100%;
+    background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:84px 22px 36px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(28px,5.6vw,44px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:50px 0 26px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 18px;line-height:1.3;}
+  h3{font-family:var(--serif);font-weight:700;font-size:19px;margin:26px 0 12px;color:#3a342e;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  .term{background:#eef5f3;border:1px solid #cfe3dd;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;}
+  .term b{color:var(--teal);}
+  .ex{background:#fbf3e6;border:1px solid #ecd9b8;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;color:#6b5526;}
+  .ex b{color:var(--gold);}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:24px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:14px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;color:#9ec79a;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:13.5px;min-height:42px;white-space:pre-wrap;line-height:1.7;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}.out .y{color:#e0b15f;}
+  .btn{border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:13px;padding:9px 15px;border-radius:9px;cursor:pointer;}
+  .btn.ghost{background:#fdfaf4;border:1.5px solid var(--line);color:var(--sub);}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+  .seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:var(--sans);transition:.15s;color:var(--ink);}
+  .seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  /* 진화 5단계 스텝퍼 */
+  .evo{display:flex;gap:4px;margin:14px 0;flex-wrap:wrap;}
+  .evo-step{flex:1;min-width:90px;text-align:center;padding:10px 6px;border:1.5px solid var(--line);border-radius:10px;background:#fdfaf4;cursor:pointer;transition:.15s;font-size:12px;}
+  .evo-step.on{border-color:var(--accent);background:var(--accent);color:#fff;font-weight:700;}
+  .evo-step .n{font-family:monospace;font-size:11px;display:block;opacity:.7;}
+  /* 평균 함정 차트 */
+  .coins{display:flex;gap:6px;align-items:flex-end;justify-content:center;height:120px;margin:14px 0;}
+  .coin{width:42px;background:var(--teal);border-radius:6px 6px 0 0;display:flex;align-items:flex-start;justify-content:center;color:#fff;font-size:10px;font-family:monospace;padding-top:3px;transition:.4s;}
+  .coin.out{background:var(--accent);}
+  .meanline{position:relative;height:0;}
+  /* 정규분포 */
+  .dist{font-family:monospace;font-size:12px;color:var(--teal);white-space:pre;line-height:1.3;text-align:center;background:#eef5f3;border-radius:10px;padding:14px;}
+  /* AI 포함관계 */
+  .venn{text-align:center;padding:10px;}
+  .ai-ring{border:2px solid var(--gold);border-radius:16px;padding:16px;background:rgba(168,118,47,.06);}
+  .ml-ring{border:2px solid var(--accent);border-radius:14px;padding:14px;margin-top:10px;background:rgba(194,65,12,.06);}
+  .dl-ring{border:2px solid var(--teal);border-radius:12px;padding:12px;margin-top:10px;background:rgba(47,107,94,.08);}
+  .ring-t{font-weight:700;font-size:13px;margin-bottom:4px;}
+  .ai-ring>.ring-t{color:var(--gold);}.ml-ring>.ring-t{color:var(--accent);}.dl-ring .ring-t{color:var(--teal);}
+  .ring-d{font-size:11.5px;color:var(--sub);}
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}}
+
+
+  :root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;--accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;--serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:768px;color-scheme:light only;}
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.9;font-size:17px;-webkit-text-size-adjust:100%;background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:84px 22px 36px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(28px,5.6vw,44px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:50px 0 26px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 18px;line-height:1.3;}
+  h3{font-family:var(--serif);font-weight:700;font-size:19px;margin:26px 0 12px;color:#3a342e;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  .term{background:#eef5f3;border:1px solid #cfe3dd;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;}
+  .term b{color:var(--teal);}
+  .ex{background:#fbf3e6;border:1px solid #ecd9b8;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;color:#6b5526;}
+  .ex b{color:var(--gold);}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:24px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:14px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;color:#9ec79a;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:13.5px;min-height:42px;white-space:pre-wrap;line-height:1.7;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}.out .y{color:#e0b15f;}
+  .btn{border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:13px;padding:9px 15px;border-radius:9px;cursor:pointer;}
+  .btn.ghost{background:#fdfaf4;border:1.5px solid var(--line);color:var(--sub);}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+  .seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:var(--sans);transition:.15s;color:var(--ink);}
+  .seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  /* DIKW 피라미드 */
+  .pyramid{display:flex;flex-direction:column;align-items:center;gap:4px;margin:14px 0;}
+  .pyr-row{border-radius:8px;padding:9px;text-align:center;cursor:pointer;transition:.2s;font-size:13px;font-weight:700;color:#fff;}
+  .pyr-row.dim{opacity:.45;}
+  .pyr-w{color:#fff;}
+  /* 정형 vs 비정형 카드 */
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .tc{border:1.5px solid var(--line);border-radius:12px;padding:14px;font-size:13px;}
+  .tc.a{background:#eef5f3;border-color:var(--teal);}
+  .tc.b{background:#fbf3e6;border-color:var(--gold);}
+  .tc .t{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:8px;}
+  .tc.a .t{color:var(--teal);}.tc.b .t{color:var(--gold);}
+  .minitable{width:100%;border-collapse:collapse;font-size:11.5px;font-family:monospace;margin-top:8px;}
+  .minitable th,.minitable td{border:1px solid #cfe3dd;padding:4px 6px;}
+  .minitable th{background:#d8e8e3;}
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}.twocol{grid-template-columns:1fr;}}
+
+
+  :root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;--accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;--serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:768px;color-scheme:light only;}
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.9;font-size:17px;-webkit-text-size-adjust:100%;background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:84px 22px 36px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(27px,5.4vw,42px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:50px 0 26px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 18px;line-height:1.3;}
+  h3{font-family:var(--serif);font-weight:700;font-size:19px;margin:26px 0 12px;color:#3a342e;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  .term{background:#eef5f3;border:1px solid #cfe3dd;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;}
+  .term b{color:var(--teal);}
+  .ex{background:#fbf3e6;border:1px solid #ecd9b8;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;color:#6b5526;}
+  .ex b{color:var(--gold);}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:24px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:14px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;color:#9ec79a;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:13.5px;min-height:42px;white-space:pre-wrap;line-height:1.7;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}.out .y{color:#e0b15f;}
+  .btn{border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:13px;padding:9px 15px;border-radius:9px;cursor:pointer;}
+  .btn.ghost{background:#fdfaf4;border:1.5px solid var(--line);color:var(--sub);}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+  .seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:var(--sans);transition:.15s;color:var(--ink);}
+  .seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  /* 척도 계단 */
+  .stairs{display:flex;flex-direction:column;gap:5px;margin:14px 0;}
+  .stair{border-radius:9px;padding:11px 14px;color:#fff;cursor:pointer;transition:.2s;font-size:13px;display:flex;justify-content:space-between;align-items:center;}
+  .stair.dim{opacity:.4;}
+  .stair .lv{font-family:monospace;font-size:11px;opacity:.85;}
+  /* 능력 체크표 */
+  .cap{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+  .cap span{font-size:11.5px;font-family:monospace;padding:3px 8px;border-radius:6px;}
+  .cap .yes{background:#d8e8e3;color:#225349;}
+  .cap .no{background:#f3ddd3;color:#9a3a14;text-decoration:line-through;}
+  /* 종합표 */
+  .bigtable{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px;}
+  .bigtable th,.bigtable td{border:1px solid var(--line);padding:6px 7px;text-align:center;}
+  .bigtable th{background:#efe7d8;font-family:var(--sans);}
+  .bigtable td:first-child{text-align:left;font-weight:700;}
+  .bigtable .o{color:var(--teal);font-weight:700;}
+  .bigtable .x{color:var(--accent);}
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}.bigtable{font-size:10.5px;}}
+
+
+  :root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;--accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;--serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:768px;color-scheme:light only;}
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.9;font-size:17px;-webkit-text-size-adjust:100%;background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:84px 22px 36px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(27px,5.4vw,42px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:50px 0 26px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 18px;line-height:1.3;}
+  h3{font-family:var(--serif);font-weight:700;font-size:19px;margin:26px 0 12px;color:#3a342e;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  .term{background:#eef5f3;border:1px solid #cfe3dd;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;}
+  .term b{color:var(--teal);}
+  .ex{background:#fbf3e6;border:1px solid #ecd9b8;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;color:#6b5526;}
+  .ex b{color:var(--gold);}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:24px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:14px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;color:#9ec79a;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:13.5px;min-height:42px;white-space:pre-wrap;line-height:1.7;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}.out .y{color:#e0b15f;}
+  .btn{border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:13px;padding:9px 15px;border-radius:9px;cursor:pointer;}
+  .btn.ghost{background:#fdfaf4;border:1.5px solid var(--line);color:var(--sub);}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+  .seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:var(--sans);transition:.15s;color:var(--ink);}
+  .seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  /* 가치 사다리 */
+  .ladder{display:flex;flex-direction:column;gap:6px;margin:14px 0;}
+  .rung{border-radius:10px;padding:13px 16px;color:#fff;cursor:pointer;transition:.2s;display:flex;justify-content:space-between;align-items:center;}
+  .rung.dim{opacity:.4;}
+  .rung .q{font-size:13px;opacity:.9;font-style:italic;}
+  .rung .nm{font-weight:700;font-size:14px;}
+  .axis{display:flex;justify-content:space-between;font-size:11px;color:var(--sub);margin-top:4px;font-family:monospace;}
+  /* 같은 데이터 4질문 */
+  .q4{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+  .q4 div{border:1px solid var(--line);border-radius:9px;padding:10px;font-size:12.5px;background:#fdfaf4;}
+  .q4 .h{font-weight:700;font-size:13px;margin-bottom:4px;}
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}.q4{grid-template-columns:1fr;}}
+
+
+  :root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;--accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;--serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:768px;color-scheme:light only;}
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.9;font-size:17px;-webkit-text-size-adjust:100%;background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:84px 22px 36px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(27px,5.4vw,42px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:50px 0 26px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 18px;line-height:1.3;}
+  h3{font-family:var(--serif);font-weight:700;font-size:19px;margin:26px 0 12px;color:#3a342e;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  .term{background:#eef5f3;border:1px solid #cfe3dd;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;}
+  .term b{color:var(--teal);}
+  .ex{background:#fbf3e6;border:1px solid #ecd9b8;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;color:#6b5526;}
+  .ex b{color:var(--gold);}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:24px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:14px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;color:#9ec79a;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:13.5px;min-height:42px;white-space:pre-wrap;line-height:1.7;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}.out .y{color:#e0b15f;}
+  .btn{border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:13px;padding:9px 15px;border-radius:9px;cursor:pointer;}
+  .btn.ghost{background:#fdfaf4;border:1.5px solid var(--line);color:var(--sub);}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+  .seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:var(--sans);transition:.15s;color:var(--ink);}
+  .seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  /* 프로세스 흐름 */
+  .flow{display:flex;flex-direction:column;gap:6px;margin:14px 0;}
+  .fstep{border:1.5px solid var(--line);border-radius:10px;padding:11px 14px;background:#fdfaf4;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:10px;}
+  .fstep.on{border-color:var(--accent);background:#fff;box-shadow:0 3px 12px rgba(194,65,12,.1);}
+  .fstep .num{width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+  .fstep .ftxt{font-size:13.5px;font-weight:700;}
+  .farrow{text-align:center;color:var(--line);font-size:14px;}
+  /* 시간 비중 도넛(막대) */
+  .timebar{display:flex;height:36px;border-radius:8px;overflow:hidden;margin:12px 0;font-size:11px;font-family:monospace;}
+  .timebar div{display:flex;align-items:center;justify-content:center;color:#fff;}
+  /* 순환 */
+  .cycle{text-align:center;font-family:monospace;font-size:12px;color:var(--teal);white-space:pre;line-height:1.5;background:#eef5f3;border-radius:10px;padding:14px;}
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .next-card{background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;padding:20px;margin:20px 0 0;}
+  .next-card .nl{font-size:12px;letter-spacing:.14em;color:var(--teal);font-weight:700;}
+  .next-card .nt{font-family:var(--serif);font-weight:700;font-size:18px;margin-top:4px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}}
+
+
+  :root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;--sub:#6f6457;--accent:#c2410c;--accent-soft:#e9d5c4;--line:#e2d9c9;--teal:#2f6b5e;--gold:#a8762f;--serif:'Gowun Batang',serif;--sans:'Gowun Dodum',sans-serif;--maxw:768px;color-scheme:light only;}
+  @media (prefers-color-scheme:dark){:root{--bg:#f4efe6;--card:#fbf8f2;--ink:#2b2723;}}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.9;font-size:17px;-webkit-text-size-adjust:100%;background-image:radial-gradient(circle at 20% 0%,rgba(194,65,12,.04),transparent 40%),radial-gradient(circle at 90% 100%,rgba(47,107,94,.04),transparent 45%);}
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:100;transition:width .1s linear;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px;}
+  header.hero{max-width:var(--maxw);margin:0 auto;padding:84px 22px 36px;}
+  .eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(27px,5.4vw,42px);line-height:1.25;margin:14px 0 18px;letter-spacing:-.01em;}
+  .lead{font-size:18px;color:var(--sub);}
+  .hero-meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:var(--accent-soft);color:#8a3408;}
+  .chip.t{background:#d8e8e3;color:#225349;}
+  section{padding:50px 0 26px;border-top:1px solid var(--line);}
+  section:first-of-type{border-top:none;}
+  .sec-no{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:700;letter-spacing:.1em;}
+  h2{font-family:var(--serif);font-weight:700;font-size:clamp(23px,4.4vw,31px);margin:6px 0 18px;line-height:1.3;}
+  h3{font-family:var(--serif);font-weight:700;font-size:19px;margin:26px 0 12px;color:#3a342e;}
+  p{margin:0 0 16px;}
+  strong{color:var(--accent);font-weight:700;}
+  .term{background:#eef5f3;border:1px solid #cfe3dd;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;}
+  .term b{color:var(--teal);}
+  .ex{background:#fbf3e6;border:1px solid #ecd9b8;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:15px;color:#6b5526;}
+  .ex b{color:var(--gold);}
+  .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px 18px;margin:18px 0;font-size:15px;color:var(--sub);}
+  .note b{color:var(--accent);}
+  .summary{background:#efe7d8;border-radius:12px;padding:18px 20px;margin:24px 0 4px;}
+  .summary .h{font-family:var(--serif);font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.05em;margin-bottom:8px;}
+  .summary ol{margin:0;padding-left:20px;}.summary li{margin:5px 0;font-size:15.5px;}
+  .widget{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:26px 0;box-shadow:0 6px 22px rgba(80,60,30,.06);}
+  .widget .wlabel{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:#fff;background:var(--accent);padding:4px 11px;border-radius:999px;margin-bottom:14px;}
+  .wdesc{font-size:14.5px;margin-bottom:14px;color:var(--sub);}
+  .out{background:#2b2723;color:#9ec79a;border-radius:10px;padding:14px 16px;font-family:monospace;font-size:13.5px;min-height:42px;white-space:pre-wrap;line-height:1.7;}
+  .out .dim{color:#8b8175;}.out .hl{color:#fff;font-weight:700;}.out .y{color:#e0b15f;}
+  .btn{border:none;background:var(--accent);color:#fff;font-family:var(--sans);font-weight:700;font-size:13px;padding:9px 15px;border-radius:9px;cursor:pointer;}
+  .btn.ghost{background:#fdfaf4;border:1.5px solid var(--line);color:var(--sub);}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+  .seg button{border:1.5px solid var(--line);background:#fdfaf4;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:var(--sans);transition:.15s;color:var(--ink);}
+  .seg button.on{border-color:var(--accent);background:var(--accent);color:#fff;}
+  /* 도구 카드 */
+  .tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .toolc{border:1.5px solid var(--line);border-radius:10px;padding:11px;cursor:pointer;transition:.15s;background:#fdfaf4;font-size:12.5px;}
+  .toolc:hover{border-color:var(--accent-soft);}
+  .toolc.on{border-color:var(--accent);background:#fff;}
+  .toolc .tn{font-weight:700;font-size:14px;color:var(--accent);}
+  /* 로드맵 */
+  .road{display:flex;flex-direction:column;gap:5px;margin:14px 0;}
+  .rd{border-radius:9px;padding:11px 14px;font-size:13px;display:flex;align-items:center;gap:10px;}
+  .rd .b{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;color:#fff;}
+  .rd.now{background:#fff;border:2px solid var(--accent);font-weight:700;}
+  .rd.dimr{background:#fdfaf4;border:1px solid var(--line);color:var(--sub);}
+  .rdarrow{text-align:center;color:var(--line);font-size:13px;}
+  footer{max-width:var(--maxw);margin:0 auto;padding:30px 22px 80px;color:var(--sub);font-size:14px;border-top:1px solid var(--line);}
+  .grad{text-align:center;padding:26px;background:linear-gradient(135deg,#fbf8f2,#f0f6f4);border:1px solid var(--line);border-radius:14px;margin:18px 0;}
+  .grad .cap{font-size:36px;}.grad .t{font-family:var(--serif);font-weight:700;font-size:19px;margin:8px 0 6px;color:var(--accent);}.grad .s{font-size:14px;color:var(--sub);}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media(max-width:480px){body{font-size:16px;}.tools{grid-template-columns:1fr;}}
+
+  /* ── 합본 추가 ── */
+  .toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-top:26px;}
+  .toc a{text-decoration:none;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 13px;color:inherit;font-size:13.5px;font-weight:700;line-height:1.4;transition:.15s;}
+  .toc a:hover{border-color:var(--accent-soft);transform:translateY(-2px);box-shadow:0 6px 16px rgba(80,60,30,.08);}
+  .toc a .tn{color:var(--accent);font-family:monospace;font-size:12px;display:block;}
+  .lecture{scroll-margin-top:20px;}
+  .lecture + .lecture{border-top:3px solid var(--accent-soft);margin-top:30px;padding-top:6px;}
+  .lecbanner{padding-top:40px;margin-bottom:-12px;}
+  .lecno{display:inline-block;font-family:var(--serif);font-weight:700;color:#fff;background:var(--accent);padding:4px 13px;border-radius:999px;font-size:13px;letter-spacing:.04em;}
+  .lectitle{font-family:var(--serif);font-weight:700;font-size:clamp(24px,4.6vw,33px);margin:12px 0 0;line-height:1.25;}
+  .backtop{display:inline-block;margin-top:10px;font-size:12.5px;color:var(--sub);text-decoration:none;}
+  .backtop:hover{color:var(--accent);}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<main class="wrap">
+<div class="lecture" id="lec1">
+<div class="lecbanner"><span class="lecno">1강</span><h2 class="lectitle">데이터 분석이란 / 왜 하는가</h2></div>
+
+
+  <!-- ===== 1-1 ===== -->
+  <section class="reveal">
+    <div class="sec-no">1-1</div>
+    <h2>데이터 분석이란 무엇인가</h2>
+
+    <h3>아주 작은 이야기로 시작함</h3>
+    <p>분식집 고민 "떡볶이 vs 김밥?" — 결정법은 두 가지임.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 두 가지 결정 방법</span>
+      <p class="wdesc">두 방법을 눌러 비교해 봄.</p>
+      <div class="seg" id="l1-w1a">
+        <button class="on" data-k="feel">🤔 방법 A — 느낌으로</button>
+        <button data-k="data">📒 방법 B — 기록을 보고</button>
+      </div>
+      <div class="out" id="l1-w1aout"></div>
+    </div>
+
+    <p>방법 B가 데이터 분석 — 기록을 세어 사실로 결정함.</p>
+
+    <div class="term"><b>데이터 분석(data analysis)이란?</b><br>흩어져 있는 데이터(기록·숫자·사실)를 <b>모으고 → 정리하고 → 살펴보아서</b>, 그 안에 숨은 의미나 규칙을 찾아내고, 그것을 <b>근거로 더 나은 결정</b>을 내리는 일.</div>
+
+    <h3>"감 vs 근거"의 진짜 차이</h3>
+    <p>직감은 유용하지만 약점이 둘 있음.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 직감의 두 가지 약점</span>
+      <p class="wdesc">각 약점을 눌러 봄.</p>
+      <div class="seg" id="l1-w1b">
+        <button class="on" data-k="bias">약점 1 — 편향</button>
+        <button data-k="share">약점 2 — 검증·공유 곤란</button>
+      </div>
+      <div class="out" id="l1-w1bout"></div>
+    </div>
+
+    <div class="ex"><b>일상 예시 (편향)</b><br>"요즘 비행기 사고 뉴스가 많네, 비행기 타기 무서워." → 실제로는 비행기가 자동차보다 훨씬 안전한데도, <b>뉴스에서 본 강렬한 장면</b> 때문에 위험을 과대평가함. 이것이 편향임.</div>
+
+    <h3>아주 중요한 오해 — 분석은 직감을 "버리는" 게 아님</h3>
+    <p>분석해도 직감은 버리지 않음 — 직감은 출발점임.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 직감과 데이터의 협력</span>
+      <p class="wdesc">"분석 진행"으로 직감→데이터 교정을 봄.</p>
+      <div class="out" id="l1-w1cout"></div>
+      <div style="text-align:center;margin-top:10px;">
+        <button class="btn" id="l1-w1cstep">▶ 다음 단계</button>
+        <button class="btn ghost" id="l1-w1creset">↻ 처음부터</button>
+      </div>
+    </div>
+
+    <p>직감은 방향, 데이터는 확인 — 둘은 협력임.</p>
+
+    <div class="note"><b>📌 데이터 분석은 "정답 기계"가 아님</b><br>같은 데이터라도 어떤 질문을 던지고 어떻게 해석하느냐에 따라 다른 결론이 나옴. "김밥이 65인분 팔렸다"를 두고 누구는 "김밥에 집중", 누구는 "떡볶이 고객층도 따로 있으니 둘 다 키우자"고 함. 데이터는 사실을 보여 줄 뿐, 해석과 결정은 사람의 몫임. 그래서 분석은 "무엇을 물을 것인가"를 고민하는 <b>사고방식</b>이기도 함.</div>
+  </section>
+
+  <!-- ===== 1-2 ===== -->
+  <section class="reveal">
+    <div class="sec-no">1-2</div>
+    <h2>기원 — 1865년의 한 은행가</h2>
+
+    <p>"데이터로 결정"은 컴퓨터 이전부터 — 'BI'가 1865년 등장.</p>
+
+    <h3>먼저 — "intelligence"의 진짜 뜻</h3>
+    <div class="term"><b>intelligence = "지능"이 아니라 "정보·첩보"</b><br>스파이 영화의 "정보국(intelligence agency)", 미국 CIA의 I가 모두 Intelligence(정보)임. 즉 <b>business intelligence = "사업에 관한 정보를 모아 활용하는 것"</b>. "사업 정보 활용"으로 이해하면 정확함.</div>
+
+    <h3>작가 디벤스와 은행가 퍼니스</h3>
+    <p>1865년 디벤스가 은행가 퍼니스 이야기로 처음 씀.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 퍼니스의 성공 방법</span>
+      <p class="wdesc">단계를 눌러 "감보다 근거"를 확인해 봄.</p>
+      <div class="out" id="l1-w2out"></div>
+      <div style="text-align:center;margin-top:10px;">
+        <button class="btn" id="l1-w2step">▶ 다음 단계</button>
+        <button class="btn ghost" id="l1-w2reset">↻</button>
+      </div>
+    </div>
+
+    <p>퍼니스는 소식을 먼저 알아 먼저 사고팔아 이익을 얻음.</p>
+
+    <div class="ex"><b>1865년 디벤스의 통찰</b><br>"사업 전략은 직감(gut instinct)이 아니라, 데이터와 실증적 증거(empirical evidence)에 기반할 때 더 믿을 만하다." → 1강 처음의 "감이 아니라 근거로"와 <b>정확히 같은 말</b>임.</div>
+
+    <div class="note"><b>📌 지금도 살아 있는 발상</b><br>회사에서 흔히 보는 "BI 대시보드"(매출·방문자 수를 한눈에 보여 주는 화면)의 BI가 바로 이 business intelligence임. 1865년 퍼니스의 발상이 화면 위 그래프로 모습을 바꿔 지금도 살아 있는 셈임.</div>
+  </section>
+
+  <!-- ===== 1-3 ===== -->
+  <section class="reveal">
+    <div class="sec-no">1-3</div>
+    <h2>체계화 — 테일러와 포드</h2>
+
+    <p>19~20세기 초, 테일러가 분석을 체계로 만듦.</p>
+
+    <div class="term"><b>시간 연구(time study)</b><br>공장에서 노동자가 일하는 모습을 <b>스톱워치로 관찰하며</b> 각 동작이 몇 초 걸리는지 측정·기록하고, 그 기록을 분석해 "이 동작은 불필요하다", "이 순서가 더 빠르다" 같은 개선점을 찾는 방법. = <b>측정 → 기록 → 분석 → 개선</b>의 체계.</div>
+
+    <h3>테일러와 포드 — 자동차를 바꾼 측정</h3>
+    <p>포드 조립 라인 측정 원리를 위젯에서 체험해 봄.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · "측정해야 개선할 수 있다"</span>
+      <p class="wdesc">"측정 켜기"로 측정→발견→개선을 봄.</p>
+      <div class="barbox" id="l1-w3bars"></div>
+      <div style="text-align:center;">
+        <button class="btn" id="l1-w3btn">① 측정 켜기</button>
+        <button class="btn ghost" id="l1-w3reset">↻</button>
+      </div>
+      <div class="out" id="l1-w3out" style="margin-top:10px;"></div>
+    </div>
+
+    <div class="ex"><b>현대 사례</b><br>배달 앱·물류 회사는 "주문→배달 평균 몇 분", "어느 단계가 가장 오래 걸리나"를 측정함. "조리는 빠른데 배달원 배정에서 평균 7분이 샌다"가 드러나면 그 단계를 집중 개선함. 100년 전 포드 공장의 원리가 지금도 똑같이 작동함.</div>
+
+    <div class="note"><b>📌 빛과 그림자</b><br>테일러 방식은 효율을 크게 높였지만 "노동자를 기계 부품처럼 다룬다"는 비판도 받았음. 데이터 분석이 "무엇을 측정하고 어떻게 쓰느냐"에 따라 좋게도 나쁘게도 쓰일 수 있음을 일찍 보여 준 사례임(윤리는 7강). 그래도 "측정→분석→개선" 틀은 오늘날까지 분석의 기본 골격으로 남음.</div>
+  </section>
+
+  <!-- ===== 1-4 (산업화) + 1-5 (기술) 통합 타임라인 ===== -->
+  <section class="reveal">
+    <div class="sec-no">1-4 · 1-5</div>
+    <h2>산업화와 기술의 발전</h2>
+
+    <h3>컨설팅 산업으로 성장</h3>
+    <p>데이터로 돕는 일은 산업이 됨 — 특히 경영 컨설팅.</p>
+    <div class="term"><b>컨설팅(consulting)</b><br>어떤 분야의 전문가가, 문제를 가진 사람·회사에게 <b>"당신의 문제는 이것이고, 이렇게 해결하면 됩니다"</b>라고 분석해 주고 조언하는 일. 테일러가 포드에게 한 일이 바로 이것임.</div>
+    <p>컨설팅은 기업의 "건강검진 의사" — 데이터로 진단·처방.</p>
+
+    <div class="ex"><b>사례 — 회계법인에서 출발한 컨설팅 거인</b><br>오늘날 세계적 기업 <b>액센추어(Accenture)</b>는 1953년 회계법인 '아서 앤더슨'의 한 부문으로 출발함. 회계(=돈을 숫자로 기록·정리 = 데이터 다루는 일)에서, 그 데이터를 분석해 조언하는 컨설팅으로 자연스럽게 확장된 것임.</div>
+
+    <h3>기술이 분석의 규모를 키우다</h3>
+    <p>발상→방법론→기술 순. 타임라인으로 따라가 봄.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 데이터 분석의 역사 타임라인</span>
+      <p class="wdesc">각 이정표를 눌러 봄.</p>
+      <div class="tl" id="l1-w4tl"></div>
+      <div class="out" id="l1-w4out" style="margin-top:12px;"></div>
+    </div>
+
+    <div class="note"><b>📌 흥미로운 순서 — 발상이 기술보다 먼저였다</b><br>보통 "기술이 먼저 나오고 분석을 시작했겠지" 생각하지만 반대임: <b>발상(1865) → 방법론(1900s) → 기술(1956~)</b>. "데이터로 결정한다"는 생각이 먼저 있었고, 기술은 그것을 더 크고 빠르게 실현해 주는 도구로 뒤따라왔음. 도구는 수단이고, 중심은 "감이 아니라 근거로"임.</div>
+  </section>
+
+  <!-- ===== 1-6 ===== -->
+  <section class="reveal">
+    <div class="sec-no">1-6</div>
+    <h2>왜 지금, 우리가 배우는가</h2>
+
+    <p>이제 분석은 모든 직무의 기본 역량임.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 데이터의 대중화 — 세 가지 변화</span>
+      <p class="wdesc">각 변화를 눌러, 분석이 왜 지금 누구나의 역량이 됐는지 자세히 봄.</p>
+      <div class="seg" id="l1-w5tog">
+        <button class="on" data-k="boom">① 데이터 폭증</button>
+        <button data-k="cost">② 비용 하락</button>
+        <button data-k="tool">③ 도구 대중화</button>
+      </div>
+      <div class="out" id="l1-w5out"></div>
+    </div>
+
+    <div class="term"><b>데이터 리터러시(data literacy)</b><br>리터러시는 본래 "글을 읽고 쓰는 능력(문해력)". 이제 데이터에도 같은 말이 붙음 — <b>"데이터를 읽고 분석하는 능력"이 글처럼 시대의 기본 소양</b>이 됐다는 뜻. 옛날에 글을 못 읽으면 불편했듯, 앞으로는 데이터를 못 읽으면 일하기 불편해짐.</div>
+
+    <div class="note"><b>📌 어디서든 쓰이는 능력</b><br>"데이터 분석가"라는 직업만이 아니라 거의 모든 직무가 이 능력을 요구함. 한 번 익히면 마케팅·기획·연구·창업 등 어디서든 쓰임 — 분석은 특정 산업의 기술이 아니라 "더 나은 결정을 내리는 보편적 방법"이기 때문임.</div>
+  </section>
+
+  <!-- ===== 마무리 ===== -->
+  <section class="reveal">
+    <div class="sec-no">정리</div>
+    <h2>가장 중요한 한 문장</h2>
+    <p>1강의 모든 이야기를 단 하나로 줄이면 이러함:</p>
+    <div class="ex" style="text-align:center;font-size:18px;color:var(--accent);font-family:var(--serif);font-weight:700;">"감(感)이 아니라 데이터(근거)로<br>더 나은 결정을 내린다."</div>
+    <p>1865년 발상이 150년 뒤 기본 소양이 됨 — "왜? 더 나은 결정."</p>
+  </section>
+
+
+</div>
+<div class="lecture" id="lec2">
+<div class="lecbanner"><span class="lecno">2강</span><h2 class="lectitle">데이터 분석 방법의 진화</h2></div>
+
+
+  <!-- 2-1 큰 그림 -->
+  <section class="reveal">
+    <div class="sec-no">2-1</div>
+    <h2>분석 방법은 왜 진화했는가</h2>
+    <p>방법은 더 어려운 질문에 답하려고 진화함. 아래에서 짝지어 봄.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 질문이 진화하면 방법도 진화함</span>
+      <p class="wdesc">각 단계를 눌러 봄 — 2강의 전체 지도임.</p>
+      <div class="evo" id="l2-evo">
+        <div class="evo-step on" data-k="0"><span class="n">①</span>집계</div>
+        <div class="evo-step" data-k="1"><span class="n">②</span>통계</div>
+        <div class="evo-step" data-k="2"><span class="n">③</span>마이닝</div>
+        <div class="evo-step" data-k="3"><span class="n">④</span>머신러닝</div>
+        <div class="evo-step" data-k="4"><span class="n">⑤</span>딥러닝·AI</div>
+      </div>
+      <div class="out" id="l2-evoout"></div>
+    </div>
+
+    <div class="note"><b>📌 겁먹지 말 것</b><br>통계·마이닝·머신러닝·딥러닝이라는 말에 겁먹지 말 것. 지금은 각각을 깊이 배우는 게 아니라 <b>"이런 단계들이 있고, 각각 이런 질문에 답하려 나왔구나"</b> 하는 전체 지도를 그리는 시간임. 그리고 복잡한 방법이 항상 좋은 게 아님 — 단순한 질문엔 단순한 집계가 가장 빠르고 정확함.</p></div>
+  </section>
+
+  <!-- 2-2 집계 -->
+  <section class="reveal">
+    <div class="sec-no">2-2</div>
+    <h2>① 집계 — 세고 합치는 분석</h2>
+    <p>① 집계 — 세고·합치고·평균 냄. "무슨 일이 있었나?"에 답함.</p>
+
+    <div class="term"><b>기술 통계(descriptive statistics)</b><br>집계에 쓰는 요약값들. <b>합계·평균·개수·최댓값·최솟값·중앙값</b> 등. "기술(describe)"은 "데이터를 묘사·서술한다"는 뜻.</div>
+
+    <h3>초보자가 꼭 알아야 할 "평균의 함정"</h3>
+    <p>평균은 때때로 사실을 왜곡함 — 위젯에서 확인해 봄.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 평균의 함정</span>
+      <p class="wdesc">이상치를 넣고 빼며 평균·중앙값을 비교해 봄.</p>
+      <div class="coins" id="l2-coins"></div>
+      <div class="out" id="l2-meanout"></div>
+      <div style="text-align:center;margin-top:10px;">
+        <button class="btn" id="l2-meanToggle">단체 손님(79,000원) 넣기/빼기</button>
+      </div>
+    </div>
+
+    <div class="term"><b>이상치(outlier)</b><br>다른 값들과 유난히 동떨어진 값. 평균은 이상치에 크게 흔들림. 이럴 땐 크기순 한가운데 값인 <b>중앙값(median)</b>이 "보통"을 더 잘 대표함.</div>
+
+    <div class="note"><b>📌 집계는 단순하지만 가장 많이 쓰임</b><br>실제 회사의 대부분 보고서·대시보드(매출 추이·방문자 수·가입자 수)는 집계로 이루어짐. 화려한 머신러닝보다 정확한 집계 하나가 더 큰 결정을 이끄는 경우가 훨씬 많음. 다만 "가진 데이터만 요약"할 수 있다는 한계가 다음 단계를 부름 — "5천만 명을 다 못 세는데, 일부로 전체를 추정할 순 없을까?"</div>
+  </section>
+
+  <!-- 2-3 통계 -->
+  <section class="reveal">
+    <div class="sec-no">2-3</div>
+    <h2>② 통계 분석 — 일부로 전체를 추정</h2>
+    <p>② 통계 — 일부(표본)로 전체(모집단)를 추정함.</p>
+
+    <div class="term"><b>모집단(population)과 표본(sample)</b><br>· <b>모집단</b> = 진짜 알고 싶은 전체 (예: 국민 전체의 키)<br>· <b>표본</b> = 실제로 뽑아 조사한 일부 (예: 무작위 1,000명의 키)<br>→ 발상: <b>전체를 다 못 조사하니, 일부만 잘 조사해 전체를 추정하자.</b></div>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 국 맛보기 비유</span>
+      <p class="wdesc">단계를 눌러, 표본이 전체를 대표하는 원리를 봄.</p>
+      <div class="seg" id="l2-soup">
+        <button class="on" data-k="0">🍲 솥 전체</button>
+        <button data-k="1">🥄 한 숟가락</button>
+        <button data-k="2">🌀 잘 젓기</button>
+      </div>
+      <div class="out" id="l2-soupout"></div>
+    </div>
+
+    <div class="ex"><b>표본을 잘못 뽑은 실패 사례 (1936년)</b><br>한 잡지사가 <b>200만 명</b>에게 설문해 미국 대선을 예측했지만 완전히 틀림. 전화·자동차 명단에서 뽑았는데, 당시 그건 <b>부유층에 치우친</b> 표본이었음(국의 위쪽만 뜬 셈). <b>표본은 크기보다 "전체를 골고루 대표하는가"가 중요함.</b></div>
+
+    <h3>분포 — 데이터가 퍼진 "모양"</h3>
+    <p>통계의 핵심은 분포 — 가운데 높은 종 모양(정규분포).</p>
+
+    <div class="widget">
+      <span class="wlabel">시각화 · 정규분포와 회귀</span>
+      <p class="wdesc">통계의 두 핵심 도구를 그림으로 봄. 버튼으로 전환해 봄.</p>
+      <div class="seg" id="l2-statviz">
+        <button class="on" data-k="dist">분포 (종 모양)</button>
+        <button data-k="reg">회귀 (식 맞추기)</button>
+      </div>
+      <div class="dist" id="l2-statvizout"></div>
+      <div class="out" id="l2-statvizdesc" style="margin-top:10px;"></div>
+    </div>
+
+    <div class="term"><b>신뢰구간 · 회귀</b><br>· <b>신뢰구간</b>: 추정엔 오차가 있으므로 "평균 키는 170cm로 추정, 오차 감안 169~171cm일 가능성이 높음"처럼 <b>범위와 불확실성을 함께</b> 제시함.<br>· <b>회귀(regression)</b>: 데이터에 <b>가장 잘 맞는 식(직선)</b>을 그어, 모르는 값을 추정(예: 넓이로 집값 추정). → <b>머신러닝의 직접적 뿌리!</b></div>
+
+    <div class="note"><b>📌 다음 단계를 부르는 한계</b><br>통계는 보통 사람이 "이런 관계가 있을 것"이라 <b>먼저 가설을 세우고</b> 확인함. 그런데 데이터가 거대해지면 — "사람이 미처 생각 못 한 패턴이 이 안에 있지 않을까? 데이터 스스로 패턴을 드러내게 할 순 없을까?" 이 질문이 데이터 마이닝을 부름.</div>
+  </section>
+
+  <!-- 2-4 데이터 마이닝 -->
+  <section class="reveal">
+    <div class="sec-no">2-4</div>
+    <h2>③ 데이터 마이닝 — 패턴 캐기</h2>
+    <p>③ 마이닝 — 거대한 데이터에서 숨은 패턴을 캐냄.</p>
+
+    <div class="term"><b>통계 vs 데이터 마이닝 — 순서가 다름</b><br>· <b>통계</b>: 사람이 <b>먼저 가설</b> → 데이터로 확인 ("넓이가 가격에 영향 줄 것 같다 → 확인")<br>· <b>마이닝</b>: 가설 없이 <b>데이터를 뒤져서</b> → 숨은 패턴 발견 ("뭐가 있는지 일단 캐 보자")</div>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 전설의 "맥주와 기저귀"</span>
+      <p class="wdesc">단계를 눌러 유명한 패턴 사례를 봄.</p>
+      <div class="out" id="l2-beerout"></div>
+      <div style="text-align:center;margin-top:10px;">
+        <button class="btn" id="l2-beerstep">▶ 다음 단계</button>
+        <button class="btn ghost" id="l2-beerreset">↻</button>
+      </div>
+    </div>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 대표 기법 두 가지</span>
+      <p class="wdesc">마이닝 두 기법을 눌러 봄 — 추천·고객분류의 바탕.</p>
+      <div class="seg" id="l2-dm">
+        <button class="on" data-k="assoc">연관 규칙</button>
+        <button data-k="cluster">군집화</button>
+      </div>
+      <div class="out" id="l2-dmout"></div>
+    </div>
+
+    <div class="note"><b>📌 다음 단계를 부르는 한계</b><br>마이닝은 주로 "과거에 이런 패턴이 있었다"를 발견함. 사람들은 곧 더 욕심을 냄 — "발견한 패턴으로 <b>미래를 예측</b>할 순 없을까? 이 고객이 떠날지를 <b>자동으로 맞히게</b>, 나아가 컴퓨터가 <b>스스로 규칙을 학습</b>하게 할 순 없을까?" 이 질문이 머신러닝을 부름.</div>
+  </section>
+
+  <!-- 2-5 머신러닝 -->
+  <section class="reveal">
+    <div class="sec-no">2-5</div>
+    <h2>④ 머신러닝 — 스스로 규칙을 학습</h2>
+    <p>④ 머신러닝 — 컴퓨터가 데이터로 규칙을 스스로 학습함.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 스팸 메일 거르기 — 전통 방식 vs 머신러닝</span>
+      <p class="wdesc">두 방식을 눌러 비교해 봄. 누가 규칙을 만드는지가 핵심 차이임.</p>
+      <div class="seg" id="l2-spam">
+        <button class="on" data-k="rule">전통 — 사람이 규칙</button>
+        <button data-k="ml">머신러닝 — 스스로 학습</button>
+      </div>
+      <div class="out" id="l2-spamout"></div>
+    </div>
+
+    <div class="ex"><b>비유 — 아이에게 고양이 가르치기</b><br>"고양이"를 말로 정의하긴 어려움(귀 뾰족·수염… 강아지도 그런데?). 대신 <b>고양이 사진을 여러 장 보여 주면</b> 아이는 어느 순간 "고양이다움"을 스스로 터득해 처음 본 고양이도 맞힘. 머신러닝이 정확히 이렇게 작동함 — <b>예시(데이터)를 충분히 주면 규칙을 스스로 터득</b>함.</div>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 머신러닝의 두 갈래</span>
+      <p class="wdesc">두 갈래를 눌러 봄 — 통계·마이닝이 여기로 이어짐.</p>
+      <div class="seg" id="l2-mlk">
+        <button class="on" data-k="sup">지도 학습 (정답 있음)</button>
+        <button data-k="unsup">비지도 학습 (정답 없음)</button>
+      </div>
+      <div class="out" id="l2-mlkout"></div>
+    </div>
+
+    <div class="note"><b>📌 진화는 누적 — 앞 단계가 여기로 흐름</b><br>2-3의 <b>회귀</b>(데이터에 식 맞추기) → 머신러닝의 "지도 학습 - 회귀"로 발전. 2-4의 <b>군집화</b>(비슷한 것끼리) → 머신러닝의 "비지도 학습 - 군집"으로 이어짐. 머신러닝은 하늘에서 떨어진 게 아니라 통계·마이닝의 발상을 이어받은 것임.</div>
+  </section>
+
+  <!-- 2-6 딥러닝/AI + 누적 -->
+  <section class="reveal">
+    <div class="sec-no">2-6</div>
+    <h2>⑤ 딥러닝·AI, 그리고 "진화는 누적"</h2>
+    <p>⑤ 딥러닝 — 복잡한 데이터를 다루고 "특징"까지 스스로 찾음.</p>
+
+    <div class="ex"><b>비유 — 신경망과 두뇌</b><br>두뇌가 빛 신호를 여러 단계로 처리해(선→모양→얼굴) "엄마다!"를 알아보듯, 딥러닝(인공 신경망)도 데이터를 여러 층으로 처리하며 점점 복잡한 특징을 스스로 잡아냄(사진: 선·점 → 눈·코 → 얼굴 전체).</div>
+
+    <h3>AI·머신러닝·딥러닝의 관계 — 헷갈리지 않게</h3>
+    <p>AI·ML·DL은 포함 관계 — 아래 그림으로 정리함.</p>
+
+    <div class="widget">
+      <span class="wlabel">시각화 · 딥러닝 ⊂ 머신러닝 ⊂ AI</span>
+      <p class="wdesc">세 개념의 포함 관계를 한눈에 봄. 각 층을 눌러 설명을 봄.</p>
+      <div class="venn">
+        <div class="ai-ring" data-k="ai" style="cursor:pointer;">
+          <div class="ring-t">인공지능 (AI)</div>
+          <div class="ring-d">사람처럼 똑똑하게 행동하는 모든 기술</div>
+          <div class="ml-ring" data-k="ml">
+            <div class="ring-t">머신러닝 (ML)</div>
+            <div class="ring-d">데이터로 스스로 규칙을 학습</div>
+            <div class="dl-ring" data-k="dl">
+              <div class="ring-t">딥러닝 (DL)</div>
+              <div class="ring-d">신경망을 깊게 쌓아 복잡한 데이터 처리</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="out" id="l2-vennout" style="margin-top:12px;"></div>
+    </div>
+
+    <h3>핵심 메시지 — "진화는 대체가 아니라 누적"</h3>
+    <p>뒤가 앞을 없앤 게 아님 — 다섯 단계가 지금도 함께 쓰임.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 한 회사에서 동시에 일어나는 일</span>
+      <p class="wdesc">각 항목을 눌러 봄 — 가장 많이 쓰는 건 여전히 ①②.</p>
+      <div class="out" id="l2-coexout"></div>
+      <div style="text-align:center;margin-top:10px;">
+        <button class="btn" id="l2-coexstep">▶ 다음 단계 보기</button>
+        <button class="btn ghost" id="l2-coexreset">↻</button>
+      </div>
+    </div>
+
+    <div class="ex"><b>비유 — 연장통</b><br>망치(집계)로 시작해 드라이버(통계)·드릴(마이닝)·정밀공구(ML)·첨단기계(딥러닝)가 차례로 연장통에 추가됨. 하지만 <b>드릴이 생겼다고 망치를 버리지 않음</b> — 못 박을 땐 망치가 최고. 연장이 많아질수록 "어떤 일에 어떤 연장을 쓸지"의 안목이 더 중요해짐.</div>
+
+    <div class="note"><b>📌 도구에 휘둘리지 말 것</b><br>요즘 "AI"가 유행이라 모든 걸 AI로 풀어야 할 듯하지만, 현실의 수많은 문제는 단순 집계·통계로 더 빠르고 정확하게 풀림. "AI를 썼다"가 자랑이 아니라 "문제를 잘 풀었다"가 핵심임. 항상 "이 문제에 가장 적합한 방법이 무엇인가"를 먼저 물을 것.</div>
+  </section>
+
+
+</div>
+<div class="lecture" id="lec3">
+<div class="lecbanner"><span class="lecno">3강</span><h2 class="lectitle">데이터란 무엇인가</h2></div>
+
+
+  <!-- 3-1 -->
+  <section class="reveal">
+    <div class="sec-no">3-1</div>
+    <h2>데이터란 무엇인가 — 가장 기본부터</h2>
+    <div class="term"><b>데이터(data)란?</b><br>현실의 사실·현상을 <b>기록한 값</b>. 숫자·글자·날짜·이미지·소리 등 어떤 형태든, "관찰하거나 측정해 적어 둔 것"은 모두 데이터임.</div>
+    <p>오늘 하루를 적으면 그게 다 데이터임 — "7시 기상", "기온 18도", "점심 8,000원"… 우리는 이미 데이터 속에 삶.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 데이터는 그 자체로는 "그냥 값"</span>
+      <p class="wdesc">아래 값을 보고, "이게 무슨 뜻일까?"를 생각해 봄. 그다음 버튼을 눌러 맥락을 더해 봄.</p>
+      <div class="out" id="l3-w1out"></div>
+      <div style="text-align:center;margin-top:10px;">
+        <button class="btn" id="l3-w1btn">맥락 더하기 →</button>
+        <button class="btn ghost" id="l3-w1reset">↻</button>
+      </div>
+    </div>
+
+    <div class="note"><b>📌 핵심</b><br>데이터(예: "36.5")는 그 자체로는 의미가 불분명함. 맥락(체온인지, 기온인지)이 붙어야 비로소 쓸모 있는 <b>정보</b>가 됨. 그래서 데이터를 "가공"해 의미를 끌어내는 게 분석임 — 다음 절의 DIKW로 이어짐.</div>
+  </section>
+
+  <!-- 3-2 DIKW -->
+  <section class="reveal">
+    <div class="sec-no">3-2</div>
+    <h2>데이터에서 지혜까지 — DIKW 피라미드</h2>
+    <p>데이터는 가공할수록 가치가 커짐. 그 단계가 DIKW 피라미드임 — Data → Information → Knowledge → Wisdom.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · DIKW 피라미드 (카페 매출 이야기)</span>
+      <p class="wdesc">피라미드의 각 층을 눌러, 같은 카페 데이터가 어떻게 정보→지식→지혜로 가치가 커지는지 봄.</p>
+      <div class="pyramid" id="l3-pyr">
+        <div class="pyr-row" data-k="3" style="background:var(--accent);width:55%;">W · 지혜</div>
+        <div class="pyr-row" data-k="2" style="background:#b4622a;width:70%;">K · 지식</div>
+        <div class="pyr-row" data-k="1" style="background:var(--teal);width:85%;">I · 정보</div>
+        <div class="pyr-row" data-k="0" style="background:#3a342e;width:100%;">D · 데이터</div>
+      </div>
+      <div class="out" id="l3-pyrout"></div>
+    </div>
+
+    <div class="note"><b>📌 이 흐름이 곧 데이터 분석</b><br>분석이란 결국 맨 아래 "데이터"를 위로 끌어올려 "정보 → 지식 → 지혜(행동)"로 바꾸는 일임. 1강에서 본 "데이터로 더 나은 결정"이 바로 데이터를 지혜(행동)까지 올리는 것임.</div>
+  </section>
+
+  <!-- 3-3 주변 데이터 -->
+  <section class="reveal">
+    <div class="sec-no">3-3</div>
+    <h2>우리 주변의 데이터</h2>
+    <p>데이터는 특별한 곳이 아니라 <strong>어디에나 있음</strong>. 분석할 거리는 이미 우리 주변에 넘쳐남. 영역별로 둘러봄.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 세상은 데이터로 가득 차 있다</span>
+      <p class="wdesc">영역을 눌러, 우리 주변 곳곳의 데이터를 살펴봄.</p>
+      <div class="seg" id="l3-around">
+        <button class="on" data-k="life">🏠 일상</button>
+        <button data-k="shop">🛒 상거래</button>
+        <button data-k="public">🏛️ 공공·사회</button>
+      </div>
+      <div class="out" id="l3-aroundout"></div>
+    </div>
+  </section>
+
+  <!-- 3-4 정형/비정형 -->
+  <section class="reveal">
+    <div class="sec-no">3-4</div>
+    <h2>첫 번째 분류 — 정형 vs 비정형</h2>
+    <p>데이터를 나누는 첫 기준은 <strong>"표로 깔끔하게 정리되는가"</strong>임.</p>
+
+    <div class="widget">
+      <span class="wlabel">시각화 · 정형 데이터 vs 비정형 데이터</span>
+      <p class="wdesc">두 종류를 나란히 비교해 봄. 표로 정리되면 정형, 틀이 없으면 비정형임.</p>
+      <div class="twocol">
+        <div class="tc a">
+          <div class="t">📋 정형 데이터</div>
+          행과 열의 <b>표</b>로 깔끔히 정리됨. 엑셀·데이터베이스의 모습.
+          <table class="minitable"><tr><th>이름</th><th>나이</th><th>구매액</th></tr><tr><td>김OO</td><td>32</td><td>45000</td></tr><tr><td>이OO</td><td>27</td><td>12000</td></tr></table>
+          <div style="margin-top:6px;color:var(--teal);">→ 매출표·고객명부·설문 응답표</div>
+        </div>
+        <div class="tc b">
+          <div class="t">🗂️ 비정형 데이터</div>
+          정해진 틀이 <b>없는</b> 데이터.
+          <div style="margin-top:8px;font-family:monospace;font-size:11px;line-height:1.7;">💬 "배송 빨라서 좋아요!"<br>📷 (상품 사진)<br>🎵 (통화 녹음)<br>📄 (자유 형식 메모)</div>
+          <div style="margin-top:6px;color:var(--gold);">→ 리뷰·이미지·음성·영상·문서</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ex"><b>비유 — 서류 캐비닛 vs 잡동사니 상자</b><br>정형은 칸칸이 라벨 붙은 <b>서류 캐비닛</b>(어디에 뭐가 있는지 명확). 비정형은 온갖 게 뒤섞인 <b>잡동사니 상자</b>(쓸모 있지만 정리가 안 됨).</div>
+
+    <div class="note"><b>📌 중요한 사실</b><br>세상 데이터의 <b>대부분(약 80% 이상)은 비정형</b>임(리뷰·사진·영상·문서). 정형은 다루기 쉽지만 양은 적고, 비정형은 양은 많지만 다루기 어려움. 그래서 우리는 먼저 다루기 쉬운 <b>정형 데이터</b>(표)부터 배움 — 판다스가 바로 표를 다루는 도구임. (틀이 약간 있는 중간 형태를 <b>반정형</b>이라 함: JSON·로그 등)</div>
+  </section>
+
+  <!-- 3-5 정량/정성 + 함정 -->
+  <section class="reveal">
+    <div class="sec-no">3-5</div>
+    <h2>두 번째 분류 — 정량 vs 정성</h2>
+    <p>또 다른 기준은 <strong>"숫자냐, 말(성질)이냐"</strong>임.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 정량 데이터 vs 정성 데이터</span>
+      <p class="wdesc">두 종류를 눌러 비교해 봄. 측정되는 숫자면 정량, 성질·특성이면 정성임.</p>
+      <div class="seg" id="l3-qq">
+        <button class="on" data-k="quant">📏 정량 (숫자)</button>
+        <button data-k="qual">🏷️ 정성 (성질)</button>
+      </div>
+      <div class="out" id="l3-qqout"></div>
+    </div>
+
+    <div class="ex"><b>비유 — 저울 vs 라벨</b><br>정량은 <b>저울</b>로 잰 값(무게·키·매출 — 크고 작음을 따짐). 정성은 <b>라벨</b>(혈액형·성별·지역 — 종류·특성을 나타냄).</div>
+
+    <h3>헷갈리기 쉬운 함정 — "숫자처럼 보이는 정성 데이터"</h3>
+    <p>이것이 초보자가 가장 많이 틀리는 부분임. <strong>숫자로 적혀 있다고 다 정량이 아님!</strong> 직접 확인해 봄.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 이건 정량일까 정성일까?</span>
+      <p class="wdesc">각 항목이 정량인지 정성인지 맞혀 봄. 숫자처럼 보여도 정성일 수 있음!</p>
+      <div class="out" id="l3-trapout"></div>
+      <div class="seg" id="l3-trapbtn" style="margin-top:10px;">
+        <button data-a="quant">정량(숫자)</button>
+        <button data-a="qual">정성(성질)</button>
+        <button class="ghost" data-a="next" style="border-color:var(--accent);color:var(--accent);">다음 문제 →</button>
+      </div>
+    </div>
+
+    <div class="note"><b>📌 왜 이 구분이 중요한가</b><br>척도를 잘못 보면 "혈액형의 평균" 같은 말이 안 되는 분석을 하게 됨. 등번호 7번 선수와 28번 선수의 "평균 17.5번"은 아무 의미가 없음 — 등번호는 숫자처럼 보여도 <b>이름표(정성)</b>이기 때문임. 이 이야기를 4강(측정 척도)에서 훨씬 정밀하게 발전시킴.</div>
+  </section>
+
+
+</div>
+<div class="lecture" id="lec4">
+<div class="lecbanner"><span class="lecno">4강</span><h2 class="lectitle">데이터의 종류 — 측정 척도</h2></div>
+
+
+  <!-- 4-1 -->
+  <section class="reveal">
+    <div class="sec-no">4-1</div>
+    <h2>왜 "척도"를 구분하는가</h2>
+    <p>같은 "7"도 등번호 7과 기온 7도는 종류가 다름. 등번호는 더하거나 평균 낼 수 없지만, 기온은 가능함. 직접 비교해 봄.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 같은 숫자 7, 다른 의미</span>
+      <p class="wdesc">두 가지 "7"을 눌러, 같은 숫자라도 할 수 있는 것이 왜 다른지 봄.</p>
+      <div class="seg" id="l4-w1">
+        <button class="on" data-k="num">등번호 7번</button>
+        <button data-k="temp">기온 7도</button>
+      </div>
+      <div class="out" id="l4-w1out"></div>
+    </div>
+
+    <div class="term"><b>측정 척도(scale of measurement)</b><br>데이터에 담긴 "정보의 정밀함"에 따라 데이터를 나눈 4단계 — <b>명목 → 순서 → 등간 → 비율</b>. 뒤로 갈수록 정보가 풍부해지고 할 수 있는 계산이 늘어남. 척도를 알아야 "이 데이터로 무엇을 할 수 있는지"를 알 수 있음.</div>
+  </section>
+
+  <!-- 4-2~4-5 네 척도: 계단 위젯으로 통합 -->
+  <section class="reveal">
+    <div class="sec-no">4-2 ~ 4-5</div>
+    <h2>네 가지 척도 — 계단처럼 쌓인다</h2>
+    <p>네 척도는 정밀함이 커지는 계단임. 각 계단을 눌러 정의·예시·가능한 계산을 봄.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 측정 척도의 계단</span>
+      <p class="wdesc">각 척도를 눌러 보세요. 위로 갈수록 "할 수 있는 것"이 하나씩 늘어남.</p>
+      <div class="stairs" id="l4-stairs">
+        <div class="stair" data-k="3" style="background:var(--accent);margin-left:30px;"><span>④ 비율형</span><span class="lv">절대 0 + 모든 계산</span></div>
+        <div class="stair" data-k="2" style="background:#b4622a;margin-left:20px;"><span>③ 등간형</span><span class="lv">간격 일정 (0은 임의)</span></div>
+        <div class="stair" data-k="1" style="background:var(--gold);margin-left:10px;"><span>② 순서형</span><span class="lv">순서 있음 (간격 불균등)</span></div>
+        <div class="stair" data-k="0" style="background:var(--teal);"><span>① 명목형</span><span class="lv">이름·분류만</span></div>
+      </div>
+      <div class="out" id="l4-stairsout"></div>
+      <div class="cap" id="l4-stairscap"></div>
+    </div>
+
+    <div class="ex"><b>외우기 비유 — 달리기 시합</b><br>· <b>명목</b>: 선수들의 <b>배번호·국적</b> (그냥 구분)<br>· <b>순서</b>: <b>등수(1·2·3위)</b> (순서는 알지만 1위와 2위 격차 ≠ 2위와 3위 격차)<br>· <b>등간</b>: 그날의 <b>기온</b> (10도→20도 간격은 일정하나 "0도=온도 없음"은 아님)<br>· <b>비율</b>: 각 선수의 <b>기록(초)</b> (0초=시간 없음이 진짜 0, 10초는 20초의 절반)</div>
+  </section>
+
+  <!-- 핵심 구분: 등간 vs 비율 -->
+  <section class="reveal">
+    <div class="sec-no">핵심</div>
+    <h2>가장 헷갈리는 곳 — 등간 vs 비율</h2>
+    <p>가장 헷갈리는 건 등간형과 비율형의 차이임. 핵심은 하나 — "절대 0(진짜 0)이 있는가"임.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · "2배"가 되는가?</span>
+      <p class="wdesc">"2배" 질문을 던져 보면 등간과 비율이 갈림. 각 예시를 눌러 확인해 봄.</p>
+      <div class="seg" id="l4-ratio">
+        <button class="on" data-k="temp">온도 (등간)</button>
+        <button data-k="weight">무게 (비율)</button>
+        <button data-k="year">연도 (등간)</button>
+        <button data-k="money">금액 (비율)</button>
+      </div>
+      <div class="out" id="l4-ratioout"></div>
+    </div>
+
+    <div class="note"><b>📌 왜 중요한가</b><br>비율형만 "몇 배"가 의미 있음. "오늘 20도가 어제 10도의 2배로 덥다"는 <b>틀린 말</b>임(온도는 등간형, 절대 0이 없음). 반면 "오늘 매출 100만 원이 어제 50만 원의 2배"는 <b>맞는 말</b>임(금액은 비율형). 척도를 모르면 이런 실수를 함.</div>
+  </section>
+
+  <!-- 4-6 총정리 + 활용 -->
+  <section class="reveal">
+    <div class="sec-no">4-6</div>
+    <h2>총정리와 분석에의 활용</h2>
+    <p>네 척도가 각각 무엇을 할 수 있는지 표로 정리함. 척도에 따라 가능한 계산·그래프가 달라짐.</p>
+
+    <div class="widget">
+      <span class="wlabel">시각화 · 척도별 가능한 연산 총정리</span>
+      <p class="wdesc">아래 표에서 각 척도가 무엇을 할 수 있는지(⭕) 없는지(❌) 한눈에 비교해 봄.</p>
+      <table class="bigtable">
+        <tr><th>가능한 것</th><th>명목</th><th>순서</th><th>등간</th><th>비율</th></tr>
+        <tr><td>분류·구분 (=, ≠)</td><td class="o">⭕</td><td class="o">⭕</td><td class="o">⭕</td><td class="o">⭕</td></tr>
+        <tr><td>순서·대소 (&lt;, &gt;)</td><td class="x">❌</td><td class="o">⭕</td><td class="o">⭕</td><td class="o">⭕</td></tr>
+        <tr><td>덧셈·뺄셈 (간격)</td><td class="x">❌</td><td class="x">❌</td><td class="o">⭕</td><td class="o">⭕</td></tr>
+        <tr><td>곱셈·나눗셈 (몇 배)</td><td class="x">❌</td><td class="x">❌</td><td class="x">❌</td><td class="o">⭕</td></tr>
+        <tr><td>대표 예시</td><td>혈액형<br>지역</td><td>학점<br>만족도</td><td>온도<br>연도</td><td>매출<br>키·무게</td></tr>
+      </table>
+    </div>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 어떤 그래프를 그릴까?</span>
+      <p class="wdesc">척도에 따라 알맞은 그래프가 다름. 각 척도를 눌러 어울리는 시각화를 봄.</p>
+      <div class="seg" id="l4-graph">
+        <button class="on" data-k="nom">명목</button>
+        <button data-k="ord">순서</button>
+        <button data-k="num">등간·비율</button>
+      </div>
+      <div class="out" id="l4-graphout"></div>
+    </div>
+
+    <div class="note"><b>📌 분석의 첫 단추</b><br>데이터를 받으면 가장 먼저 "각 열이 어떤 척도인가"를 확인해야 함. 척도를 알아야 — 평균을 내도 되는지(등간·비율만), 순서로 정렬해도 되는지(순서 이상), 어떤 그래프가 맞는지 — 가 정해짐. 이것이 헛분석을 막는 첫 단추임.</div>
+  </section>
+
+
+</div>
+<div class="lecture" id="lec6">
+<div class="lecbanner"><span class="lecno">6강</span><h2 class="lectitle">데이터 분석 프로세스</h2></div>
+
+
+  <!-- 6-1 전체 지도 -->
+  <section class="reveal">
+    <div class="sec-no">6-1</div>
+    <h2>분석은 "과정"이다 — 전체 지도</h2>
+    <p>데이터 분석은 한 번에 되는 게 아니라 여러 단계를 밟는 과정임. 보통 6단계로 진행됨. 각 단계를 눌러 봄.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 분석 프로세스 6단계</span>
+      <p class="wdesc">각 단계를 눌러 보세요. 위에서 아래로 흐르며, 필요하면 되돌아가기도 함.</p>
+      <div class="flow" id="l6-flow">
+        <div class="fstep on" data-k="0"><span class="num">1</span><span class="ftxt">문제 정의</span></div>
+        <div class="farrow">▼</div>
+        <div class="fstep" data-k="1"><span class="num">2</span><span class="ftxt">데이터 수집</span></div>
+        <div class="farrow">▼</div>
+        <div class="fstep" data-k="2"><span class="num">3</span><span class="ftxt">데이터 정제 ⏳</span></div>
+        <div class="farrow">▼</div>
+        <div class="fstep" data-k="3"><span class="num">4</span><span class="ftxt">분석·탐색</span></div>
+        <div class="farrow">▼</div>
+        <div class="fstep" data-k="4"><span class="num">5</span><span class="ftxt">시각화</span></div>
+        <div class="farrow">▼</div>
+        <div class="fstep" data-k="5"><span class="num">6</span><span class="ftxt">의사결정·공유</span></div>
+      </div>
+      <div class="out" id="l6-flowout"></div>
+    </div>
+  </section>
+
+  <!-- 6-2 문제 정의 -->
+  <section class="reveal">
+    <div class="sec-no">6-2</div>
+    <h2>① 문제 정의 — 가장 중요한데 가장 자주 생략됨</h2>
+    <p>가장 중요한데 가장 자주 건너뛰는 단계임. "무엇을 알고 싶은가"를 정하지 않고 데이터부터 만지는 게 흔한 실수임.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 문제 정의가 없으면?</span>
+      <p class="wdesc">두 분석가를 비교해 봄. 문제 정의의 유무가 결과를 어떻게 가르는지 봄.</p>
+      <div class="seg" id="l6-prob">
+        <button class="on" data-k="no">❌ 문제 정의 없이</button>
+        <button data-k="yes">⭕ 문제 정의부터</button>
+      </div>
+      <div class="out" id="l6-probout"></div>
+    </div>
+
+    <div class="ex"><b>비유 — 내비게이션의 목적지</b><br>아무리 좋은 내비게이션(도구·데이터)도 "어디로 갈지"(문제 정의)를 입력하지 않으면 출발조차 못 함. 분석도 "무엇을 알고 싶은가"가 목적지임. (7강에서 "좋은 질문"으로 더 깊이 다룸)</div>
+  </section>
+
+  <!-- 6-3,6-4 수집·정제 -->
+  <section class="reveal">
+    <div class="sec-no">6-3 · 6-4</div>
+    <h2>② 수집과 ③ 정제 — 가장 많은 시간이 드는 곳</h2>
+    <p>② 수집은 데이터를 모으는 단계(파일·DB·웹). ③ 정제는 — 놀랍게도 — 전체 시간의 70~80%를 차지하는 가장 중요한 단계임.</p>
+
+    <div class="widget">
+      <span class="wlabel">시각화 · 분석가의 시간은 어디에 쓰이나</span>
+      <p class="wdesc">실제 분석가가 시간을 어디에 쓰는지 봄. 화려한 분석보다 "정제"가 압도적임.</p>
+      <div class="timebar">
+        <div style="width:75%;background:var(--accent);">정제·준비 70~80%</div>
+        <div style="width:25%;background:var(--teal);">실제 분석</div>
+      </div>
+      <div class="out" id="l6-cleanout"></div>
+    </div>
+
+    <div class="term"><b>정제(cleaning)에서 다루는 것들</b><br>· <b>결측치</b>: 빠진 값 (예: 나이 칸이 비어 있음)<br>· <b>이상치</b>: 말도 안 되는 값 (예: 나이 999세) — 2강의 "평균의 함정" 주범<br>· <b>중복</b>: 같은 데이터가 여러 번<br>· <b>형식 오류</b>: 날짜가 제각각(2024-01-01 vs 24/1/1)<br>→ 이런 "지저분한" 데이터를 깨끗이 다듬어야 분석이 정확해짐.</div>
+
+    <div class="note"><b>📌 "쓰레기를 넣으면 쓰레기가 나온다"</b><br>(Garbage In, Garbage Out) 아무리 좋은 분석 기법도, 지저분한 데이터를 넣으면 엉터리 결과가 나옴. 그래서 지루해 보이는 정제가 사실 분석의 성패를 가름. 우리가 배울 판다스가 바로 이 정제를 강력하게 해 주는 도구임.</div>
+  </section>
+
+  <!-- 6-5,6-6 분석·시각화 -->
+  <section class="reveal">
+    <div class="sec-no">6-5 · 6-6</div>
+    <h2>④ 분석·탐색과 ⑤ 시각화</h2>
+    <p>데이터가 깨끗해지면 ④ 분석·탐색으로 패턴과 답을 찾음. ⑤ 시각화는 그 결과를 한눈에 보이는 그림으로 만듦.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 표 vs 그래프</span>
+      <p class="wdesc">같은 데이터를 표로 볼 때와 그래프로 볼 때, 무엇이 더 빨리 이해되는지 비교해 봄.</p>
+      <div class="seg" id="l6-viz">
+        <button class="on" data-k="table">표로 보기</button>
+        <button data-k="chart">그래프로 보기</button>
+      </div>
+      <div class="out" id="l6-vizout"></div>
+    </div>
+
+    <div class="note"><b>📌 시각화는 "설득"의 도구</b><br>분석 결과를 숫자 표로만 내밀면 사람들은 이해하기 어려움. 그래프로 보여 주면 "아, 여름에 매출이 확 오르네!"가 한눈에 보임. 1강에서 본 "데이터는 검증·공유가 쉽다"는 장점이 시각화로 완성됨 — 시각화는 결과를 남에게 전달하고 설득하는 핵심 도구임.</div>
+  </section>
+
+  <!-- 6-7 의사결정·순환 -->
+  <section class="reveal">
+    <div class="sec-no">6-7</div>
+    <h2>⑥ 의사결정·공유, 그리고 순환</h2>
+    <p>마지막은 ⑥ 의사결정·공유임. 분석은 "더 나은 결정으로 이어질 때" 가치가 있음(1강 핵심). 그리고 한 번에 끝나지 않고 순환함.</p>
+
+    <div class="widget">
+      <span class="wlabel">시각화 · 분석은 순환하는 과정</span>
+      <p class="wdesc">분석은 직선이 아니라 돌고 도는 과정임. "다시 돌기"를 눌러 순환을 따라가 봄.</p>
+      <div class="cycle" id="l6-cycleviz"></div>
+      <div style="text-align:center;margin-top:10px;">
+        <button class="btn" id="l6-cyclebtn">▶ 한 바퀴 돌기</button>
+        <button class="btn ghost" id="l6-cyclereset">↻</button>
+      </div>
+      <div class="out" id="l6-cycleout" style="margin-top:10px;"></div>
+    </div>
+
+    <div class="note"><b>📌 분석은 직선이 아니라 나선</b><br>현실의 분석은 "정의→수집→정제→분석→시각화→결정"을 한 번 하고 끝나지 않음. 결과를 보면 새 질문이 생기고(7강의 호기심!), 그러면 다시 문제를 다듬어 또 한 바퀴 돎. 이렇게 돌수록 분석이 깊어짐 — 직선이 아니라 위로 올라가는 나선에 가까움.</div>
+  </section>
+
+
+</div>
+<div class="lecture" id="lec7">
+<div class="lecbanner"><span class="lecno">7강</span><h2 class="lectitle">분석가의 도구와 마인드셋</h2></div>
+
+
+  <!-- 7-1 도구 -->
+  <section class="reveal">
+    <div class="sec-no">7-1</div>
+    <h2>분석에 쓰는 도구들</h2>
+    <p>도구는 수십 가지지만 큰 그림으로는 몇 무리로 나뉘고 각자 자리가 있음. 다 외울 필요 없이 지형도만 그리면 됨.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 네 가지 도구의 자리</span>
+      <p class="wdesc">각 도구를 눌러, 무엇을 하고 언제 강한지 봄.</p>
+      <div class="tools" id="l7-tools">
+        <div class="toolc on" data-k="excel"><div class="tn">📊 엑셀</div>표·집계·간단한 그래프</div>
+        <div class="toolc" data-k="sql"><div class="tn">🗄️ SQL</div>DB에서 데이터 꺼내기</div>
+        <div class="toolc" data-k="py"><div class="tn">🐍 파이썬·R</div>분석 전부 (만능)</div>
+        <div class="toolc" data-k="bi"><div class="tn">📈 BI 도구</div>대시보드·시각화</div>
+      </div>
+      <div class="out" id="l7-toolsout" style="margin-top:10px;"></div>
+    </div>
+
+    <div class="ex"><b>핵심 — 도구는 경쟁이 아니라 협업</b><br>"어떤 도구가 제일 좋아요?"의 답은 "함께 쓴다"임. 실무: <b>SQL</b>로 데이터를 꺼내 → <b>파이썬·판다스</b>로 분석·모델링 → <b>BI(태블로)</b>로 멋지게 공유 (간단한 확인은 <b>엑셀</b>). 2강의 "연장통" 비유처럼, 일에 맞는 연장을 골라 함께 씀.</div>
+  </section>
+
+  <!-- 7-2 왜 파이썬 -->
+  <section class="reveal">
+    <div class="sec-no">7-2</div>
+    <h2>왜 파이썬·판다스로 가는가</h2>
+    <p>도구가 많은데 왜 우리는 <strong>파이썬</strong>과 그 안의 <strong>판다스</strong>를 배울까? 네 가지 이유를 눌러 봄.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 파이썬을 고른 4가지 이유</span>
+      <p class="wdesc">각 이유를 눌러 자세히 봄.</p>
+      <div class="seg" id="l7-why">
+        <button class="on" data-k="all">① 만능</button>
+        <button data-k="auto">② 대용량·자동화</button>
+        <button data-k="repro">③ 재현·협업</button>
+        <button data-k="free">④ 무료·쉬움</button>
+      </div>
+      <div class="out" id="l7-whyout"></div>
+    </div>
+
+    <div class="term"><b>판다스(pandas)란?</b><br>파이썬으로 데이터 분석을 할 때 가장 핵심인 도구. 쉽게 말해 <b>"프로그래밍 가능한 엑셀"</b>임. 엑셀처럼 표(행·열)로 다루되, 큰 데이터도 거뜬하고, 모든 작업을 코드로 남겨 자동화·반복 가능. 3강의 정형 데이터(표)를 다루는 최강 도구 — 분석가의 "밥 먹는 숟가락".</div>
+
+    <div class="note"><b>📌 파이썬이 전부는 아님</b><br>"파이썬만 배우면 된다"는 뜻이 아님 — 도구는 협업함. 다만 그 중심에서 가장 넓게 쓰이는 만능 도구가 파이썬·판다스라, 그것을 먼저·깊이 배우는 것임. 하나를 제대로 익히면 나머지는 훨씬 수월해짐. 이 커리큘럼 뒷부분에서 판다스를 본격적으로 배움.</div>
+  </section>
+
+  <!-- 7-3 마인드셋 -->
+  <section class="reveal">
+    <div class="sec-no">7-3</div>
+    <h2>마인드셋 — 도구보다 중요한 것</h2>
+    <p>가장 중요한 전환 — 좋은 분석가를 만드는 건 도구가 아니라 "마음가짐"임. 같은 파이썬도 마음가짐에 따라 결과가 달라짐. 세 마인드셋을 눌러 봄.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 분석가의 세 가지 마인드셋</span>
+      <p class="wdesc">각 마인드셋을 눌러, 사례와 함께 자세히 봄.</p>
+      <div class="seg" id="l7-mind">
+        <button class="on" data-k="curio">🔍 호기심</button>
+        <button data-k="doubt">🤨 의심</button>
+        <button data-k="ethic">⚖️ 윤리</button>
+      </div>
+      <div class="out" id="l7-mindout"></div>
+    </div>
+
+    <div class="ex"><b>꼭 기억할 함정 — 상관관계 ≠ 인과관계</b><br>"아이스크림 판매가 늘면 물놀이 사고도 는다" → 그렇다고 "아이스크림이 사고를 일으킨다"? <b>틀림!</b> 사실은 <b>여름(더위)</b>이라는 공통 원인이 둘 다 늘린 것. "함께 움직인다(상관)"고 "하나가 다른 하나를 일으킨다(인과)"고 단정하면 안 됨.</div>
+  </section>
+
+  <!-- 7-4 좋은 질문 -->
+  <section class="reveal">
+    <div class="sec-no">7-4</div>
+    <h2>좋은 질문이 좋은 분석을 만든다</h2>
+    <p>개요에서 가장 중요한 하나 — 분석의 핵심은 도구가 아니라 "좋은 질문"임. 질문이 분명하지 않으면 좋은 도구·데이터로도 길을 잃음.</p>
+
+    <div class="widget">
+      <span class="wlabel">인터랙티브 · 나쁜 질문 → 좋은 질문</span>
+      <p class="wdesc">막연한 질문을 눌러, 그것을 어떻게 "데이터로 답할 수 있는" 좋은 질문으로 바꾸는지 봄.</p>
+      <div class="seg" id="l7-quest">
+        <button class="on" data-k="0">"매출 올리고 싶어"</button>
+        <button data-k="1">"고객을 알고 싶어"</button>
+        <button data-k="2">"서비스 어때?"</button>
+      </div>
+      <div class="out" id="l7-questout"></div>
+    </div>
+
+    <div class="ex"><b>비유 — 내비게이션의 목적지</b><br>아무리 좋은 내비게이션(도구)도 "어디로 갈지"(질문)를 입력 안 하면 출발조차 못 함. "무엇을 알고 싶은가"라는 질문이 목적지이고, 데이터·도구는 데려다주는 수단임. 좋은 질문은 <b>구체적·데이터로 답 가능·행동으로 연결</b>됨.</div>
+
+    <div class="note"><b>📌 AI 시대에 더 중요해지는 것</b><br>분석의 기술적 부분은 점점 자동화되지만, <b>"무엇을 물을 것인가, 답을 어떻게 해석하고 무엇을 할 것인가"</b>는 여전히 사람의 몫임. 막연한 요청을 구체적 질문으로 바꾸는 힘 — 이것이 어떤 도구가 나와도 대체되지 않는 분석가의 가장 큰 자산임.</div>
+  </section>
+
+  <!-- 7-5 로드맵 -->
+  <section class="reveal">
+    <div class="sec-no">7-5</div>
+    <h2>전체 커리큘럼 로드맵</h2>
+    <p>끝으로 학습 여정 전체를 펼쳐 봄. 지금 어디에 있고 어디로 가는지 알면 길을 잃지 않음.</p>
+
+    <div class="widget">
+      <span class="wlabel">시각화 · 데이터 분석 자동화 로드맵</span>
+      <p class="wdesc">지금 우리는 첫 봉우리(개요)를 막 넘는 지점임. 앞으로의 길을 봄.</p>
+      <div class="road">
+        <div class="rd now"><span class="b" style="background:var(--accent);">1</span>데이터 분석 개요 (지금 여기!) — 왜·무엇을</div>
+        <div class="rdarrow">▼</div>
+        <div class="rd dimr"><span class="b" style="background:#b9ad99;">2</span>파이썬 문법 기초 — 분석의 도구 익히기</div>
+        <div class="rdarrow">▼</div>
+        <div class="rd dimr"><span class="b" style="background:#b9ad99;">3</span>분석 기초·중급 이론 + 프로세스 — 어떻게</div>
+        <div class="rdarrow">▼</div>
+        <div class="rd dimr"><span class="b" style="background:#b9ad99;">4</span>판다스란 무엇인가 — 핵심 도구</div>
+        <div class="rdarrow">▼</div>
+        <div class="rd dimr"><span class="b" style="background:#b9ad99;">5</span>판다스 + 분석 프로세스 — 실전 분석</div>
+      </div>
+    </div>
+
+    <div class="note"><b>📌 순서에는 이유가 있음</b><br>왜·무엇을 먼저 이해하고(개요) → 도구를 익힌 뒤(파이썬·판다스) → 실제 분석(실전). 도구부터 무작정 배우면 "이걸 왜 배우지?" 하며 길을 잃기 쉬운데, 우리는 개요로 "왜"를 먼저 다졌으니 걱정 없음.</div>
+  </section>
+
+  <!-- 마무리 -->
+  <section class="reveal">
+    <div class="sec-no">개요 모듈 완료</div>
+    <h2>개요 모듈을 마치며</h2>
+    <div class="grad">
+      <div class="cap">🎓</div>
+      <div class="t">데이터 분석 개요 및 기초 이론 (1~7강) 완료!</div>
+      <div class="s">1강 분석이란/왜 · 2강 방법의 진화 · 3강 데이터란 · 4강 측정 척도<br>5강 분석 4유형 · 6강 분석 프로세스 · 7강 도구·마인드셋</div>
+    </div>
+    <p>코드 한 줄 안 썼지만, 왜 하는지·무엇이 데이터인지·어떻게·어떤 마음으로 하는지의 기초를 모두 갖췄음. 어떤 도구를 배우든 길잡이가 됨.</p>
+    <div class="ex" style="text-align:center;font-size:18px;color:var(--accent);font-family:var(--serif);font-weight:700;">"감(感)이 아니라 데이터(근거)로<br>더 나은 결정을 내린다."</div>
+    <p>한 문장에서 시작해 전체 그림을 그렸음. 다음 모듈에서 첫 도구 파이썬을 만나러 감. 수고 많으셨음. 🙌</p>
+  </section>
+
+
+</div>
+</main>
+<footer>
+  <p style="margin-top:14px;">데이터 분석 개요 및 기초 이론 · 1~7강 전체 합본 · 데이터 분석 자동화 커리큘럼</p>
+</footer>
+<script>
+var prog=document.getElementById('progress');
+addEventListener('scroll',function(){var h=document.documentElement;prog.style.width=((h.scrollTop)/(h.scrollHeight-h.clientHeight)*100)+'%';});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+
+/* ===== 1강 ===== */
+/* W1a 두 방법 */
+(function(){
+  var R={
+    feel:'<span class="dim">방법 A — 느낌으로 결정</span>\n"요즘 추워졌고, 떡볶이가 잘 나가는 것 같던데?\n 떡볶이로 가자."\n<span class="y">근거: 사장님의 느낌·최근 기억</span>\n→ 맞을 수도, 틀릴 수도. 검증·설득 어려움',
+    data:'<span class="dim">방법 B — 기록(데이터)을 보고 결정</span>\n지난 한 달 장부를 셈:\n  떡볶이 하루 평균 <span class="hl">40인분</span>\n  김밥   하루 평균 <span class="hl">65인분</span>\n→ "김밥이 1.6배 더 나갔구나. 김밥에 집중!"\n<span style="color:#9ec79a">이것이 바로 데이터 분석!</span>'
+  };
+  var out=document.getElementById('l1-w1aout');
+  document.getElementById('lec1').querySelectorAll('#l1-w1a button').forEach(function(b){b.addEventListener('click',function(){document.getElementById('lec1').querySelectorAll('#l1-w1a button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.feel;
+})();
+
+/* W1b 약점 */
+(function(){
+  var R={
+    bias:'<span class="y">약점 1 — 편향 (보고 싶은 것만 봄)</span>\n사장님이 "떡볶이가 잘 나간다"고 느낀 이유가\n사실은 <span class="dim">어제 우연히 떡볶이가 몰린 한순간</span> 때문일 수 있음.\n사람은 강렬한 최근 기억을 실제보다 크게 평가함.\n\n<span style="color:#9ec79a">→ 데이터는 한 달 전체를 세므로 이 편향을 줄여 줌</span>',
+    share:'<span class="y">약점 2 — 검증·공유가 어려움</span>\n"내 느낌엔 이게 맞아"는 남을 설득하기 어려움.\n팀에서 "느낌"으로는 합의에 이르기 힘듦.\n\n<span style="color:#9ec79a">→ "장부상 김밥이 1.6배 더 팔렸다"는\n   누구나 같은 장부로 확인 가능 → 설득·공유 쉬움</span>'
+  };
+  var out=document.getElementById('l1-w1bout');
+  document.getElementById('lec1').querySelectorAll('#l1-w1b button').forEach(function(b){b.addEventListener('click',function(){document.getElementById('lec1').querySelectorAll('#l1-w1b button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.bias;
+})();
+
+/* W1c 협력 흐름 */
+(function(){
+  var steps=[
+    '<span class="dim">의류 매장 매니저의 이야기로 협력을 봄</span>\n"버튼을 눌러 단계를 진행하세요"',
+    '<span class="y">① 직감으로 가설</span>\n"젊은 손님이 늘어난 것 같으니\n 청바지를 더 들여놓자!"\n<span class="dim">(직감이 방향을 던짐)</span>',
+    '<span class="y">② 데이터로 확인</span>\n결제 데이터를 분석해 봄…\n실제로 늘어난 건 젊은 손님이 아니라\n<span class="hl">40대 손님의 외투 구매</span>였음!',
+    '<span class="y">③ 직감을 교정 → 실행</span>\n매니저는 생각을 바꿔 <span class="hl">외투에 집중</span> → 매출 상승\n\n<span style="color:#9ec79a">직감(방향) + 데이터(확인) = 협력!\n직감을 버린 게 아니라 데이터로 다듬은 것</span>'
+  ];
+  var i=0,out=document.getElementById('l1-w1cout');
+  function r(){out.innerHTML=steps[i];}
+  document.getElementById('l1-w1cstep').addEventListener('click',function(){if(i<steps.length-1)i++;r();});
+  document.getElementById('l1-w1creset').addEventListener('click',function(){i=0;r();});
+  r();
+})();
+
+/* W2 퍼니스 */
+(function(){
+  var steps=[
+    '<span class="dim">1865년, 작가 디벤스가 책에서 "business intelligence"를 처음 기록</span>\n"버튼을 눌러 퍼니스의 방법을 따라가세요"',
+    '<span class="y">① 정보를 먼저 모음 (intelligence)</span>\n은행가 퍼니스는 연락망을 만들어\n먼 지역 소식을 <span class="hl">남들보다 하루 먼저</span> 알아냄\n<span class="dim">(당시엔 소식이 며칠씩 걸려 전해짐)</span>',
+    '<span class="y">② 그 정보로 먼저 행동</span>\n"이 물건 값이 곧 오르겠구나" 판단\n→ 경쟁자보다 <span class="hl">먼저 사고팔아 이익</span>',
+    '<span class="y">디벤스의 통찰 (1865)</span>\n"직감이 아니라 데이터·실증 증거로\n 전략을 세우는 것이 더 믿을 만하다"\n\n<span style="color:#9ec79a">→ 150여 년 전, 이미 "감보다 근거"!</span>'
+  ];
+  var i=0,out=document.getElementById('l1-w2out');
+  function r(){out.innerHTML=steps[i];}
+  document.getElementById('l1-w2step').addEventListener('click',function(){if(i<steps.length-1)i++;r();});
+  document.getElementById('l1-w2reset').addEventListener('click',function(){i=0;r();});
+  r();
+})();
+
+/* W3 측정 바 */
+(function(){
+  var jobs=[{n:"공정 A",t:8},{n:"공정 B",t:14},{n:"공정 C",t:6},{n:"공정 D",t:11}];
+  var measured=false,improved=false;
+  var bars=document.getElementById('l1-w3bars'),out=document.getElementById('l1-w3out'),btn=document.getElementById('l1-w3btn');
+  function r(){
+    bars.innerHTML=jobs.map(function(j){
+      var t=(improved&&j.t>10)?Math.round(j.t*0.6):j.t;
+      var w=measured?t*8:8;
+      var color=measured?((improved&&j.t>10)?'#3f7d4f':(t>10?'#c2410c':'#a8762f')):'#ddd2bf';
+      return '<div class="bar-row"><span class="lbl">'+j.n+'</span><div class="bar" style="width:'+w+'px;background:'+color+'"></div><span style="color:var(--sub)">'+(measured?t+'초':'?초')+'</span></div>';
+    }).join('');
+  }
+  btn.addEventListener('click',function(){
+    if(!measured){measured=true;btn.textContent='② 느린 공정 개선';out.innerHTML='<span class="y">① 측정 완료</span> — 각 공정 시간을 데이터로 기록\n→ <span class="hl">공정 B(14초)가 가장 느림이 한눈에 보임!</span>\n<span class="dim">측정 전엔 어디가 느린지 전혀 안 보였음</span>';}
+    else if(!improved){improved=true;btn.textContent='✓ 개선 완료';out.innerHTML='<span class="y">② 개선 완료</span> — 느린 공정 B·D를 집중 개선\n→ <span style="color:#9ec79a">전체 시간이 크게 단축됨!</span>\n\n<span class="hl">"측정할 수 없으면 개선할 수 없다"</span>';}
+    r();
+  });
+  document.getElementById('l1-w3reset').addEventListener('click',function(){measured=false;improved=false;btn.textContent='① 측정 켜기';out.innerHTML='<span class="dim">측정 전: 어느 공정이 느린지 전혀 안 보임. "측정 켜기"를 눌러 보세요</span>';r();});
+  r();out.innerHTML='<span class="dim">측정 전: 어느 공정이 느린지 전혀 안 보임. "측정 켜기"를 눌러 보세요</span>';
+})();
+
+/* W4 타임라인 */
+(function(){
+  var items=[
+    {y:"1865",t:"BI 용어 등장 (디벤스)",d:"작가 디벤스가 은행가 퍼니스 사례로 \"business intelligence\"를 기록 — 발상의 시작. \"감이 아니라 근거로\"."},
+    {y:"1880",t:"홀러리스 천공카드",d:"미국 인구조사가 손 집계로 10년이나 걸려 적체됨. 구멍 뚫은 카드와 집계 기계로 몇 달로 단축 — \"기계로 데이터를 처리한다\"의 첫 큰 성과."},
+    {y:"1900s",t:"테일러·포드의 과학적 관리",d:"공정 시간을 측정·분석 → 모델 T 생산 혁신. 미국 최초의 체계적 비즈니스 분석. \"측정해야 개선한다\"."},
+    {y:"1953",t:"컨설팅 산업의 성장",d:"데이터로 기업을 진단·자문하는 일이 전문 산업으로. 예: 액센추어가 회계법인 아서 앤더슨의 한 부문에서 출발."},
+    {y:"1956",t:"IBM 최초 하드디스크",d:"대량 데이터를 유연하게 저장하고 빠르게 찾게 됨. \"데이터를 쌓아 둘 곳\"이 생기자 분석할 데이터도 쌓이기 시작."},
+    {y:"1960s",t:"메인프레임 BI",d:"거대 컴퓨터로 재무·운영 보고서를 자동 집계. 사람이 손으로 만들던 월간 보고서를 컴퓨터가 — 현대 BI의 본격 출발."},
+    {y:"1989",t:"가트너의 BI 재정립",d:"IT 분석기관 가트너의 하워드 드레스너가 옛 용어 BI를 \"데이터 기술로 더 나은 비즈니스 결정\"이라는 현대적 의미로 재정의 → 오늘날 BI 개념 확립."},
+    {y:"2000s~",t:"빅데이터·클라우드·AI",d:"저장·계산 비용 급락, 무료 도구 확산. 누구나 노트북으로 수백만 건을 분석하는 대중화 시대 — 같은 발상을 더 강력한 기술로."}
+  ];
+  var tl=document.getElementById('l1-w4tl'),out=document.getElementById('l1-w4out');
+  tl.innerHTML=items.map(function(it,i){return '<div class="tl-item" data-i="'+i+'"><span class="tl-year">'+it.y+'</span> <span class="tl-title">'+it.t+'</span></div>';}).join('');
+  function sel(i){tl.querySelectorAll('.tl-item').forEach(function(el){el.classList.remove('on');});tl.querySelector('[data-i="'+i+'"]').classList.add('on');out.innerHTML='<span class="hl">'+items[i].y+' — '+items[i].t+'</span>\n<span class="dim">'+items[i].d+'</span>';}
+  tl.querySelectorAll('.tl-item').forEach(function(el){el.addEventListener('click',function(){sel(+el.dataset.i);});});
+  sel(0);
+})();
+
+/* W5 대중화 */
+(function(){
+  var R={
+    boom:'<span class="y">① 데이터 폭증</span>\n스마트폰 검색·카드 결제·교통카드·SNS…\n우리의 거의 모든 활동이 <span class="hl">데이터로 기록</span>됨.\n<span class="dim">한 사람이 하루에 만드는 데이터가,\n수십 년 전 한 회사의 1년치보다 많다고 함</span>',
+    cost:'<span class="y">② 비용 하락</span>\n과거엔 저장·분석에 거대한 컴퓨터+전문 인력이 필요\n→ 대기업만 가능. 지금은 <span class="hl">클라우드</span>로 비용 급락.\n<span class="dim">예전엔 "발전소를 직접 지어야" 했다면,\n지금은 "콘센트에 플러그만 꽂으면" 됨</span>',
+    tool:'<span class="y">③ 도구의 대중화</span>\n과거엔 비싼 전문 소프트웨어가 필요.\n지금은 <span class="hl">파이썬·판다스가 무료</span>, 자료도 풍부.\n→ 마케터·기획자·소상공인·학생 모두 데이터로 판단.\n<span style="color:#9ec79a">데이터 리터러시 = 읽고 쓰기 같은 기본 소양</span>'
+  };
+  var out=document.getElementById('l1-w5out');
+  document.getElementById('lec1').querySelectorAll('#l1-w5tog button').forEach(function(b){b.addEventListener('click',function(){document.getElementById('lec1').querySelectorAll('#l1-w5tog button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.boom;
+})();
+
+/* ===== 2강 ===== */
+/* evo */
+(function(){
+  var R=[
+    {q:'"지난달 매출은 얼마였나?" (단순 사실)',m:'① 집계 — 세고 합치기',d:'가진 데이터를 요약. 가장 단순·기본.'},
+    {q:'"국민 전체의 평균 키는?" (전체를 다 못 셀 때)',m:'② 통계 분석 — 일부로 전체 추정',d:'표본으로 모집단을 추정. 분포·회귀.'},
+    {q:'"어떤 상품들이 함께 잘 팔리나?" (숨은 패턴)',m:'③ 데이터 마이닝 — 패턴 캐기',d:'가설 없이 데이터를 뒤져 규칙 발견.'},
+    {q:'"이 고객이 다음 달에 떠날까?" (미래 예측)',m:'④ 머신러닝 — 스스로 규칙 학습',d:'데이터로 컴퓨터가 규칙을 학습해 예측.'},
+    {q:'"이 사진 속 동물이 고양이인가?" (복잡한 인식)',m:'⑤ 딥러닝·AI — 복잡한 것까지',d:'신경망을 깊게 쌓아 사진·음성·언어 처리.'}
+  ];
+  var out=document.getElementById('l2-evoout');
+  function sel(i){document.getElementById('lec2').querySelectorAll('#l2-evo .evo-step').forEach(function(x){x.classList.remove('on');});document.getElementById('lec2').querySelector('#l2-evo [data-k="'+i+'"]').classList.add('on');out.innerHTML='<span class="dim">질문:</span> '+R[i].q+'\n<span class="y">필요한 방법 → '+R[i].m+'</span>\n<span class="dim">'+R[i].d+'</span>';}
+  document.getElementById('lec2').querySelectorAll('#l2-evo .evo-step').forEach(function(el){el.addEventListener('click',function(){sel(+el.dataset.k);});});
+  sel(0);
+})();
+
+/* 평균 함정 */
+(function(){
+  var base=[5000,6000,5500,4500];
+  var withOut=false;
+  var coins=document.getElementById('l2-coins'),out=document.getElementById('l2-meanout');
+  function render(){
+    var data=withOut?base.concat([79000]):base.slice();
+    var maxV=Math.max.apply(null,data);
+    coins.innerHTML=data.map(function(v){
+      var h=Math.max(18,Math.round(v/maxV*110));
+      var cls=(v>=79000)?'coin out':'coin';
+      return '<div class="'+cls+'" style="height:'+h+'px">'+(v/1000)+'k</div>';
+    }).join('');
+    var mean=Math.round(data.reduce(function(a,c){return a+c;},0)/data.length);
+    var sorted=data.slice().sort(function(a,b){return a-b;});
+    var mid=sorted[Math.floor(sorted.length/2)];
+    out.innerHTML='데이터: ['+data.map(function(v){return v.toLocaleString();}).join(', ')+']\n'+
+      '<span class="y">평균(mean) = '+mean.toLocaleString()+'원</span>\n'+
+      '<span class="hl">중앙값(median) = '+mid.toLocaleString()+'원</span>\n'+
+      (withOut?'<span class="dim">→ 단체 손님 1명(이상치) 때문에 평균이 확 올라감!\n   하지만 "보통 손님"은 중앙값 5,500원에 가까움</span>':'<span class="dim">→ 평균과 중앙값이 비슷함 (이상치 없음)</span>');
+  }
+  document.getElementById('l2-meanToggle').addEventListener('click',function(){withOut=!withOut;render();});
+  render();
+})();
+
+/* 국 맛보기 */
+(function(){
+  var R=[
+    '<span class="hl">🍲 솥 전체 = 모집단</span>\n진짜 알고 싶은 전체 (예: 국민 전체의 키).\n<span class="dim">전부 조사하긴 불가능 — 5천만 명을 다 잴 순 없음</span>',
+    '<span class="hl">🥄 한 숟가락 = 표본</span>\n실제로 떠서 맛본 일부 (예: 무작위 1,000명).\n<span class="dim">간을 보려고 솥 전체를 마실 필요는 없음</span>',
+    '<span class="hl">🌀 잘 젓기 = 무작위·골고루 뽑기</span>\n안 젓고 위에서만 뜨면 맛을 잘못 앎.\n<span style="color:#9ec79a">잘 저은 한 숟가락이 솥 전체를 대표하듯,\n잘 뽑은 표본이 모집단 전체를 대표함!</span>'
+  ];
+  var out=document.getElementById('l2-soupout');
+  document.getElementById('lec2').querySelectorAll('#l2-soup button').forEach(function(b){b.addEventListener('click',function(){document.getElementById('lec2').querySelectorAll('#l2-soup button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[+b.dataset.k];});});
+  out.innerHTML=R[0];
+})();
+
+/* 통계 시각화 */
+(function(){
+  var distSVG='<svg viewBox="0 0 440 205" width="100%" style="max-width:480px;display:block;margin:2px auto"><rect x="0" y="0" width="440" height="205" rx="10" fill="#fbf8f2"/><line x1="46" y1="172" x2="408" y2="172" stroke="#cbbfa9" stroke-width="1.5"/><line x1="46" y1="28" x2="46" y2="172" stroke="#cbbfa9" stroke-width="1.5"/><path d="M58,170 C150,168 186,54 227,49 C268,54 304,168 398,170" fill="rgba(194,65,12,0.10)" stroke="#c2410c" stroke-width="2.5"/><line x1="227" y1="51" x2="227" y2="172" stroke="#2f6b5e" stroke-width="1.5" stroke-dasharray="4 3"/><text x="227" y="44" text-anchor="middle" fill="#2f6b5e" font-size="12" font-weight="700">평균 170cm</text><text x="405" y="190" text-anchor="end" fill="#6f6457" font-size="12">키 →</text><text x="40" y="36" text-anchor="end" fill="#6f6457" font-size="12">사람 수</text><text x="92" y="165" text-anchor="middle" fill="#8a3408" font-size="10.5">작은 키·드묾</text><text x="372" y="165" text-anchor="middle" fill="#8a3408" font-size="10.5">큰 키·드묾</text></svg>';
+  var regSVG='<svg viewBox="0 0 440 205" width="100%" style="max-width:480px;display:block;margin:2px auto"><rect x="0" y="0" width="440" height="205" rx="10" fill="#fbf8f2"/><line x1="46" y1="172" x2="408" y2="172" stroke="#cbbfa9" stroke-width="1.5"/><line x1="46" y1="28" x2="46" y2="172" stroke="#cbbfa9" stroke-width="1.5"/><line x1="62" y1="162" x2="398" y2="58" stroke="#2f6b5e" stroke-width="2.5"/><circle cx="84" cy="156" r="4.5" fill="#c2410c"/><circle cx="124" cy="150" r="4.5" fill="#c2410c"/><circle cx="164" cy="136" r="4.5" fill="#c2410c"/><circle cx="204" cy="130" r="4.5" fill="#c2410c"/><circle cx="244" cy="112" r="4.5" fill="#c2410c"/><circle cx="284" cy="104" r="4.5" fill="#c2410c"/><circle cx="324" cy="86" r="4.5" fill="#c2410c"/><circle cx="364" cy="74" r="4.5" fill="#c2410c"/><text x="405" y="190" text-anchor="end" fill="#6f6457" font-size="12">넓이 →</text><text x="40" y="36" text-anchor="end" fill="#6f6457" font-size="12">가격</text><circle cx="250" cy="40" r="4.5" fill="#c2410c"/><text x="260" y="44" fill="#6f6457" font-size="11">실제 데이터</text><line x1="246" y1="57" x2="272" y2="57" stroke="#2f6b5e" stroke-width="2.5"/><text x="279" y="61" fill="#6f6457" font-size="11">추정 식(직선)</text></svg>';
+  var descD='<span class="hl">분포(distribution)</span> — 데이터가 퍼진 모양. 키·점수 등은 가운데 높고 양끝 낮은 <span class="y">종 모양(정규분포)</span>. → "이 값이 흔한가 드문가"를 판단함.';
+  var descR='<span class="hl">회귀(regression)</span> — 데이터에 가장 잘 맞는 직선을 그음. 새 값(넓이)으로 모르는 값(가격)을 <span class="y">추정</span>. <span style="color:#9ec79a">머신러닝의 직접적 뿌리!</span>';
+  var viz=document.getElementById('l2-statvizout'),desc=document.getElementById('l2-statvizdesc');
+  function sel(k){document.getElementById('lec2').querySelectorAll('#l2-statviz button').forEach(function(x){x.classList.remove('on');});document.getElementById('lec2').querySelector('#l2-statviz [data-k="'+k+'"]').classList.add('on');viz.innerHTML=(k==='dist')?distSVG:regSVG;desc.innerHTML=(k==='dist')?descD:descR;}
+  document.getElementById('lec2').querySelectorAll('#l2-statviz button').forEach(function(b){b.addEventListener('click',function(){sel(b.dataset.k);});});
+  sel('dist');
+})();
+
+/* 맥주 기저귀 */
+(function(){
+  var steps=[
+    '<span class="dim">한 대형 마트가 영수증 데이터를 마이닝함</span>\n"버튼을 눌러 무엇이 발견됐는지 보세요"',
+    '<span class="y">발견된 뜻밖의 패턴</span>\n"금요일 저녁에 <span class="hl">맥주</span>를 사는 사람이\n <span class="hl">기저귀</span>도 함께 사는 경우가 많다"',
+    '<span class="dim">왜? — 나중에 해석해 보니</span>\n"금요일 퇴근길 아빠가 기저귀 심부름을 나왔다가,\n 주말에 마실 맥주도 함께 집어 든다"',
+    '<span class="y">결과</span>\n맥주와 기저귀를 가까이 진열 → 매출 상승\n\n<span style="color:#9ec79a">사람이 가설로 떠올리기 힘든 패턴을\n데이터가 스스로 드러냄 — 이것이 마이닝의 힘!</span>'
+  ];
+  var i=0,out=document.getElementById('l2-beerout');
+  function r(){out.innerHTML=steps[i];}
+  document.getElementById('l2-beerstep').addEventListener('click',function(){if(i<steps.length-1)i++;r();});
+  document.getElementById('l2-beerreset').addEventListener('click',function(){i=0;r();});
+  r();
+})();
+
+/* 마이닝 기법 */
+(function(){
+  var R={
+    assoc:'<span class="hl">연관 규칙 — "함께 일어나는 것 찾기"</span>\n"A를 산 사람이 B도 산다" 같은 패턴.\n맥주-기저귀가 바로 이것.\n<span class="dim">→ 오늘날 쇼핑몰의 "이 상품을 본 사람이\n   함께 본 상품" 추천이 여기서 나옴</span>',
+    cluster:'<span class="hl">군집화 — "비슷한 것끼리 묶기"</span>\n정답(분류 기준)을 안 줘도 비슷한 것끼리 저절로 묶음.\n예: 고객을 "알뜰형·충동형·주말형"으로 자동 분류.\n<span class="dim">→ 운동장에서 "친한 사람끼리 모여"라 하면\n   저절로 무리가 생기는 것과 같음</span>'
+  };
+  var out=document.getElementById('l2-dmout');
+  document.getElementById('lec2').querySelectorAll('#l2-dm button').forEach(function(b){b.addEventListener('click',function(){document.getElementById('lec2').querySelectorAll('#l2-dm button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.assoc;
+})();
+
+/* 스팸 */
+(function(){
+  var R={
+    rule:'<span class="y">전통 방식 — 사람이 규칙을 다 정해 줌</span>\n"제목에 \'무료\'가 있으면 스팸"\n"\'당첨\'이 있으면 스팸" …\n<span class="dim">문제: 스팸 발송자가 \'무료\'→\'무∗료\'로 피해 감.\n사람이 규칙을 아무리 추가해도 끝이 없음</span>',
+    ml:'<span class="y">머신러닝 — 컴퓨터가 스스로 학습</span>\n스팸 수만 통 + 정상 수만 통을 <span class="hl">보여 줌(데이터)</span>\n→ 컴퓨터가 "스팸은 이런 특징"을 <span class="hl">스스로 찾음(학습)</span>\n→ 새 메일이 오면 학습한 규칙으로 스스로 판단\n<span style="color:#9ec79a">사람이 규칙을 주는 게 아니라,\n예시를 주면 컴퓨터가 규칙을 만들어 냄!</span>'
+  };
+  var out=document.getElementById('l2-spamout');
+  document.getElementById('lec2').querySelectorAll('#l2-spam button').forEach(function(b){b.addEventListener('click',function(){document.getElementById('lec2').querySelectorAll('#l2-spam button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.rule;
+})();
+
+/* ML 갈래 */
+(function(){
+  var R={
+    sup:'<span class="hl">지도 학습 — "정답을 알려 주며 가르치기"</span>\n정답이 붙은 데이터로 학습.\n· <span class="y">분류</span>: 정답이 "종류" (스팸/정상, 고양이/강아지)\n· <span class="y">회귀</span>: 정답이 "숫자" (집값·매출 예측)\n<span style="color:#9ec79a">← 2-3의 통계 회귀가 바로 여기로 이어짐!</span>',
+    unsup:'<span class="hl">비지도 학습 — "정답 없이 스스로 묶기"</span>\n정답 없이 데이터만 주고 구조를 찾게 함.\n· <span class="y">군집</span>: 비슷한 것끼리 자동으로 묶기\n<span style="color:#9ec79a">← 2-4의 데이터 마이닝 군집화가 여기에 해당!</span>'
+  };
+  var out=document.getElementById('l2-mlkout');
+  document.getElementById('lec2').querySelectorAll('#l2-mlk button').forEach(function(b){b.addEventListener('click',function(){document.getElementById('lec2').querySelectorAll('#l2-mlk button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.sup;
+})();
+
+/* venn */
+(function(){
+  var R={
+    ai:'<span class="hl">인공지능 (AI) — 가장 큰 우산</span>\n"기계가 사람처럼 똑똑하게 행동하게 하는 모든 기술".\n머신러닝은 AI를 만드는 여러 방법 중 하나임.',
+    ml:'<span class="hl">머신러닝 (ML) — AI의 한 방법</span>\n"데이터로 스스로 규칙을 학습하는" 방법.\nAI라는 우산 안에 있음.',
+    dl:'<span class="hl">딥러닝 (DL) — 머신러닝의 한 종류</span>\n"신경망을 깊게 쌓아 복잡한 데이터를 다루는" 방법.\n<span class="y">딥러닝 ⊂ 머신러닝 ⊂ 인공지능</span>의 포함 관계!'
+  };
+  var out=document.getElementById('l2-vennout');
+  document.getElementById('lec2').querySelectorAll('[data-k="ai"],[data-k="ml"],[data-k="dl"]').forEach(function(el){
+    el.addEventListener('click',function(ev){ev.stopPropagation();out.innerHTML=R[el.dataset.k];});
+  });
+  out.innerHTML=R.dl;
+})();
+
+/* 공존 */
+(function(){
+  var steps=[
+    {t:'한 회사에서 지금 이 순간 동시에 일어나는 일:',d:'"다음 단계 보기"를 눌러 하나씩 확인하세요'},
+    {t:'• 매일 아침 매출·방문자 수를 집계해 봄',d:'<span class="y">① 집계</span> — 가장 많이 씀!'},
+    {t:'• 설문 조사로 고객 만족도를 추정함',d:'<span class="y">② 통계 분석</span>'},
+    {t:'• 함께 잘 팔리는 상품 조합을 발견함',d:'<span class="y">③ 데이터 마이닝</span>'},
+    {t:'• 어떤 고객이 떠날지 예측함',d:'<span class="y">④ 머신러닝</span>'},
+    {t:'• 고객 문의를 AI 챗봇이 자동 응대함',d:'<span class="y">⑤ 딥러닝·AI</span>'},
+    {t:'다섯 단계가 모두 함께 쓰임!',d:'<span style="color:#9ec79a">진화는 대체가 아니라 누적.\n가장 많이 쓰는 건 여전히 ①집계·②통계!</span>'}
+  ];
+  var i=0,out=document.getElementById('l2-coexout'),shown=[];
+  function r(){
+    var html='<span class="dim">'+steps[0].t+'</span>\n';
+    for(var k=1;k<=i;k++){ html+='\n'+steps[k].t+'\n   '+steps[k].d+'\n'; }
+    if(i===0) html=steps[0].t+'\n<span class="dim">'+steps[0].d+'</span>';
+    out.innerHTML=html;
+  }
+  document.getElementById('l2-coexstep').addEventListener('click',function(){if(i<steps.length-1)i++;r();});
+  document.getElementById('l2-coexreset').addEventListener('click',function(){i=0;r();});
+  r();
+})();
+
+/* ===== 3강 ===== */
+/* 3-1 맥락 */
+(function(){
+  var steps=[
+    '<span class="hl">36.5</span>\n<span class="dim">이 숫자만 보면… 무슨 뜻일까? 알 수 없음.</span>',
+    '<span class="hl">36.5 ℃</span>  <span class="dim">(단위가 붙음)</span>\n<span class="dim">온도구나. 그런데 무엇의 온도?</span>',
+    '<span class="hl">체온: 36.5 ℃</span>  <span class="dim">(맥락이 붙음)</span>\n<span class="y">→ 이제 "정상 체온"이라는 의미가 생김!</span>\n<span style="color:#9ec79a">데이터(36.5)는 그냥 값,\n맥락이 붙어야 쓸모 있는 정보가 됨</span>'
+  ];
+  var i=0,out=document.getElementById('l3-w1out');
+  function r(){out.innerHTML=steps[i];}
+  document.getElementById('l3-w1btn').addEventListener('click',function(){if(i<steps.length-1)i++;r();});
+  document.getElementById('l3-w1reset').addEventListener('click',function(){i=0;r();});
+  r();
+})();
+
+/* DIKW */
+(function(){
+  var R=[
+    {t:'D · 데이터 (Data)',d:'<span class="hl">"오늘 카페 매출: 50만 원"</span>\n그냥 기록된 값. 좋은지 나쁜지조차 모름.'},
+    {t:'I · 정보 (Information)',d:'<span class="hl">"어제 40만, 오늘 50만 — 25% 증가"</span>\n데이터에 맥락(비교)이 붙어 의미가 생김.'},
+    {t:'K · 지식 (Knowledge)',d:'<span class="hl">"비 오는 날 매출이 늘 높았음 (패턴)"</span>\n여러 정보를 모아 규칙·패턴을 발견함.'},
+    {t:'W · 지혜 (Wisdom)',d:'<span class="hl">"비 예보가 있으면 재료를 더 준비하자"</span>\n<span class="y">지식을 바탕으로 더 나은 행동을 결정 — 분석의 목표!</span>'}
+  ];
+  var out=document.getElementById('l3-pyrout');
+  function sel(i){
+    document.getElementById('lec3').querySelectorAll('#l3-pyr .pyr-row').forEach(function(x){x.classList.add('dim');});
+    document.getElementById('lec3').querySelector('#l3-pyr [data-k="'+i+'"]').classList.remove('dim');
+    out.innerHTML='<span class="dim">'+R[i].t+'</span>\n'+R[i].d;
+  }
+  document.getElementById('lec3').querySelectorAll('#l3-pyr .pyr-row').forEach(function(el){el.addEventListener('click',function(){sel(+el.dataset.k);});});
+  document.getElementById('lec3').querySelectorAll('#l3-pyr .pyr-row').forEach(function(x){x.classList.remove('dim');});
+  out.innerHTML='<span class="dim">피라미드의 각 층을 눌러 보세요 (아래 데이터 → 위 지혜)</span>';
+})();
+
+/* 주변 데이터 */
+(function(){
+  var R={
+    life:'<span class="hl">🏠 일상의 데이터</span>\n· 스마트폰 걸음 수·수면 시간\n· 검색 기록·시청 기록\n· 가계부·교통카드 이용 내역\n· 날씨·기온·미세먼지',
+    shop:'<span class="hl">🛒 상거래의 데이터</span>\n· 영수증·주문 내역\n· 상품 리뷰·별점\n· 장바구니·찜 목록\n· 광고 클릭·방문 기록',
+    public:'<span class="hl">🏛️ 공공·사회의 데이터</span>\n· 인구조사·통계청 자료\n· 대중교통 이용량\n· 기상·환경 측정\n· 공공데이터포털의 개방 데이터'
+  };
+  var out=document.getElementById('l3-aroundout');
+  document.getElementById('lec3').querySelectorAll('#l3-around button').forEach(function(b){b.addEventListener('click',function(){document.getElementById('lec3').querySelectorAll('#l3-around button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.life;
+})();
+
+/* 정량/정성 */
+(function(){
+  var R={
+    quant:'<span class="hl">📏 정량 데이터 — 숫자로 측정</span>\n크고 작음, 많고 적음을 따질 수 있음.\n· 키 170cm, 몸무게 65kg\n· 매출 50만 원, 나이 32세\n· 방문자 1,200명, 기온 18도\n<span class="dim">→ 더하고 평균 내는 계산이 의미 있음</span>',
+    qual:'<span class="hl">🏷️ 정성 데이터 — 성질·특성</span>\n종류·범주를 나타냄(크고 작음 아님).\n· 혈액형(A·B·O·AB), 성별\n· 지역(서울·부산), 직업\n· 만족도(좋음·보통·나쁨)\n<span class="dim">→ 개수를 세거나 분류하는 게 의미 있음</span>'
+  };
+  var out=document.getElementById('l3-qqout');
+  document.getElementById('lec3').querySelectorAll('#l3-qq button').forEach(function(b){b.addEventListener('click',function(){document.getElementById('lec3').querySelectorAll('#l3-qq button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.quant;
+})();
+
+/* 함정 퀴즈 */
+(function(){
+  var Q=[
+    {q:'몸무게 "65" (kg)',a:'quant',why:'무게는 크고 작음을 따지고 더할 수 있음 → 정량'},
+    {q:'전화번호 "010-1234..."',a:'qual',why:'숫자지만 더하거나 평균 내면 무의미한 이름표 → 정성!'},
+    {q:'축구 등번호 "7"',a:'qual',why:'7번+28번의 "평균 17.5번"은 무의미 → 이름표(정성)!'},
+    {q:'한 달 매출 "500" (만원)',a:'quant',why:'금액은 더하고 평균 내는 게 의미 있음 → 정량'},
+    {q:'우편번호 "06236"',a:'qual',why:'지역을 가리키는 코드일 뿐, 계산은 무의미 → 정성!'}
+  ];
+  var i=0,answered=false,out=document.getElementById('l3-trapout');
+  function show(){out.innerHTML='<span class="dim">문제 '+(i+1)+'/'+Q.length+' — 이건 정량일까 정성일까?</span>\n\n<span class="hl">'+Q[i].q+'</span>';answered=false;}
+  function judge(a){
+    if(answered)return;
+    answered=true;
+    var ok=(a===Q[i].a);
+    out.innerHTML='<span class="dim">문제 '+(i+1)+'/'+Q.length+'</span>\n\n<span class="hl">'+Q[i].q+'</span>\n\n'+(ok?'<span style="color:#9ec79a">⭕ 정답!</span>':'<span style="color:#e0935f">❌ 다시 생각</span>')+' — 정답: <span class="y">'+(Q[i].a==='quant'?'정량':'정성')+'</span>\n<span class="dim">'+Q[i].why+'</span>';
+  }
+  document.getElementById('lec3').querySelectorAll('#l3-trapbtn button').forEach(function(b){
+    b.addEventListener('click',function(){
+      if(b.dataset.a==='next'){i=(i+1)%Q.length;show();}
+      else judge(b.dataset.a);
+    });
+  });
+  show();
+})();
+
+/* ===== 4강 ===== */
+/* 4-1 */
+(function(){
+  var R={
+    num:'<span class="hl">등번호 7번</span>\n7번 선수 + 9번 선수 = 16번 선수? <span class="y">→ 무의미!</span>\n평균 등번호 8번? <span class="y">→ 무의미!</span>\n<span class="dim">등번호는 그냥 "이름표". 숫자처럼 보여도\n더하거나 평균 낼 수 없음 → 명목형(정성)</span>',
+    temp:'<span class="hl">기온 7도</span>\n7도 다음 날 9도 → 평균 8도 <span style="color:#9ec79a">→ 의미 있음!</span>\n9도 - 7도 = 2도 더 따뜻 <span style="color:#9ec79a">→ 의미 있음!</span>\n<span class="dim">기온은 간격이 일정한 측정값\n→ 더하고 평균 낼 수 있음 → 등간형(정량)</span>'
+  };
+  var out=document.getElementById('l4-w1out');
+  document.getElementById('lec4').querySelectorAll('#l4-w1 button').forEach(function(b){b.addEventListener('click',function(){document.getElementById('lec4').querySelectorAll('#l4-w1 button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.num;
+})();
+
+/* 계단 */
+(function(){
+  var R=[
+    {t:'① 명목형 (nominal) — 구분하는 이름표',d:'순서 없이 "종류"만 구분. 대소 비교 불가.\n예: 혈액형(A·B·O·AB), 성별, 지역, 직업',cap:['구분 가능','순서 ✗','덧셈 ✗','배수 ✗']},
+    {t:'② 순서형 (ordinal) — 순서가 있는 등급',d:'순서는 있지만 간격이 불균등.\n예: 학점(A·B·C), 만족도(좋음·보통·나쁨), 등수\n<span class="dim">1위와 2위 격차 ≠ 2위와 3위 격차</span>',cap:['구분 가능','순서 가능','덧셈 ✗','배수 ✗']},
+    {t:'③ 등간형 (interval) — 간격이 일정',d:'간격이 일정해 덧셈·뺄셈 가능. 단 "절대 0"이 없음.\n예: 온도(섭씨), 연도, 지능지수\n<span class="dim">0도가 "온도 없음"은 아님 → 배수 무의미</span>',cap:['구분 가능','순서 가능','덧셈 가능','배수 ✗']},
+    {t:'④ 비율형 (ratio) — 절대 0이 있는 완전한 수',d:'절대 0(없음)이 있어 모든 계산 가능.\n예: 매출, 키, 무게, 나이, 개수, 시간\n<span style="color:#9ec79a">0원=돈 없음(진짜 0) → "2배" 가능</span>',cap:['구분 가능','순서 가능','덧셈 가능','배수 가능']}
+  ];
+  var out=document.getElementById('l4-stairsout'),cap=document.getElementById('l4-stairscap');
+  function sel(i){
+    document.getElementById('lec4').querySelectorAll('#l4-stairs .stair').forEach(function(x){x.classList.add('dim');});
+    document.getElementById('lec4').querySelector('#l4-stairs [data-k="'+i+'"]').classList.remove('dim');
+    out.innerHTML='<span class="hl">'+R[i].t+'</span>\n'+R[i].d;
+    cap.innerHTML=R[i].cap.map(function(c){var no=c.indexOf('✗')>=0;return '<span class="'+(no?'no':'yes')+'">'+c.replace(' ✗','')+'</span>';}).join('');
+  }
+  document.getElementById('lec4').querySelectorAll('#l4-stairs .stair').forEach(function(el){el.addEventListener('click',function(){sel(+el.dataset.k);});});
+  document.getElementById('lec4').querySelectorAll('#l4-stairs .stair').forEach(function(x){x.classList.remove('dim');});
+  out.innerHTML='<span class="dim">각 계단을 눌러 보세요 (아래 명목 → 위 비율)</span>';cap.innerHTML='';
+})();
+
+/* 등간 vs 비율 */
+(function(){
+  var R={
+    temp:'<span class="hl">온도 (등간형)</span>\n"오늘 20도는 어제 10도의 2배로 덥다"?\n<span class="y">→ 틀림! 절대 0이 없어 "2배"가 무의미</span>\n<span class="dim">(0도는 "온도 없음"이 아니라 그냥 한 지점)</span>',
+    weight:'<span class="hl">무게 (비율형)</span>\n"20kg은 10kg의 2배"?\n<span style="color:#9ec79a">→ 맞음! 0kg=무게 없음(절대 0)</span>\n<span class="dim">절대 0이 있어 "몇 배"가 의미 있음</span>',
+    year:'<span class="hl">연도 (등간형)</span>\n"2000년은 1000년의 2배"?\n<span class="y">→ 틀림! 0년이 "시간 없음"이 아님</span>\n<span class="dim">간격(2000-1000=1000년)은 의미 있지만 배수는 무의미</span>',
+    money:'<span class="hl">금액 (비율형)</span>\n"매출 100만 원은 50만 원의 2배"?\n<span style="color:#9ec79a">→ 맞음! 0원=돈 없음(절대 0)</span>\n<span class="dim">비율형이라 "2배" 같은 비교가 정확히 성립</span>'
+  };
+  var out=document.getElementById('l4-ratioout');
+  document.getElementById('lec4').querySelectorAll('#l4-ratio button').forEach(function(b){b.addEventListener('click',function(){document.getElementById('lec4').querySelectorAll('#l4-ratio button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.temp;
+})();
+
+/* 그래프 */
+(function(){
+  var R={
+    nom:'<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><div style="background:#fbf8f2;border-radius:10px;padding:10px 8px;text-align:center"><svg viewBox="0 0 180 112" width="100%" style="max-width:175px"><rect width="180" height="112" rx="9" fill="#fff"/><line x1="22" y1="92" x2="165" y2="92" stroke="#cbbfa9" stroke-width="1.3"/><rect x="30" y="32" width="24" height="60" rx="2" fill="#c2410c"/><rect x="62" y="47" width="24" height="45" rx="2" fill="#c2410c"/><rect x="94" y="20" width="24" height="72" rx="2" fill="#c2410c"/><rect x="126" y="62" width="24" height="30" rx="2" fill="#c2410c"/><text x="42" y="105" text-anchor="middle" font-size="10" fill="#6f6457">A</text><text x="74" y="105" text-anchor="middle" font-size="10" fill="#6f6457">B</text><text x="106" y="105" text-anchor="middle" font-size="10" fill="#6f6457">O</text><text x="138" y="105" text-anchor="middle" font-size="10" fill="#6f6457">AB</text></svg><div style="font-size:11.5px;color:#6f6457;margin-top:5px;font-weight:700">막대그래프 · 혈액형별 인원</div></div><div style="background:#fbf8f2;border-radius:10px;padding:10px 8px;text-align:center"><svg viewBox="0 0 150 112" width="100%" style="max-width:150px"><rect width="150" height="112" rx="9" fill="#fff"/><g transform="rotate(-90 75 56)"><circle cx="75" cy="56" r="34" fill="none" stroke="#e2d9c9" stroke-width="20"/><circle cx="75" cy="56" r="34" fill="none" stroke="#c2410c" stroke-width="20" stroke-dasharray="96 214"/><circle cx="75" cy="56" r="34" fill="none" stroke="#2f6b5e" stroke-width="20" stroke-dasharray="64 214" stroke-dashoffset="-96"/><circle cx="75" cy="56" r="34" fill="none" stroke="#a8762f" stroke-width="20" stroke-dasharray="54 214" stroke-dashoffset="-160"/></g></svg><div style="font-size:11.5px;color:#6f6457;margin-top:5px;font-weight:700">원그래프 · 지역별 비중</div></div></div><div style="font-size:12.5px;color:#cfc7b8;margin-top:10px;text-align:center">범주별 <b>개수·비율</b>을 보여 줌. 순서가 없어 추세선은 안 그림.</div>',
+    ord:'<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><div style="background:#fbf8f2;border-radius:10px;padding:10px 8px;text-align:center"><svg viewBox="0 0 200 112" width="100%" style="max-width:200px"><rect width="200" height="112" rx="9" fill="#fff"/><line x1="22" y1="92" x2="185" y2="92" stroke="#cbbfa9" stroke-width="1.3"/><rect x="34" y="62" width="34" height="30" rx="2" fill="#2f6b5e"/><rect x="84" y="42" width="34" height="50" rx="2" fill="#2f6b5e"/><rect x="134" y="22" width="34" height="70" rx="2" fill="#2f6b5e"/><text x="51" y="105" text-anchor="middle" font-size="10" fill="#6f6457">나쁨</text><text x="101" y="105" text-anchor="middle" font-size="10" fill="#6f6457">보통</text><text x="151" y="105" text-anchor="middle" font-size="10" fill="#6f6457">좋음</text></svg><div style="font-size:11.5px;color:#6f6457;margin-top:5px;font-weight:700">막대그래프(순서대로) · 만족도</div></div></div><div style="font-size:12.5px;color:#cfc7b8;margin-top:10px;text-align:center">나쁨→보통→좋음 <b>순서를 유지</b>해 배열함.</div>',
+    num:'<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><div style="background:#fbf8f2;border-radius:10px;padding:10px 8px;text-align:center"><svg viewBox="0 0 170 112" width="100%" style="max-width:165px"><rect width="170" height="112" rx="9" fill="#fff"/><line x1="20" y1="92" x2="158" y2="92" stroke="#cbbfa9" stroke-width="1.3"/><rect x="28" y="72" width="24" height="20" fill="#c2410c" stroke="#fff" stroke-width="1"/><rect x="52" y="48" width="24" height="44" fill="#c2410c" stroke="#fff" stroke-width="1"/><rect x="76" y="24" width="24" height="68" fill="#c2410c" stroke="#fff" stroke-width="1"/><rect x="100" y="42" width="24" height="50" fill="#c2410c" stroke="#fff" stroke-width="1"/><rect x="124" y="68" width="24" height="24" fill="#c2410c" stroke="#fff" stroke-width="1"/></svg><div style="font-size:11.5px;color:#6f6457;margin-top:5px;font-weight:700">히스토그램 · 값의 분포</div></div><div style="background:#fbf8f2;border-radius:10px;padding:10px 8px;text-align:center"><svg viewBox="0 0 175 112" width="100%" style="max-width:170px"><rect width="175" height="112" rx="9" fill="#fff"/><line x1="22" y1="92" x2="162" y2="92" stroke="#cbbfa9" stroke-width="1.3"/><polyline points="30,78 62,64 94,70 126,44 158,30" fill="none" stroke="#2f6b5e" stroke-width="2.5"/><circle cx="30" cy="78" r="3.5" fill="#2f6b5e"/><circle cx="62" cy="64" r="3.5" fill="#2f6b5e"/><circle cx="94" cy="70" r="3.5" fill="#2f6b5e"/><circle cx="126" cy="44" r="3.5" fill="#2f6b5e"/><circle cx="158" cy="30" r="3.5" fill="#2f6b5e"/></svg><div style="font-size:11.5px;color:#6f6457;margin-top:5px;font-weight:700">꺾은선 · 시간 추세</div></div><div style="background:#fbf8f2;border-radius:10px;padding:10px 8px;text-align:center"><svg viewBox="0 0 175 112" width="100%" style="max-width:170px"><rect width="175" height="112" rx="9" fill="#fff"/><line x1="22" y1="92" x2="162" y2="92" stroke="#cbbfa9" stroke-width="1.3"/><line x1="22" y1="20" x2="22" y2="92" stroke="#cbbfa9" stroke-width="1.3"/><circle cx="38" cy="80" r="3.6" fill="#a8762f"/><circle cx="56" cy="72" r="3.6" fill="#a8762f"/><circle cx="72" cy="76" r="3.6" fill="#a8762f"/><circle cx="90" cy="60" r="3.6" fill="#a8762f"/><circle cx="108" cy="58" r="3.6" fill="#a8762f"/><circle cx="120" cy="46" r="3.6" fill="#a8762f"/><circle cx="140" cy="40" r="3.6" fill="#a8762f"/><circle cx="154" cy="34" r="3.6" fill="#a8762f"/><circle cx="64" cy="66" r="3.6" fill="#a8762f"/><circle cx="100" cy="68" r="3.6" fill="#a8762f"/></svg><div style="font-size:11.5px;color:#6f6457;margin-top:5px;font-weight:700">산점도 · 두 값의 관계</div></div></div><div style="font-size:12.5px;color:#cfc7b8;margin-top:10px;text-align:center">숫자라서 <b>분포·추세·관계</b>를 모두 그릴 수 있음.</div>'
+  };
+  var out=document.getElementById('l4-graphout');
+  document.getElementById('lec4').querySelectorAll('#l4-graph button').forEach(function(b){b.addEventListener('click',function(){document.getElementById('lec4').querySelectorAll('#l4-graph button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.nom;
+})();
+
+/* ===== 5강 ===== */
+/* ===== 6강 ===== */
+/* flow */
+(function(){
+  var R=[
+    {t:'① 문제 정의',d:'"무엇을 알고 싶은가"를 분명히 함.\n<span class="y">가장 중요한데 가장 자주 생략됨!</span>\n예: "왜 이번 달 재구매율이 떨어졌나?"'},
+    {t:'② 데이터 수집',d:'필요한 데이터를 모음.\n파일·데이터베이스(SQL)·웹·설문 등에서 확보.\n<span class="dim">문제에 답하는 데 필요한 데이터가 무엇인지 정해야 함</span>'},
+    {t:'③ 데이터 정제 ⏳',d:'지저분한 데이터를 깨끗이 다듬음.\n<span class="y">분석 시간의 70~80%를 차지!</span>\n결측치·이상치·중복·형식 오류 처리.'},
+    {t:'④ 분석·탐색',d:'깨끗한 데이터에서 패턴과 답을 찾음.\n집계·통계·시각적 탐색 등(2강의 방법들).\n<span class="dim">5강의 묘사·진단·예측·처방이 여기서 일어남</span>'},
+    {t:'⑤ 시각화',d:'결과를 사람이 이해할 그림으로 만듦.\n그래프·차트·대시보드.\n<span class="dim">숫자 표보다 그래프가 한눈에 이해됨</span>'},
+    {t:'⑥ 의사결정·공유',d:'분석 결과를 결정으로 잇고 공유함.\n<span class="y">분석은 결정으로 이어질 때 가치가 있음(1강!)</span>\n그리고 새 질문이 생기면 다시 ①로 순환.'}
+  ];
+  var out=document.getElementById('l6-flowout');
+  function sel(i){document.getElementById('lec6').querySelectorAll('#l6-flow .fstep').forEach(function(x){x.classList.remove('on');});document.getElementById('lec6').querySelector('#l6-flow [data-k="'+i+'"]').classList.add('on');out.innerHTML='<span class="hl">'+R[i].t+'</span>\n'+R[i].d;}
+  document.getElementById('lec6').querySelectorAll('#l6-flow .fstep').forEach(function(el){el.addEventListener('click',function(){sel(+el.dataset.k);});});
+  sel(0);
+})();
+
+/* 문제 정의 */
+(function(){
+  var R={
+    no:'<span class="y">❌ 문제 정의 없이 시작</span>\n"일단 데이터부터 열어 보자…"\n→ 이것저것 그래프만 잔뜩 그림\n→ "그래서 뭘 알아낸 거지?" 답이 없음\n<span class="dim">목적 없이 헤매다 시간만 소모</span>',
+    yes:'<span style="color:#9ec79a">⭕ 문제 정의부터</span>\n"이번 달 재구매율이 왜 떨어졌는지 알고 싶다"\n→ 필요한 데이터·분석이 명확해짐\n→ 답에 곧장 다가감\n<span class="dim">목적지가 분명하니 길을 잃지 않음</span>'
+  };
+  var out=document.getElementById('l6-probout');
+  document.getElementById('lec6').querySelectorAll('#l6-prob button').forEach(function(b){b.addEventListener('click',function(){document.getElementById('lec6').querySelectorAll('#l6-prob button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.no;
+})();
+
+/* 정제 */
+(function(){
+  document.getElementById('l6-cleanout').innerHTML='<span class="hl">분석가 시간의 70~80%가 정제·준비에!</span>\n<span class="dim">화려한 분석·모델링은 의외로 작은 비중.\n"지저분한 데이터 다듬기"가 일의 대부분임.\n→ 그만큼 정제가 분석의 성패를 가름</span>';
+})();
+
+/* 표 vs 그래프 */
+(function(){
+  var R={
+    table:'<span class="hl">표로 보기 (월별 매출)</span>\n1월 320  2월 310  3월 350\n4월 410  5월 480  6월 620\n7월 720  8월 700  9월 510 ...\n<span class="dim">→ 숫자를 하나하나 읽어야 함.\n   "여름에 높다"가 한눈에 안 들어옴</span>',
+    chart:'<span class="hl">그래프로 보기 (월별 매출)</span>\n720|              ___\n   |           __/   \\\n480|        __/       \\_\n   |     __/\n320|___ /\n   +1--3--5--7--9-- 월\n<span style="color:#9ec79a">→ "여름(6~8월)에 확 오른다!"가 한눈에!</span>'
+  };
+  var out=document.getElementById('l6-vizout');
+  document.getElementById('lec6').querySelectorAll('#l6-viz button').forEach(function(b){b.addEventListener('click',function(){document.getElementById('lec6').querySelectorAll('#l6-viz button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.table;
+})();
+
+/* 순환 */
+(function(){
+  var diagram='   ┌─────────────────────────────┐\n   ▼                             │\n① 문제정의 → ② 수집 → ③ 정제 →    │\n                                  │\n   ④ 분석 → ⑤ 시각화 → ⑥ 의사결정 ┘\n        (새 질문이 생기면 다시 ①로)';
+  document.getElementById('l6-cycleviz').textContent=diagram;
+  var steps=[
+    '<span class="dim">"한 바퀴 돌기"를 눌러 순환을 따라가 보세요</span>',
+    '<span class="y">① 문제정의</span> → ② 수집 → ③ 정제\n<span class="dim">무엇을 알고 싶은지 정하고, 데이터를 모아 다듬음</span>',
+    '③ 정제 → <span class="y">④ 분석 → ⑤ 시각화</span>\n<span class="dim">패턴을 찾고 그림으로 표현</span>',
+    '⑤ 시각화 → <span class="y">⑥ 의사결정</span>\n<span class="dim">결과를 결정으로 이음 — 분석의 가치!</span>',
+    '<span class="y">⑥ → 새 질문 → 다시 ①</span>\n<span style="color:#9ec79a">결과를 보니 새 궁금증이 생김(호기심!)\n→ 다시 한 바퀴. 돌수록 분석이 깊어짐 (나선)</span>'
+  ];
+  var i=0,out=document.getElementById('l6-cycleout');
+  function r(){out.innerHTML=steps[i];}
+  document.getElementById('l6-cyclebtn').addEventListener('click',function(){if(i<steps.length-1)i++;r();});
+  document.getElementById('l6-cyclereset').addEventListener('click',function(){i=0;r();});
+  r();
+})();
+
+/* ===== 7강 ===== */
+/* 도구 */
+(function(){
+  var R={
+    excel:'<span class="hl">📊 엑셀 (스프레드시트)</span>\n표에 넣고 합계·평균·그래프·정렬. 집계의 대부분.\n<span style="color:#9ec79a">강함: 작은 데이터, 빠른 확인, 누구나 쉬움</span>\n<span class="dim">한계: 큰 데이터에 느림, 반복·협업 어려움</span>',
+    sql:'<span class="hl">🗄️ SQL</span>\n거대한 데이터베이스(창고)에서 원하는 데이터를 꺼내는 언어.\n"매출 100만 넘는 고객만 보여 줘" 같은 질문(query).\n<span style="color:#9ec79a">강함: 회사의 큰 데이터 창고 다루기</span>\n<span class="dim">비유: 도서관 사서에게 "이 조건의 책만" 요청</span>',
+    py:'<span class="hl">🐍 파이썬·R</span>\n정제·통계·머신러닝·시각화·자동화를 전부 하는 만능 도구.\n<span style="color:#9ec79a">강함: 본격 분석, 자동화, AI — 못 하는 게 거의 없음</span>\n<span class="dim">한계: 배우는 데 시간·노력 — 그래서 이 커리큘럼!</span>',
+    bi:'<span class="hl">📈 BI 도구 (태블로 등)</span>\n데이터를 보기 좋은 대시보드·그래프로 만드는 데 특화.\n(1강의 business intelligence의 그 BI)\n<span style="color:#9ec79a">강함: 코드 없이 멋진 대시보드, 결과 공유</span>\n<span class="dim">한계: 복잡한 분석·모델링은 약함</span>'
+  };
+  var out=document.getElementById('l7-toolsout');
+  document.getElementById('lec7').querySelectorAll('#l7-tools .toolc').forEach(function(el){el.addEventListener('click',function(){document.getElementById('lec7').querySelectorAll('#l7-tools .toolc').forEach(function(x){x.classList.remove('on');});el.classList.add('on');out.innerHTML=R[el.dataset.k];});});
+  out.innerHTML=R.excel;
+})();
+
+/* 왜 파이썬 */
+(function(){
+  var R={
+    all:'<span class="hl">① 거의 모든 것을 하는 만능 도구</span>\n불러오기·정제·통계·ML·딥러닝·시각화·자동화를\n한 언어로 끝까지. 2강의 분석 5단계를 모두 다룸.\n<span class="dim">여러 도구를 오갈 필요 없이 파이썬 하나로</span>',
+    auto:'<span class="hl">② 큰 데이터 + 자동화·반복</span>\n수백만 행도 다룸. 코드로 남기니 반복이 쉬움.\n"매달 보고서 만들기"를 엑셀은 매번 손으로,\n파이썬은 버튼 한 번(또는 자동 실행)으로.\n<span class="dim">6강의 "순환하는 분석"과 만나는 지점</span>',
+    repro:'<span class="hl">③ 재현 가능·협업에 강함</span>\n같은 코드 = 같은 결과(재현). "어떻게 이 숫자가?"를\n코드로 추적 가능. 동료와 공유·검토 쉬움.\n<span class="dim">엑셀은 누가 어느 셀을 바꿨는지 추적 어려움</span>',
+    free:'<span class="hl">④ 무료·쉬움·풍부한 자료</span>\n무료(1강 "도구 대중화"의 핵심). 문법이 비교적 쉽고\n읽기 좋음. 전 세계가 써서 자료·커뮤니티가 풍부.\n<span style="color:#9ec79a">막히면 검색만 해도 답이 나옴</span>'
+  };
+  var out=document.getElementById('l7-whyout');
+  document.getElementById('lec7').querySelectorAll('#l7-why button').forEach(function(b){b.addEventListener('click',function(){document.getElementById('lec7').querySelectorAll('#l7-why button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.all;
+})();
+
+/* 마인드셋 */
+(function(){
+  var R={
+    curio:'<span class="hl">🔍 호기심 — "왜 그럴까?"</span>\n"그렇구나"로 멈추지 않고 끊임없이 물음.\n"주말 매출이 높다" → "토요일? 일요일? 시간대는?\n어떤 메뉴가? 비 오는 주말은?"\n<span class="dim">→ 5강의 진단 분석으로 이어지고 통찰을 만듦</span>',
+    doubt:'<span class="hl">🤨 의심 — "곧이곧대로 믿어도 될까?"</span>\n데이터는 거짓말할 수 있음(잘못 모이거나 해석되면).\n· 어떻게 모였나? (2강 1936년 표본 실패)\n· 빠진 값·이상치는? (6강 정제)\n· 평균이 진짜 대표값? (2강 평균의 함정)\n· 상관이 진짜 인과? (아래 참고)',
+    ethic:'<span class="hl">⚖️ 윤리 — "누군가를 해치지 않는가?"</span>\n· 개인정보 보호: 이름·주소·구매내역을 안전하게\n· 편향 경계: 과거 차별을 학습한 AI가 차별을 반복\n<span class="dim">"데이터가 그렇게 말한다"가 늘 옳거나 공정한 건 아님.\n"할 수 있다"와 "해도 된다"는 다름</span>'
+  };
+  var out=document.getElementById('l7-mindout');
+  document.getElementById('lec7').querySelectorAll('#l7-mind button').forEach(function(b){b.addEventListener('click',function(){document.getElementById('lec7').querySelectorAll('#l7-mind button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[b.dataset.k];});});
+  out.innerHTML=R.curio;
+})();
+
+/* 좋은 질문 */
+(function(){
+  var R=[
+    '<span class="y">나쁜 질문:</span> "매출 좀 올리고 싶은데…"\n<span class="dim">막연해서 어디서 시작할지 모름</span>\n\n<span style="color:#9ec79a">좋은 질문:</span> "지난 분기 어떤 상품군의 매출이\n가장 크게 줄었고, 그 원인은 무엇인가?"\n<span class="dim">→ 구체적, 데이터로 답 가능, 행동으로 연결</span>',
+    '<span class="y">나쁜 질문:</span> "고객을 더 알고 싶어"\n<span class="dim">무엇을? 막연함</span>\n\n<span style="color:#9ec79a">좋은 질문:</span> "재구매 고객과 한 번만 산 고객은\n첫 구매에서 무엇이 달랐나?"\n<span class="dim">→ 비교 대상이 명확하고 답을 행동으로 연결 가능</span>',
+    '<span class="y">나쁜 질문:</span> "우리 서비스 어때?"\n<span class="dim">평가 기준이 없음</span>\n\n<span style="color:#9ec79a">좋은 질문:</span> "가입 후 첫 일주일에 무엇을 한\n사용자가 오래 남는가?"\n<span class="dim">→ 구체적 행동·기간으로 답을 찾을 수 있음</span>'
+  ];
+  var out=document.getElementById('l7-questout');
+  document.getElementById('lec7').querySelectorAll('#l7-quest button').forEach(function(b){b.addEventListener('click',function(){document.getElementById('lec7').querySelectorAll('#l7-quest button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');out.innerHTML=R[+b.dataset.k];});});
+  out.innerHTML=R[0];
+})();
+
+</script>
+</body>
+</html>
