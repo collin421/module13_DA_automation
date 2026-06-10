@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>?곗씠??遺꾩꽍 ?꾨줈?몄뒪? ?먮떎???쒖슜?섍린 쨌 ?꾩껜 紐⑹감</title>
+<title>데이터 분석 프로세스와 판다스 활용하기 · 전체 목차</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
@@ -26,7 +26,7 @@
   .chip{font-size:12.5px;font-weight:700;letter-spacing:.04em;padding:6px 13px;border-radius:999px;background:#d8e8e3;color:#225349;}
   .chip.o{background:var(--accent-soft);color:#8a3408;}
 
-  /* 遺꾩꽍 ?꾨줈?몄뒪 ??*/
+  /* 분석 프로세스 띠 */
   .flow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin:30px auto 0;max-width:920px;}
   .flow .step{font-size:12.5px;font-weight:700;padding:7px 14px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--sub);}
   .flow .step b{color:var(--teal);}
@@ -52,7 +52,7 @@
   .pcard.bonus{border-color:var(--gold);background:linear-gradient(135deg,#fbf8f2,#fbf3e6);}
   .pcard.bonus .pn{color:var(--gold);}
 
-  /* ?⑥닔쨌硫붿냼??臾몃쾿 ???덊띁?곗뒪 */
+  /* 함수·메소드 문법 퀵 레퍼런스 */
   .ref{margin:54px 0 0;}
   .ref h2{font-family:var(--serif);font-weight:700;font-size:clamp(22px,4vw,28px);color:var(--accent);margin-bottom:6px;}
   .ref .rsub{font-size:14px;color:var(--sub);margin-bottom:20px;}
@@ -88,245 +88,245 @@
 <body>
 
 <header class="hero">
-  <div class="eyebrow">?뚯씠??湲곗큹 ?ㅼ쓬 ?④퀎 쨌 ?ㅼ쟾 ?곗씠??遺꾩꽍</div>
-  <h1>?곗씠??遺꾩꽍 ?꾨줈?몄뒪?<br>?먮떎???쒖슜?섍린</h1>
-  <p class="lead">?묒?濡??섎뜕 ?곗씠???묒뾽??<strong style="color:var(--teal)">肄붾뱶 ??踰덉쑝濡??먮룞??/strong>?? ?곗씠?곕? 遺덈윭?ㅺ퀬 ???댄렣蹂닿퀬 ???뺤젣?섍퀬 ???⑹튂怨????붿빟?섎뒗 <strong style="color:var(--accent)">?ㅼ쟾 遺꾩꽍 ?꾨줈?몄뒪</strong>瑜? 留??④퀎 ?꾩슂??<strong>?⑥닔쨌硫붿냼?쒖쓽 臾몃쾿怨??ъ슜踰?/strong>??吏곸젒 ?듯엳硫??곕씪媛?</p>
+  <div class="eyebrow">파이썬 기초 다음 단계 · 실전 데이터 분석</div>
+  <h1>데이터 분석 프로세스와<br>판다스 활용하기</h1>
+  <p class="lead">엑셀로 하던 데이터 작업을 <strong style="color:var(--teal)">코드 한 번으로 자동화</strong>함. 데이터를 불러오고 → 살펴보고 → 정제하고 → 합치고 → 요약하는 <strong style="color:var(--accent)">실전 분석 프로세스</strong>를, 매 단계 필요한 <strong>함수·메소드의 문법과 사용법</strong>을 직접 익히며 따라감.</p>
   <div class="meta">
-    <span class="chip">?좏뻾 NumPy + 9?④퀎 + 蹂대꼫??/span>
-    <span class="chip o">?뚰듃留덈떎 ?⑥닔쨌硫붿냼??臾몃쾿쨌?ъ슜踰?/span>
-    <span class="chip">硫ㅻ쾭??룸젋?댟룹빱癒몄뒪 ?ㅼ쟾 ?곗씠??/span>
+    <span class="chip">선행 NumPy + 9단계 + 보너스</span>
+    <span class="chip o">파트마다 함수·메소드 문법·사용법</span>
+    <span class="chip">멤버십·렌탈·커머스 실전 데이터</span>
   </div>
   <div style="margin-top:24px;">
-    <a href="pandas_practice.zip" download style="display:inline-block; padding:12px 24px; background:var(--accent); color:#fff; border-radius:10px; text-decoration:none; font-weight:700; font-size:15.5px; box-shadow:0 6px 16px rgba(194,65,12,.2); transition:transform 0.2s;">?뱿 ?먮떎???꾩껜 ?ㅼ뒿 ?뚯씪 ?ㅼ슫濡쒕뱶 (.zip)</a>
+    <a href="pandas_practice.zip" download style="display:inline-block; padding:12px 24px; background:var(--accent); color:#fff; border-radius:10px; text-decoration:none; font-weight:700; font-size:15.5px; box-shadow:0 6px 16px rgba(194,65,12,.2); transition:transform 0.2s;">📥 판다스 전체 실습 파일 다운로드 (.zip)</a>
   </div>
   <div class="flow">
-    <span class="step">?뱿 <b>遺덈윭?ㅺ린</b></span><span class="arr">??/span>
-    <span class="step">?뵇 <b>援ъ“ ?뚯븙</b></span><span class="arr">??/span>
-    <span class="step">?㏏ <b>?뺤젣쨌?꾩쿂由?/b></span><span class="arr">??/span>
-    <span class="step">?뵕 <b>寃고빀</b></span><span class="arr">??/span>
-    <span class="step">?뱤 <b>?붿빟쨌吏묎퀎</b></span><span class="arr">??/span>
-    <span class="step">?뮕 <b>?몄궗?댄듃</b></span>
+    <span class="step">📥 <b>불러오기</b></span><span class="arr">→</span>
+    <span class="step">🔍 <b>구조 파악</b></span><span class="arr">→</span>
+    <span class="step">🧹 <b>정제·전처리</b></span><span class="arr">→</span>
+    <span class="step">🔗 <b>결합</b></span><span class="arr">→</span>
+    <span class="step">📊 <b>요약·집계</b></span><span class="arr">→</span>
+    <span class="step">💡 <b>인사이트</b></span>
   </div>
 </header>
 
 <main class="wrap">
 
-  <!-- ?좏뻾 -->
+  <!-- 선행 -->
   <div class="stage pre reveal">
-    <div class="stage-head"><span class="stage-tag">?㎜ ?좏뻾</span><span class="stage-sub">?섍꼍 以鍮?쨌 ?쇱씠釉뚮윭由?媛쒕뀗 쨌 ?먮떎?ㅼ쓽 ?붿쭊(NumPy)</span></div>
+    <div class="stage-head"><span class="stage-tag">🧮 선행</span><span class="stage-sub">환경 준비 · 라이브러리 개념 · 판다스의 엔진(NumPy)</span></div>
     <div class="cards">
       <div class="pcard pre">
-        <div class="pn">?좏뻾 ??쨌 湲곗큹</div>
-        <div class="pt">紐⑤뱢 쨌 ?⑦궎吏 쨌 ?쇱씠釉뚮윭由?/div>
-        <div class="pd">?⑥쓽 肄붾뱶瑜?媛?몃떎 ?곕뒗 踰? import 4媛吏, ?쒖? ?쇱씠釉뚮윭由? ?⑦궎吏(?대뜑쨌__init__), ?쇱씠釉뚮윭由?룻봽?덉엫?뚰겕 李⑥씠, pip쨌PyPI源뚯?. ?먮떎?ㅻ룄 ?섎굹???쇱씠釉뚮윭由?</div>
+        <div class="pn">선행 ① · 기초</div>
+        <div class="pt">모듈 · 패키지 · 라이브러리</div>
+        <div class="pd">남의 코드를 가져다 쓰는 법. import 4가지, 표준 라이브러리, 패키지(폴더·__init__), 라이브러리·프레임워크 차이, pip·PyPI까지. 판다스도 하나의 라이브러리.</div>
         <div class="funcs"><span class="ftag">import</span><span class="ftag">from~import</span><span class="ftag">as</span><span class="ftag">pip install</span><span class="ftag">PyPI</span></div>
-        <div class="clinks"><a class="cl-web only" href="?밴컯??00_?좏뻾1_紐⑤뱢怨??쇱씠釉뚮윭由??밴컯??html">?뱰 ?밴컯??/a></div>
+        <div class="clinks"><a class="cl-web only" href="웹강의/00_선행1_모듈과_라이브러리_웹강의.html">📖 웹강의</a></div>
       </div>
       <div class="pcard pre">
-        <div class="pn">?좏뻾 ??쨌 ?섍꼍</div>
-        <div class="pt">?꾨굹肄섎떎 쨌 ?섏〈??쨌 媛?곹솚寃?/div>
-        <div class="pd">遺꾩꽍 ?꾧뎄瑜???踰덉뿉 源붿븘二쇰뒗 ?꾨굹肄섎떎 ?ㅼ튂(Windows), ?섏〈??異⑸룎怨?媛?곹솚寃?媛쒕뀗, conda濡??섍꼍 留뚮뱾湲?create쨌activate쨌install), Jupyter ?곌껐源뚯?.</div>
+        <div class="pn">선행 ② · 환경</div>
+        <div class="pt">아나콘다 · 의존성 · 가상환경</div>
+        <div class="pd">분석 도구를 한 번에 깔아주는 아나콘다 설치(Windows), 의존성 충돌과 가상환경 개념, conda로 환경 만들기(create·activate·install), Jupyter 연결까지.</div>
         <div class="funcs"><span class="ftag">conda create</span><span class="ftag">activate</span><span class="ftag">install</span><span class="ftag">env export</span><span class="ftag">ipykernel</span></div>
-        <div class="clinks"><a class="cl-web only" href="?밴컯??00_?좏뻾2_?꾨굹肄섎떎_媛?곹솚寃??밴컯??html">?뱰 ?밴컯??/a></div>
+        <div class="clinks"><a class="cl-web only" href="웹강의/00_선행2_아나콘다_가상환경_웹강의.html">📖 웹강의</a></div>
       </div>
       <div class="pcard pre">
-        <div class="pn">NUMPY 쨌 ?좏뻾</div>
-        <div class="pt">NumPy 湲곗큹 ??諛곗뿴怨??곗궛</div>
-        <div class="pd">?먮떎?ㅻ뒗 NumPy ?꾩뿉 ?몄썙吏? ndarray??援ъ“, ?몃뜳?굿룹뒳?쇱씠?? 釉뚮줈?쒖틦?ㅽ똿 ?곗궛, 異?axis) 湲곗? 吏묎퀎, ?쒖닔 ?앹꽦源뚯? ??????レ옄瑜?鍮좊Ⅴ寃??ㅻ（???좊?瑜?癒쇱? ?ㅼ쭚.</div>
-        <div class="funcs"><span class="ftag">np.array</span><span class="ftag">ndarray.shape</span><span class="ftag">?щ씪?댁떛[ ]</span><span class="ftag">釉뚮줈?쒖틦?ㅽ똿</span><span class="ftag">sum/mean(axis=)</span><span class="ftag">np.random</span></div>
+        <div class="pn">NUMPY · 선행</div>
+        <div class="pt">NumPy 기초 — 배열과 연산</div>
+        <div class="pd">판다스는 NumPy 위에 세워짐. ndarray의 구조, 인덱싱·슬라이싱, 브로드캐스팅 연산, 축(axis) 기준 집계, 난수 생성까지 — 대량 숫자를 빠르게 다루는 토대를 먼저 다짐.</div>
+        <div class="funcs"><span class="ftag">np.array</span><span class="ftag">ndarray.shape</span><span class="ftag">슬라이싱[ ]</span><span class="ftag">브로드캐스팅</span><span class="ftag">sum/mean(axis=)</span><span class="ftag">np.random</span></div>
       
-        <div class="clinks"><a class="cl-web" href="?밴컯??00_NumPy_?밴컯??html">?뱰 ?밴컯??/a><a class="cl-nb" href="?먮떎??理쒖쥌?ㅼ뒿/Numpy.ipynb">?뮲 ?ㅼ뒿</a></div>
+        <div class="clinks"><a class="cl-web" href="웹강의/00_NumPy_웹강의.html">📖 웹강의</a><a class="cl-nb" href="판다스_최종실습/Numpy.ipynb" download>💻 실습</a></div>
       </div>
     </div>
   </div>
 
-  <!-- 1?④퀎 -->
+  <!-- 1단계 -->
   <div class="stage s1 reveal">
-    <div class="stage-head"><span class="stage-tag">?윟 1?④퀎 쨌 遺덈윭?ㅺ린? 援ъ“</span><span class="stage-sub">?곗씠?곕? ?대뒗 洹몃쫯 쨌 Series? DataFrame</span></div>
+    <div class="stage-head"><span class="stage-tag">🟢 1단계 · 불러오기와 구조</span><span class="stage-sub">데이터를 담는 그릇 · Series와 DataFrame</span></div>
     <div class="cards">
       <div class="pcard">
         <div class="pn">PART 1</div>
         <div class="pt">Series & DataFrame</div>
-        <div class="pd">1李⑥썝 Series? 2李⑥썝 DataFrame??援ъ“. 由ъ뒪?맞룸뵓?붾꼫由?룸같?대줈 ?앹꽦, ?몃뜳???ㅻ（湲? CSV 遺덈윭?ㅺ린/??? 洹몃━怨??됀룹뿴??怨⑤씪?대뒗 <code>iloc</code>쨌<code>loc</code>??臾몃쾿源뚯?.</div>
+        <div class="pd">1차원 Series와 2차원 DataFrame의 구조. 리스트·딕셔너리·배열로 생성, 인덱스 다루기, CSV 불러오기/저장, 그리고 행·열을 골라내는 <code>iloc</code>·<code>loc</code>의 문법까지.</div>
         <div class="funcs"><span class="ftag">pd.Series()</span><span class="ftag">pd.DataFrame()</span><span class="ftag">pd.read_csv()</span><span class="ftag">set_index()</span><span class="ftag">reset_index()</span><span class="ftag">rename()</span><span class="ftag">drop()</span><span class="ftag">iloc[ ]</span><span class="ftag">loc[ ]</span></div>
       
-        <div class="clinks"><a class="cl-web" href="?밴컯??01_Series_DataFrame_?밴컯??html">?뱰 ?밴컯??/a><a class="cl-nb" href="?먮떎??理쒖쥌?ㅼ뒿/pandas_01_Series_DataFrame.ipynb">?뮲 ?ㅼ뒿</a></div>
+        <div class="clinks"><a class="cl-web" href="웹강의/01_Series_DataFrame_웹강의.html">📖 웹강의</a><a class="cl-nb" href="판다스_최종실습/pandas_01_Series_DataFrame.ipynb" download>💻 실습</a></div>
       </div>
     </div>
   </div>
 
-  <!-- 2?④퀎 -->
+  <!-- 2단계 -->
   <div class="stage s2 reveal">
-    <div class="stage-head"><span class="stage-tag">?윞 2?④퀎 쨌 ?곗씠???먯깋(DDA)</span><span class="stage-sub">遺덈윭?붿쑝硫?癒쇱? ?댄렣蹂몃떎 쨌 援ъ“ ?뚯븙怨?湲곗닠 ?듦퀎</span></div>
+    <div class="stage-head"><span class="stage-tag">🟡 2단계 · 데이터 탐색(DDA)</span><span class="stage-sub">불러왔으면 먼저 살펴본다 · 구조 파악과 기술 통계</span></div>
     <div class="cards">
       <div class="pcard">
         <div class="pn">PART 2</div>
-        <div class="pt">?곗씠??援ъ“ ?뚯븙 & 湲곗닠 ?듦퀎</div>
-        <div class="pd">?곗씠?곕? 遺덈윭?ㅻ㈃ 媛??癒쇱? ?뺤씤??寃껊뱾 ???ш린쨌?는룹씤?깆뒪. ?レ옄 ?곗씠?곗쓽 ??쒓컪쨌?고룷?꽷룸텇??<code>describe</code>)? 踰붿＜?뺤쓽 理쒕퉰媛뮻룰퀬?좉컪쨌鍮덈룄瑜??쎈뒗 踰?</div>
+        <div class="pt">데이터 구조 파악 & 기술 통계</div>
+        <div class="pd">데이터를 불러오면 가장 먼저 확인할 것들 — 크기·열·인덱스. 숫자 데이터의 대표값·산포도·분포(<code>describe</code>)와 범주형의 최빈값·고유값·빈도를 읽는 법.</div>
         <div class="funcs"><span class="ftag">info()</span><span class="ftag">shape</span><span class="ftag">describe()</span><span class="ftag">mean/median/mode()</span><span class="ftag">std/var()</span><span class="ftag">quantile()</span><span class="ftag">value_counts()</span><span class="ftag">unique()</span></div>
       
-        <div class="clinks"><a class="cl-web" href="?밴컯??02_湲곗닠?듦퀎_?밴컯??html">?뱰 ?밴컯??/a><a class="cl-nb" href="?먮떎??理쒖쥌?ㅼ뒿/pandas_02_DDA.ipynb">?뮲 ?ㅼ뒿</a></div>
+        <div class="clinks"><a class="cl-web" href="웹강의/02_기술통계_웹강의.html">📖 웹강의</a><a class="cl-nb" href="판다스_최종실습/pandas_02_DDA.ipynb" download>💻 실습</a></div>
       </div>
     </div>
   </div>
 
-  <!-- 3?④퀎 -->
+  <!-- 3단계 -->
   <div class="stage s3 reveal">
-    <div class="stage-head"><span class="stage-tag">?윝 3?④퀎 쨌 ?곗씠??媛怨돠룹젙??/span><span class="stage-sub">遺꾩꽍?????덈뒗 ?뺥깭濡?쨌 ?뺣젹쨌?꾪꽣쨌?꾩쿂由?룸궇吏?/span></div>
+    <div class="stage-head"><span class="stage-tag">🟠 3단계 · 데이터 가공·정제</span><span class="stage-sub">분석할 수 있는 형태로 · 정렬·필터·전처리·날짜</span></div>
     <div class="cards">
       <div class="pcard">
         <div class="pn">PART 3</div>
-        <div class="pt">?뺣젹怨??꾪꽣留?/div>
-        <div class="pd">湲곗????곕씪 以??몄슦湲?<code>sort_values</code>)? 議곌굔?쇰줈 怨⑤씪?닿린. 遺덈━???몃뜳?? AND쨌OR쨌NOT 寃고빀, <code>loc</code> 議곌굔 ?좏깮, ?ы븿쨌踰붿쐞쨌寃곗륫 議곌굔??臾몃쾿.</div>
-        <div class="funcs"><span class="ftag">sort_values()</span><span class="ftag">sort_index()</span><span class="ftag">遺덈━??[ ]</span><span class="ftag">&amp; | ~</span><span class="ftag">loc[議곌굔]</span><span class="ftag">isin()</span><span class="ftag">between()</span><span class="ftag">str.contains()</span><span class="ftag">isnull()/notna()</span></div>
+        <div class="pt">정렬과 필터링</div>
+        <div class="pd">기준에 따라 줄 세우기(<code>sort_values</code>)와 조건으로 골라내기. 불리언 인덱싱, AND·OR·NOT 결합, <code>loc</code> 조건 선택, 포함·범위·결측 조건의 문법.</div>
+        <div class="funcs"><span class="ftag">sort_values()</span><span class="ftag">sort_index()</span><span class="ftag">불리언 [ ]</span><span class="ftag">&amp; | ~</span><span class="ftag">loc[조건]</span><span class="ftag">isin()</span><span class="ftag">between()</span><span class="ftag">str.contains()</span><span class="ftag">isnull()/notna()</span></div>
       
-        <div class="clinks"><a class="cl-web" href="?밴컯??03_?뺣젹怨??꾪꽣留??밴컯??html">?뱰 ?밴컯??/a><a class="cl-nb" href="?먮떎??理쒖쥌?ㅼ뒿/pandas_03_DDA2.ipynb">?뮲 ?ㅼ뒿</a></div>
+        <div class="clinks"><a class="cl-web" href="웹강의/03_정렬과_필터링_웹강의.html">📖 웹강의</a><a class="cl-nb" href="판다스_최종실습/pandas_03_DDA2.ipynb" download>💻 실습</a></div>
       </div>
       <div class="pcard">
-        <div class="pn">PART 4 쨌 ?ㅼ뒿</div>
-        <div class="pt">?뺣젹쨌?꾪꽣 醫낇빀 ?ㅼ뒿 & ???/div>
-        <div class="pd">?욎꽌 諛곗슫 ?먯깋쨌?뺣젹쨌?꾪꽣瑜??ㅼ젣 ?곗씠?곗뿉 ?곸슜???먰븯???됰쭔 異붿텧?섍퀬, 寃곌낵瑜?CSV쨌?묒? ?뚯씪濡??대낫?대뒗 ???ъ씠?댁쓣 吏곸젒 ?섑뻾.</div>
+        <div class="pn">PART 4 · 실습</div>
+        <div class="pt">정렬·필터 종합 실습 & 저장</div>
+        <div class="pd">앞서 배운 탐색·정렬·필터를 실제 데이터에 적용해 원하는 행만 추출하고, 결과를 CSV·엑셀 파일로 내보내는 한 사이클을 직접 수행.</div>
         <div class="funcs"><span class="ftag">read_csv()</span><span class="ftag">value_counts()</span><span class="ftag">sort_values()</span><span class="ftag">between()</span><span class="ftag">to_csv()</span><span class="ftag">to_excel()</span></div>
       
-        <div class="clinks"><a class="cl-web" href="?밴컯??04_?ㅼ뒿怨?????밴컯??html">?뱰 ?밴컯??/a><a class="cl-nb" href="?먮떎??理쒖쥌?ㅼ뒿/pandas_04_?ㅼ뒿.ipynb">?뮲 ?ㅼ뒿</a></div>
+        <div class="clinks"><a class="cl-web" href="웹강의/04_실습과_저장_웹강의.html">📖 웹강의</a><a class="cl-nb" href="판다스_최종실습/pandas_04_실습.ipynb" download>💻 실습</a></div>
       </div>
       <div class="pcard">
         <div class="pn">PART 5</div>
-        <div class="pt">?곗씠???꾩쿂由???寃곗륫移샕룹씠?곸튂</div>
-        <div class="pd">鍮좎쭊 媛?寃곗륫移?????젣?좎? 梨꾩슱吏 ?먮떒?섍퀬, ???媛??댁긽移???IQR쨌?쒖??몄감濡??먯?쨌泥섎━. ?됯퇏/以묒븰媛??욌뮘媛??泥댁? 諛뺤뒪?뚮’ ?쒓컖 ?뺤씤源뚯?.</div>
-        <div class="funcs"><span class="ftag">isnull()/isna()</span><span class="ftag">dropna()</span><span class="ftag">fillna()</span><span class="ftag">quantile()쨌IQR</span><span class="ftag">std()</span><span class="ftag">boxplot()</span><span class="ftag">hist()</span></div>
+        <div class="pt">데이터 전처리 — 결측치·이상치</div>
+        <div class="pd">빠진 값(결측치)을 삭제할지 채울지 판단하고, 튀는 값(이상치)을 IQR·표준편차로 탐지·처리. 평균/중앙값/앞뒤값 대체와 박스플롯 시각 확인까지.</div>
+        <div class="funcs"><span class="ftag">isnull()/isna()</span><span class="ftag">dropna()</span><span class="ftag">fillna()</span><span class="ftag">quantile()·IQR</span><span class="ftag">std()</span><span class="ftag">boxplot()</span><span class="ftag">hist()</span></div>
       
-        <div class="clinks"><a class="cl-web" href="?밴컯??05_?꾩쿂由??밴컯??html">?뱰 ?밴컯??/a><a class="cl-nb" href="?먮떎??理쒖쥌?ㅼ뒿/pandas_05_DDA3_?꾩쿂由?ipynb">?뮲 ?ㅼ뒿</a></div>
+        <div class="clinks"><a class="cl-web" href="웹강의/05_전처리_웹강의.html">📖 웹강의</a><a class="cl-nb" href="판다스_최종실습/pandas_05_DDA3_전처리.ipynb" download>💻 실습</a></div>
       </div>
       <div class="pcard">
         <div class="pn">PART 6</div>
-        <div class="pt">?좎쭨 ?곗씠??& 洹몃９ 吏묎퀎</div>
-        <div class="pd">臾몄옄?댁쓣 ?좎쭨濡?蹂?섑븯怨??걔룹썡쨌二쇱감쨌?붿씪??戮묒븘 ?몃젋??遺꾩꽍. <code>groupby</code>濡?湲곗?蹂?吏묎퀎, <code>apply</code>濡??ъ슜???⑥닔 ?곸슜, 諛곗넚湲곌컙 怨꾩궛 媛숈? ?ㅼ쟾 媛怨?</div>
+        <div class="pt">날짜 데이터 & 그룹 집계</div>
+        <div class="pd">문자열을 날짜로 변환하고 연·월·주차·요일을 뽑아 트렌드 분석. <code>groupby</code>로 기준별 집계, <code>apply</code>로 사용자 함수 적용, 배송기간 계산 같은 실전 가공.</div>
         <div class="funcs"><span class="ftag">pd.to_datetime()</span><span class="ftag">.dt</span><span class="ftag">day_name()</span><span class="ftag">groupby()</span><span class="ftag">agg()</span><span class="ftag">apply()</span><span class="ftag">str.split()</span><span class="ftag">replace()</span></div>
       
-        <div class="clinks"><a class="cl-web" href="?밴컯??06_?좎쭨?_洹몃９吏묎퀎_?밴컯??html">?뱰 ?밴컯??/a><a class="cl-nb" href="?먮떎??理쒖쥌?ㅼ뒿/pandas_06_DDA4(?좎쭨?곗씠??.ipynb">?뮲 ?ㅼ뒿</a></div>
+        <div class="clinks"><a class="cl-web" href="웹강의/06_날짜와_그룹집계_웹강의.html">📖 웹강의</a><a class="cl-nb" href="판다스_최종실습/pandas_06_DDA4(날짜데이터).ipynb" download>💻 실습</a></div>
       </div>
     </div>
   </div>
 
-  <!-- 4?④퀎 -->
+  <!-- 4단계 -->
   <div class="stage s4 reveal">
-    <div class="stage-head"><span class="stage-tag">?뵶 4?④퀎 쨌 寃고빀怨??붿빟</span><span class="stage-sub">?щ윭 ?뚯씠釉붿쓣 ?섎굹濡?쨌 ?⑹튂怨??붿빟???몄궗?댄듃</span></div>
+    <div class="stage-head"><span class="stage-tag">🔴 4단계 · 결합과 요약</span><span class="stage-sub">여러 테이블을 하나로 · 합치고 요약해 인사이트</span></div>
     <div class="cards">
       <div class="pcard">
         <div class="pn">PART 7</div>
-        <div class="pt">?곗씠???⑹튂湲???concat & merge</div>
-        <div class="pd">?쒓컙 援ш컙???ㅻⅨ ?곗씠?곕? ?댁뼱 遺숈씠??<code>concat</code>, 怨듯넻 ?ㅻ줈 ?뚯씠釉붿쓣 ??뒗 <code>merge</code>. inner쨌outer쨌left쨌right 議곗씤 諛⑹떇??李⑥씠? 臾몃쾿.</div>
+        <div class="pt">데이터 합치기 — concat & merge</div>
+        <div class="pd">시간 구간이 다른 데이터를 이어 붙이는 <code>concat</code>, 공통 키로 테이블을 엮는 <code>merge</code>. inner·outer·left·right 조인 방식의 차이와 문법.</div>
         <div class="funcs"><span class="ftag">pd.concat()</span><span class="ftag">pd.merge()</span><span class="ftag">how=inner/outer</span><span class="ftag">on=</span><span class="ftag">groupby().sum()</span></div>
       
-        <div class="clinks"><a class="cl-web" href="?밴컯??07_?곗씠?고빀移섍린_?밴컯??html">?뱰 ?밴컯??/a><a class="cl-nb" href="?먮떎??理쒖쥌?ㅼ뒿/pandas_07_DDA5(?⑹튂湲?.ipynb">?뮲 ?ㅼ뒿</a></div>
+        <div class="clinks"><a class="cl-web" href="웹강의/07_데이터합치기_웹강의.html">📖 웹강의</a><a class="cl-nb" href="판다스_최종실습/pandas_07_DDA5(합치기).ipynb" download>💻 실습</a></div>
       </div>
       <div class="pcard">
         <div class="pn">PART 8</div>
-        <div class="pt">?쇰쿁?뚯씠釉???pivot_table</div>
-        <div class="pd">?묒? ?쇰쿁泥섎읆 湲곗?蹂꾨줈 ?붿빟쨌吏묎퀎. index쨌values쨌columns 諛곗튂, <code>aggfunc</code> 吏묎퀎 諛⑹떇, ?ㅼ쨷 ?몃뜳??吏묎퀎, <code>margins</code> 珥앺빀, ?묒? ???</div>
+        <div class="pt">피벗테이블 — pivot_table</div>
+        <div class="pd">엑셀 피벗처럼 기준별로 요약·집계. index·values·columns 배치, <code>aggfunc</code> 집계 방식, 다중 인덱스/집계, <code>margins</code> 총합, 엑셀 저장.</div>
         <div class="funcs"><span class="ftag">pd.pivot_table()</span><span class="ftag">index=</span><span class="ftag">values=</span><span class="ftag">columns=</span><span class="ftag">aggfunc=</span><span class="ftag">margins=</span><span class="ftag">to_excel()</span></div>
       
-        <div class="clinks"><a class="cl-web" href="?밴컯??08_?쇰쿁?뚯씠釉??밴컯??html">?뱰 ?밴컯??/a><a class="cl-nb" href="?먮떎??理쒖쥌?ㅼ뒿/pandas_08_DDA6(?쇰쿁?뚯씠釉?.ipynb">?뮲 ?ㅼ뒿</a></div>
+        <div class="clinks"><a class="cl-web" href="웹강의/08_피벗테이블_웹강의.html">📖 웹강의</a><a class="cl-nb" href="판다스_최종실습/pandas_08_DDA6(피벗테이블).ipynb" download>💻 실습</a></div>
       </div>
       <div class="pcard">
         <div class="pn">PART 9</div>
-        <div class="pt">?곗씠??援ъ“????melt</div>
-        <div class="pd">遺꾩꽍?섍린 ?대젮??Wide ?뺥깭瑜?遺꾩꽍???곹빀??Long ?뺥깭濡?諛붽씀??<code>melt</code>. id_vars쨌value_vars 吏?? ?쇰쿁 ?댁젣, 洹몃━怨???怨쇱젙???뉖뒗 ?꾩쿂由?醫낇빀 ?ㅼ뒿.</div>
+        <div class="pt">데이터 구조화 — melt</div>
+        <div class="pd">분석하기 어려운 Wide 형태를 분석에 적합한 Long 형태로 바꾸는 <code>melt</code>. id_vars·value_vars 지정, 피벗 해제, 그리고 전 과정을 잇는 전처리 종합 실습.</div>
         <div class="funcs"><span class="ftag">pd.melt()</span><span class="ftag">id_vars=</span><span class="ftag">value_vars=</span><span class="ftag">pivot_table()</span><span class="ftag">drop()</span><span class="ftag">rename()</span></div>
       
-        <div class="clinks"><a class="cl-nb only" href="?먮떎??理쒖쥌?ㅼ뒿/pandas_09_DDA(melt).ipynb">?뮲 ?ㅼ뒿 ?명듃遺?/a></div>
+        <div class="clinks"><a class="cl-nb only" href="판다스_최종실습/pandas_09_DDA(melt).ipynb" download>💻 실습 노트북</a></div>
       </div>
     </div>
   </div>
 
-  <!-- 蹂대꼫??-->
+  <!-- 보너스 -->
   <div class="stage bonus reveal">
-    <div class="stage-head"><span class="stage-tag">狩?蹂대꼫??쨌 ?먮룞 ?먯깋</span><span class="stage-sub">??以꾨줈 ?앸궡??EDA 由ы룷??/span></div>
+    <div class="stage-head"><span class="stage-tag">⭐ 보너스 · 자동 탐색</span><span class="stage-sub">한 줄로 끝내는 EDA 리포트</span></div>
     <div class="cards">
       <div class="pcard bonus">
-        <div class="pn">PART 10 쨌 蹂대꼫??/div>
+        <div class="pn">PART 10 · 보너스</div>
         <div class="pt">Pandas Profiling</div>
-        <div class="pd">YData Profiling?쇰줈 ?곗씠???꾩껜??遺꾪룷쨌寃곗륫쨌?곴?쨌以묐났???먮룞 由ы룷?몃줈 ??踰덉뿉 ?앹꽦. ?욎뿉???먯쑝濡?諛곗슫 ?먯깋???먮룞?뷀빐 蹂대뒗 留덈Т由?</div>
+        <div class="pd">YData Profiling으로 데이터 전체의 분포·결측·상관·중복을 자동 리포트로 한 번에 생성. 앞에서 손으로 배운 탐색을 자동화해 보는 마무리.</div>
         <div class="funcs"><span class="ftag">ProfileReport()</span><span class="ftag">to_notebook_iframe()</span><span class="ftag">to_file()</span></div>
       
-        <div class="clinks"><a class="cl-nb only" href="?먮떎??理쒖쥌?ㅼ뒿/pandas_10.ipynb">?뮲 ?ㅼ뒿 ?명듃遺?/a></div>
+        <div class="clinks"><a class="cl-nb only" href="판다스_최종실습/pandas_10.ipynb" download>💻 실습 노트북</a></div>
       </div>
     </div>
   </div>
 
-  <!-- ?⑥닔쨌硫붿냼??臾몃쾿 ???덊띁?곗뒪 -->
+  <!-- 함수·메소드 문법 퀵 레퍼런스 -->
   <div class="ref reveal">
-    <h2>?⑥닔쨌硫붿냼??臾몃쾿쨌?ъ슜踰????덊띁?곗뒪</h2>
-    <p class="rsub">?대줎?먯꽌 ?ㅻ（???듭떖 ?⑥닔쨌硫붿냼?쒖쓽 <b>臾몃쾿(?쒓렇?덉쿂)</b>怨?<b>??以??ъ슜踰?/b>??遺꾩꽍 ?④퀎蹂꾨줈 臾띠쓬.</p>
+    <h2>함수·메소드 문법·사용법 퀵 레퍼런스</h2>
+    <p class="rsub">이론에서 다루는 핵심 함수·메소드의 <b>문법(시그니처)</b>과 <b>한 줄 사용법</b>을 분석 단계별로 묶음.</p>
     <div class="refgrid">
 
       <div class="refcard">
-        <div class="rh"><span class="dot"></span>??遺덈윭?ㅺ린 쨌 ???/div>
-        <div class="syn"><code><span class="k">pd.read_csv</span>(<span class="s">"?뚯씪.csv"</span>, encoding=<span class="s">"cp949"</span>)</code><div class="use">CSV瑜?DataFrame?쇰줈 <b>遺덈윭??/b> (?쒓?? cp949/euc-kr)</div></div>
+        <div class="rh"><span class="dot"></span>① 불러오기 · 저장</div>
+        <div class="syn"><code><span class="k">pd.read_csv</span>(<span class="s">"파일.csv"</span>, encoding=<span class="s">"cp949"</span>)</code><div class="use">CSV를 DataFrame으로 <b>불러옴</b> (한글은 cp949/euc-kr)</div></div>
         <div class="syn"><code>df.<span class="k">to_csv</span>(<span class="s">"out.csv"</span>, index=<span class="k">False</span>)
-df.<span class="k">to_excel</span>(<span class="s">"out.xlsx"</span>)</code><div class="use">寃곌낵瑜??뚯씪濡?<b>???/b></div></div>
-        <div class="syn"><code>df.<span class="k">head</span>(); df.<span class="k">tail</span>(); df.<span class="k">sample</span>()</code><div class="use">????臾댁옉???됱쓣 <b>誘몃━蹂닿린</b></div></div>
+df.<span class="k">to_excel</span>(<span class="s">"out.xlsx"</span>)</code><div class="use">결과를 파일로 <b>저장</b></div></div>
+        <div class="syn"><code>df.<span class="k">head</span>(); df.<span class="k">tail</span>(); df.<span class="k">sample</span>()</code><div class="use">앞/뒤/무작위 행을 <b>미리보기</b></div></div>
       </div>
 
       <div class="refcard">
-        <div class="rh"><span class="dot"></span>??援ъ“ 쨌 ?듦퀎 ?먯깋</div>
-        <div class="syn"><code>df.<span class="k">info</span>(); df.<span class="k">shape</span>; df.<span class="k">columns</span></code><div class="use">?ш린쨌?먮즺?빧룹뿴 ?대쫫 <b>援ъ“ ?뚯븙</b></div></div>
-        <div class="syn"><code>df.<span class="k">describe</span>()           <span class="c"># ?レ옄 ?붿빟</span>
-df.<span class="k">describe</span>(include=<span class="s">"O"</span>) <span class="c"># 踰붿＜??/span></code><div class="use">?됯퇏쨌遺꾩쐞????<b>湲곗닠 ?듦퀎 ??踰덉뿉</b></div></div>
-        <div class="syn"><code>df[<span class="s">"??</span>].<span class="k">value_counts</span>()
-df[<span class="s">"??</span>].<span class="k">unique</span>()</code><div class="use">踰붿＜蹂?<b>鍮덈룄</b>쨌<b>怨좎쑀媛?/b></div></div>
+        <div class="rh"><span class="dot"></span>② 구조 · 통계 탐색</div>
+        <div class="syn"><code>df.<span class="k">info</span>(); df.<span class="k">shape</span>; df.<span class="k">columns</span></code><div class="use">크기·자료형·열 이름 <b>구조 파악</b></div></div>
+        <div class="syn"><code>df.<span class="k">describe</span>()           <span class="c"># 숫자 요약</span>
+df.<span class="k">describe</span>(include=<span class="s">"O"</span>) <span class="c"># 범주형</span></code><div class="use">평균·분위수 등 <b>기술 통계 한 번에</b></div></div>
+        <div class="syn"><code>df[<span class="s">"열"</span>].<span class="k">value_counts</span>()
+df[<span class="s">"열"</span>].<span class="k">unique</span>()</code><div class="use">범주별 <b>빈도</b>·<b>고유값</b></div></div>
       </div>
 
       <div class="refcard">
-        <div class="rh"><span class="dot"></span>???좏깮 쨌 ?뺣젹 쨌 ?꾪꽣</div>
-        <div class="syn"><code>df.<span class="k">loc</span>[?됰씪踰? <span class="s">"??</span>]
-df.<span class="k">iloc</span>[?됰쾲?? ?대쾲??</code><div class="use">?쇰꺼/踰덊샇濡?<b>?됀룹뿴 ?좏깮</b></div></div>
-        <div class="syn"><code>df.<span class="k">sort_values</span>(<span class="s">"??</span>, ascending=<span class="k">False</span>)</code><div class="use">媛?湲곗? <b>?뺣젹</b> (?щ윭 ?댁? 由ъ뒪?몃줈)</div></div>
+        <div class="rh"><span class="dot"></span>③ 선택 · 정렬 · 필터</div>
+        <div class="syn"><code>df.<span class="k">loc</span>[행라벨, <span class="s">"열"</span>]
+df.<span class="k">iloc</span>[행번호, 열번호]</code><div class="use">라벨/번호로 <b>행·열 선택</b></div></div>
+        <div class="syn"><code>df.<span class="k">sort_values</span>(<span class="s">"열"</span>, ascending=<span class="k">False</span>)</code><div class="use">값 기준 <b>정렬</b> (여러 열은 리스트로)</div></div>
         <div class="syn"><code>df[(df.A&gt;<span class="s">10</span>) <span class="k">&amp;</span> (df.B==<span class="s">"VIP"</span>)]
-df[df.<span class="s">"??</span>.<span class="k">isin</span>([...])]</code><div class="use">議곌굔?쇰줈 <b>?꾪꽣留?/b> (&amp; and 쨌 | or 쨌 ~ not)</div></div>
+df[df.<span class="s">"열"</span>.<span class="k">isin</span>([...])]</code><div class="use">조건으로 <b>필터링</b> (&amp; and · | or · ~ not)</div></div>
       </div>
 
       <div class="refcard">
-        <div class="rh"><span class="dot"></span>???꾩쿂由?(寃곗륫쨌?댁긽移?</div>
-        <div class="syn"><code>df.<span class="k">isnull</span>().<span class="k">sum</span>()</code><div class="use">?대퀎 <b>寃곗륫移?媛쒖닔</b> ?뺤씤</div></div>
-        <div class="syn"><code>df.<span class="k">dropna</span>()                <span class="c"># ????젣</span>
-df.<span class="k">fillna</span>(df.<span class="s">"??</span>.<span class="k">median</span>()) <span class="c"># ?泥?/span></code><div class="use">寃곗륫移?<b>??젣</b> ?먮뒗 <b>?泥?/b></div></div>
+        <div class="rh"><span class="dot"></span>④ 전처리 (결측·이상치)</div>
+        <div class="syn"><code>df.<span class="k">isnull</span>().<span class="k">sum</span>()</code><div class="use">열별 <b>결측치 개수</b> 확인</div></div>
+        <div class="syn"><code>df.<span class="k">dropna</span>()                <span class="c"># 행 삭제</span>
+df.<span class="k">fillna</span>(df.<span class="s">"열"</span>.<span class="k">median</span>()) <span class="c"># 대체</span></code><div class="use">결측치 <b>삭제</b> 또는 <b>대체</b></div></div>
         <div class="syn"><code>Q1, Q3 = df.A.<span class="k">quantile</span>([<span class="s">.25</span>, <span class="s">.75</span>])
-IQR = Q3 - Q1</code><div class="use">IQR濡?<b>?댁긽移?寃쎄퀎</b> 怨꾩궛</div></div>
+IQR = Q3 - Q1</code><div class="use">IQR로 <b>이상치 경계</b> 계산</div></div>
       </div>
 
       <div class="refcard">
-        <div class="rh"><span class="dot"></span>???좎쭨 쨌 洹몃９ 吏묎퀎</div>
-        <div class="syn"><code>df.<span class="s">"?좎쭨"</span> = <span class="k">pd.to_datetime</span>(df.<span class="s">"?좎쭨"</span>)
-df.<span class="s">"??</span> = df.<span class="s">"?좎쭨"</span>.<span class="k">dt</span>.month</code><div class="use">臾몄옄?닳넂<b>?좎쭨 蹂??/b>, ?걔룹썡쨌?붿씪 <b>異붿텧</b></div></div>
-        <div class="syn"><code>df.<span class="k">groupby</span>(<span class="s">"湲곗?"</span>)[<span class="s">"媛?</span>].<span class="k">sum</span>()
-df.<span class="k">groupby</span>(...).<span class="k">agg</span>([<span class="s">"sum"</span>,<span class="s">"mean"</span>])</code><div class="use">湲곗?蹂?<b>吏묎퀎</b> (agg濡??ㅼ쨷 吏묎퀎)</div></div>
-        <div class="syn"><code>df.<span class="s">"??</span>.<span class="k">apply</span>(<span class="k">lambda</span> x: ...)</code><div class="use">???댁뿉 <b>?ъ슜???⑥닔 ?곸슜</b></div></div>
+        <div class="rh"><span class="dot"></span>⑤ 날짜 · 그룹 집계</div>
+        <div class="syn"><code>df.<span class="s">"날짜"</span> = <span class="k">pd.to_datetime</span>(df.<span class="s">"날짜"</span>)
+df.<span class="s">"월"</span> = df.<span class="s">"날짜"</span>.<span class="k">dt</span>.month</code><div class="use">문자열→<b>날짜 변환</b>, 연·월·요일 <b>추출</b></div></div>
+        <div class="syn"><code>df.<span class="k">groupby</span>(<span class="s">"기준"</span>)[<span class="s">"값"</span>].<span class="k">sum</span>()
+df.<span class="k">groupby</span>(...).<span class="k">agg</span>([<span class="s">"sum"</span>,<span class="s">"mean"</span>])</code><div class="use">기준별 <b>집계</b> (agg로 다중 집계)</div></div>
+        <div class="syn"><code>df.<span class="s">"열"</span>.<span class="k">apply</span>(<span class="k">lambda</span> x: ...)</code><div class="use">행/열에 <b>사용자 함수 적용</b></div></div>
       </div>
 
       <div class="refcard">
-        <div class="rh"><span class="dot"></span>??寃고빀 쨌 ?붿빟 쨌 援ъ“??/div>
-        <div class="syn"><code><span class="k">pd.concat</span>([df1, df2])            <span class="c"># ?댁뼱 遺숈씠湲?/span>
-<span class="k">pd.merge</span>(a, b, on=<span class="s">"??</span>, how=<span class="s">"inner"</span>)</code><div class="use">?뚯씠釉?<b>?곌껐</b>쨌<b>蹂묓빀</b> (議곗씤)</div></div>
-        <div class="syn"><code><span class="k">pd.pivot_table</span>(df, index=<span class="s">"??</span>, columns=<span class="s">"??</span>,
-   values=<span class="s">"媛?</span>, aggfunc=<span class="s">"sum"</span>, margins=<span class="k">True</span>)</code><div class="use">湲곗?蹂?<b>?쇰쿁 ?붿빟</b> (margins=珥앺빀)</div></div>
-        <div class="syn"><code><span class="k">pd.melt</span>(df, id_vars=<span class="s">"id"</span>, value_vars=[...])</code><div class="use">Wide?묹ong <b>援ъ“ 蹂??/b></div></div>
+        <div class="rh"><span class="dot"></span>⑥ 결합 · 요약 · 구조화</div>
+        <div class="syn"><code><span class="k">pd.concat</span>([df1, df2])            <span class="c"># 이어 붙이기</span>
+<span class="k">pd.merge</span>(a, b, on=<span class="s">"키"</span>, how=<span class="s">"inner"</span>)</code><div class="use">테이블 <b>연결</b>·<b>병합</b> (조인)</div></div>
+        <div class="syn"><code><span class="k">pd.pivot_table</span>(df, index=<span class="s">"행"</span>, columns=<span class="s">"열"</span>,
+   values=<span class="s">"값"</span>, aggfunc=<span class="s">"sum"</span>, margins=<span class="k">True</span>)</code><div class="use">기준별 <b>피벗 요약</b> (margins=총합)</div></div>
+        <div class="syn"><code><span class="k">pd.melt</span>(df, id_vars=<span class="s">"id"</span>, value_vars=[...])</code><div class="use">Wide→Long <b>구조 변환</b></div></div>
       </div>
 
     </div>
   </div>
 
   <div class="principle reveal">
-    <div class="h">狩???怨쇱젙???먯튃 ???꾨줈?몄뒪 ?꾩뿉?? 臾몃쾿怨??ъ슜踰뺤쓣 ?④퍡</div>
-    <p>?⑥닔瑜??곕줈?곕줈 ?몄슦吏 ?딆쓬. <b>遺덈윭?ㅺ린 ???먯깋 ???뺤젣 ??寃고빀 ???붿빟</b>?대씪???ㅼ젣 ?곗씠??遺꾩꽍 ?꾨줈?몄뒪???먮쫫 ?꾩뿉?? 媛??④퀎???꾩슂???⑥닔쨌硫붿냼?쒓? "??吏湲??꾩슂?쒖?"? ?④퍡 ?깆옣?? 紐⑤뱺 ?⑥닔??<b>臾몃쾿(?쒓렇?덉쿂쨌?듭떖 ?뚮씪誘명꽣)</b>怨?<b>?ъ슜踰??ㅼ쟾 ?곗씠?곗뿉 ?곸슜???덉젣)</b>??吏앹쑝濡??ㅻ쨪, 泥섏쓬 蹂대뒗 ?곗씠???욎뿉?쒕룄 ?ㅼ뒪濡?遺꾩꽍 ?덉감瑜??몄슱 ???덇쾶 ??</p>
+    <div class="h">⭐ 이 과정의 원칙 — 프로세스 위에서, 문법과 사용법을 함께</div>
+    <p>함수를 따로따로 외우지 않음. <b>불러오기 → 탐색 → 정제 → 결합 → 요약</b>이라는 실제 데이터 분석 프로세스의 흐름 위에서, 각 단계에 필요한 함수·메소드가 "왜 지금 필요한지"와 함께 등장함. 모든 함수는 <b>문법(시그니처·핵심 파라미터)</b>과 <b>사용법(실전 데이터에 적용한 예제)</b>을 짝으로 다뤄, 처음 보는 데이터 앞에서도 스스로 분석 절차를 세울 수 있게 함.</p>
   </div>
 
 </main>
 
 <footer>
-  <p>?곗씠??遺꾩꽍 ?꾨줈?몄뒪? ?먮떎???쒖슜?섍린 쨌 ?좏뻾 NumPy + Part 1~9 + 蹂대꼫??쨌 ?뚯씠??湲곗큹 ?꾩뿉 ?몄슫 ?ㅼ쟾 遺꾩꽍</p>
-  <p style="margin-top:6px;">?욎꽑 ?ъ젙 ???뚯씠??湲곗큹 臾몃쾿(蹂?샕룹옄猷뚭뎄議걔룻븿?샕룻겢?섏뒪) 쨌 ?ㅼ쓬 ???쒓컖??&amp; 癒몄떊?щ떇</p>
+  <p>데이터 분석 프로세스와 판다스 활용하기 · 선행 NumPy + Part 1~9 + 보너스 · 파이썬 기초 위에 세운 실전 분석</p>
+  <p style="margin-top:6px;">앞선 여정 — 파이썬 기초 문법(변수·자료구조·함수·클래스) · 다음 — 시각화 &amp; 머신러닝</p>
 </footer>
 
 <script>
@@ -335,4 +335,3 @@ document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
 </script>
 </body>
 </html>
-
